@@ -5,13 +5,25 @@ import { contextBridge, ipcRenderer } from "electron";
 contextBridge.exposeInMainWorld("ipcRenderer", {
 	send: (channel, data) => {
 		// whitelist channels
-		let validChannels = ["toMain"];
+		let validChannels = [
+			"toMain",
+			"parseXML",
+			"buildXML",
+			"readID3",
+			"readAudio",
+		];
 		if (validChannels.includes(channel)) {
 			ipcRenderer.send(channel, data);
 		}
 	},
 	receive: (channel, func) => {
-		let validChannels = ["fromMain"];
+		let validChannels = [
+			"fromMain",
+			"sendJSobject",
+			"savedXML",
+			"showID3",
+			"sendAudioBlob",
+		];
 		if (validChannels.includes(channel)) {
 			// Deliberately strip event as it includes `sender`
 			ipcRenderer.on(channel, (event, ...args) => func(...args));

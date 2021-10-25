@@ -12,12 +12,24 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@jamescoyle/vue-icon": "^0.1.2",
+    "@mdi/js": "^6.4.95",
     "@tailwindcss/postcss7-compat": "^2.0.2",
+    "ag-grid-community": "^26.1.0",
+    "ag-grid-vue3": "^26.1.2",
     "autoprefixer": "^9",
+    "buffer": "^6.0.3",
+    "cross-blob": "^3.0.0",
+    "music-metadata": "^7.11.4",
+    "music-metadata-browser": "^2.5.0",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
+    "v-tooltip": "^4.0.0-alpha.1",
     "vue": "^3.0.0",
-    "vuex": "^3.6.2"
+    "vue-class-component": "^8.0.0-rc.1",
+    "vuex": "^3.6.2",
+    "wavesurfer.js": "^5.2.0",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@vue/cli-service": "~4.5.0",

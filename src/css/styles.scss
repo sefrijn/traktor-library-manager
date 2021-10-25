@@ -1,0 +1,40 @@
+@import "~ag-grid-community/src/styles/ag-grid.scss";
+@import "~ag-grid-community/src/styles/ag-theme-alpine-dark/sass/ag-theme-alpine-dark-mixin";
+
+$black-light: #2d2d2d;
+$black-medium: #1c1c1c;
+$black-dark: #131313;
+$gray: #969696;
+$traktor-active: #2e91a7;
+
+.ag-theme-alpine-dark {
+	@include ag-theme-alpine-dark(
+		(
+			alpine-active-color: $traktor-active,
+			header-background-color: $black-light,
+			borders: false,
+			background-color: $black-dark,
+			odd-row-background-color: $black-medium,
+		)
+	);
+
+	.ag-header {
+		// or write CSS selectors to make customisations beyond what the parameters support
+		text-style: italic;
+	}
+}
+
+/* Style */
+.v-popper--theme-tooltip .v-popper__inner {
+	background: $black-medium;
+	color: $gray;
+	@apply text-xs;
+}
+
+.v-popper--theme-tooltip .v-popper__arrow {
+	border-color: $black-medium;
+}
+
+.active {
+	@apply bg-active;
+}
