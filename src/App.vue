@@ -1,6 +1,7 @@
 <template>
   <div class="h-screen bg-black-dark text-white font-sans">
     <app-header
+      ref="header"
       style="height:100px;"
       @load="load"
       v-on:show-genres="showGenres"
@@ -33,6 +34,8 @@
 <script>
 // import "ag-grid-community/dist/styles/ag-grid.css";
 // import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
+window.ipcRenderer.removeAllListeners();
+
 import { AgGridVue } from "ag-grid-vue3";
 import { reactive, onMounted } from "vue";
 import appHeader from "./components/appHeader.vue";
@@ -53,6 +56,8 @@ export default {
       gridOptions: null,
       library: null,
       genres: [],
+      trackLoaded: null,
+      trackLoadedImage: null,
       defaultColDef: {
         editable: true,
       },
@@ -88,12 +93,29 @@ export default {
     },
     onCellClicked(params) {
       if (params.colDef.field == this.track_fields[16]) {
-        console.log("play audio");
+        // console.log("play audio, store variable:");
+        this.$store.commit("setTrue");
+        // console.log(this.$store.state);
+        this.$refs.header.emptyWavesurfer();
+        // console.log(this.$refs);
+
         window.ipcRenderer.send("readAudio", params.data.filename);
+        this.trackLoaded = params.data.filename;
+        window.ipcRenderer.send("readID3single", [this.trackLoaded]);
+        window.ipcRenderer.receive("showCoverArtSingle", function(picture) {
+          console.log(picture);
+        });
+
+        // // this.trackLoaded = params.data.filename;
+        // console.log(params);
+        // var rowNode = this.gridOptions.api.getDisplayedRowAtIndex(
+        //   params.rowIndex
+        // );
+        // console.log(rowNode);
       }
     },
     onCellValueChanged(params) {
-      // console.log("You'v edited a cell");
+      console.log("You'v edited a cell");
       // console.log(params.data);
 
       this.library["NML"]["COLLECTION"][0]["ENTRY"][params.rowIndex]["INFO"][0][
@@ -121,14 +143,6 @@ export default {
   },
   mounted() {
     let self = this;
-
-    // window.ipcRenderer.removeAllListeners([
-    //   "fromMain",
-    //   "sendJSobject",
-    //   "savedXML",
-    //   "showID3",
-    //   "sendAudioBlob",
-    // ]);
 
     if (localStorage.pathToLibrary) {
       this.pathToLibrary = localStorage.pathToLibrary;

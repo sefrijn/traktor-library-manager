@@ -36,10 +36,13 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      // contextIsolation: false,
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  win.setPosition(80, 0);
+  console.log("node integration:");
+  console.log(process.env.ELECTRON_NODE_INTEGRATION);
+  win.setPosition(1280, 0);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -94,9 +97,11 @@ ipcMain.on("toMain", function(event) {
 });
 
 ipcMain.on("parseXML", function(event, arg) {
+  // console.log(arg);
   let file = arg[0];
   fs.readFile(file, function(err, data) {
     parser.parseString(data, function(err, result) {
+      // console.log(result);
       win.webContents.send("sendJSobject", result);
     });
   });
@@ -126,7 +131,7 @@ ipcMain.on("readID3", function(event, arg) {
         "base64"
       )}`;
 
-      win.webContents.send("showID3", [src, cell]);
+      win.webContents.send("showCoverArt", [src, cell]);
     } catch (error) {
       console.error(error.message);
     }

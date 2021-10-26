@@ -1,3 +1,6 @@
+// import { ipcRenderer } from "electron";
+// window.ipcRenderer = ipcRenderer;
+
 import { contextBridge, ipcRenderer } from "electron";
 
 // Expose protected methods that allow the renderer process to use
@@ -10,6 +13,7 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
 			"parseXML",
 			"buildXML",
 			"readID3",
+			"readID3single",
 			"readAudio",
 		];
 		if (validChannels.includes(channel)) {
@@ -21,12 +25,16 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
 			"fromMain",
 			"sendJSobject",
 			"savedXML",
-			"showID3",
+			"showCoverArt",
+			"showCoverArtSingle",
 			"sendAudioBlob",
 		];
 		if (validChannels.includes(channel)) {
 			// Deliberately strip event as it includes `sender`
 			ipcRenderer.on(channel, (event, ...args) => func(...args));
 		}
+	},
+	removeAllListeners: () => {
+		ipcRenderer.removeAllListeners();
 	},
 });

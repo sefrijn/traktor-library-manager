@@ -18,7 +18,7 @@ export default {
 
         window.ipcRenderer.send("readID3", [file, this.cell]);
 
-        window.ipcRenderer.receive("showID3", function(picture) {
+        window.ipcRenderer.receive("showCoverArt", function(picture) {
             if (self.cell == picture[1]) {
                 self.file = picture[0];
             }

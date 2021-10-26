@@ -6,6 +6,7 @@ $black-medium: #1c1c1c;
 $black-dark: #131313;
 $gray: #969696;
 $traktor-active: #2e91a7;
+$traktor-active-dark: #007f93;
 
 .ag-theme-alpine-dark {
 	@include ag-theme-alpine-dark(
@@ -15,8 +16,16 @@ $traktor-active: #2e91a7;
 			borders: false,
 			background-color: $black-dark,
 			odd-row-background-color: $black-medium,
+			row-hover-color: $traktor-active,
 		)
 	);
+	.ag-cell-focus {
+		background-color: $traktor-active-dark;
+		border: none !important;
+	}
+	.ag-row-focus {
+		background-color: $traktor-active;
+	}
 
 	.ag-header {
 		// or write CSS selectors to make customisations beyond what the parameters support
@@ -34,7 +43,11 @@ $traktor-active: #2e91a7;
 .v-popper--theme-tooltip .v-popper__arrow {
 	border-color: $black-medium;
 }
-
-.active {
-	@apply bg-active;
+#app {
+	button {
+		@apply bg-black-medium hover:bg-black-dark text-gray-light;
+	}
+	.active {
+		@apply bg-active hover:bg-active-dark text-white;
+	}
 }

@@ -15,7 +15,7 @@
 		<div class="flex">
 			<button
 				@click="togglePlayback"
-				class="border border-r-0 border-black-medium hover:bg-black-medium flex justify-center items-center"
+				class="border border-r-0 border-black-medium flex justify-center items-center"
 				style="height:35px; width:35px;"
 				v-bind:class="{ active: isPlaying }"
 			>
@@ -23,9 +23,20 @@
 			</button>
 			<div
 				id="waveform"
-				class="border border-black-medium"
+				class="relative border border-black-medium"
 				style="width:400px;height:35px;"
-			></div>
+			>
+				<div
+					class="absolute w-full h-full flex justify-center items-end"
+				>
+					<scale-loader
+						:color="color"
+						:height="height"
+						:width="width"
+						:loading="loading"
+					></scale-loader>
+				</div>
+			</div>
 
 			<button
 				v-tooltip="{
@@ -33,7 +44,7 @@
 					triggers: ['hover'],
 					delay: { show: 400, hide: 300 },
 				}"
-				class="bg-black-dark text-gray-light px-5 py-2 hover:bg-black-medium"
+				class="px-5 py-2"
 				style="height:35px;"
 				@click="$emit('load')"
 			>
@@ -47,19 +58,32 @@
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiArchiveSearch } from "@mdi/js";
 import { mdiPlay } from "@mdi/js";
+import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
 import WaveSurfer from "wavesurfer.js";
 let wavesurfer;
 
 export default {
 	components: {
 		SvgIcon,
+		ScaleLoader,
+	},
+	props: {
+		clearWavesurfer: Boolean,
 	},
 	data() {
 		return {
 			isPlaying: false,
 			iconOpenLib: mdiArchiveSearch,
 			iconPlayPause: mdiPlay,
+			color: "#969696",
+			height: "18px",
+			width: "5px",
 		};
+	},
+	computed: {
+		loading() {
+			return this.$store.state.loading;
+		},
 	},
 	methods: {
 		togglePlayback() {
@@ -67,6 +91,23 @@ export default {
 			this.isPlaying = wavesurfer.isPlaying();
 			console.log(this.isPlaying);
 		},
+		emptyWavesurfer() {
+			wavesurfer.stop();
+			wavesurfer.empty();
+		},
+	},
+	beforeUnmount() {
+		// Destroy and reset wavesurfer for hot reload
+		wavesurfer.destroy();
+		wavesurfer = WaveSurfer.create({
+			container: "#waveform",
+			waveColor: "#d30",
+			progressColor: "#900",
+			cursorColor: "#ddd",
+			barWidth: 2,
+			height: 35,
+			mediaControls: true,
+		});
 	},
 	mounted() {
 		let self = this;
@@ -79,18 +120,15 @@ export default {
 			height: 35,
 			mediaControls: true,
 		});
-		// if (!typeof window.ipcRenderer.receive === "function") {
 		window.ipcRenderer.receive("sendAudioBlob", function(message) {
-			// console.log(message);
 			var blob = new window.Blob([message]);
-			wavesurfer.stop();
-			wavesurfer.empty();
 			wavesurfer.loadBlob(blob);
 		});
-		// }
 
 		wavesurfer.on("ready", function() {
 			console.log("ready");
+			self.$store.commit("setFalse");
+			console.log(self.$store.state);
 
 			wavesurfer.play();
 			self.isPlaying = true;
