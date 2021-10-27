@@ -1,5 +1,5 @@
 import track_fields from "./columnHeaders.js";
-import CoverArtRenderer from "./coverArtRenderer.vue";
+import CoverArtRenderer from "./CoverArtRenderer.vue";
 
 let column_defs = [
   {

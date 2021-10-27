@@ -5,6 +5,8 @@ $black-light: #2d2d2d;
 $black-medium: #1c1c1c;
 $black-dark: #131313;
 $gray: #969696;
+$gray-dark: #777777;
+
 $traktor-active: #2e91a7;
 $traktor-active-dark: #007f93;
 
@@ -50,4 +52,20 @@ $traktor-active-dark: #007f93;
 	.active {
 		@apply bg-active hover:bg-active-dark text-white;
 	}
+}
+
+.w-1\/7 {
+	width: calc(100% / 7);
+}
+.w-1\/8 {
+	width: calc(100% / 8);
+}
+.w-1\/9 {
+	width: calc(100% / 9);
+}
+.w-1\/10 {
+	width: calc(100% / 10);
+}
+.w-1\/11 {
+	width: calc(100% / 11);
 }

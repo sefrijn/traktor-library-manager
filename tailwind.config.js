@@ -7,6 +7,7 @@ module.exports = {
         "black-light": "#2d2d2d",
         "black-medium": "#1c1c1c",
         "black-dark": "#131313",
+        "gray-dark": "#777777",
         gray: "#969696",
         "gray-light": "#A0A0A0",
         active: "#2e91a7",
@@ -15,7 +16,10 @@ module.exports = {
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      backgroundColor: ["checked"],
+      textColor: ["checked"],
+    },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

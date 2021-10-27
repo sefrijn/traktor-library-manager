@@ -1,26 +1,31 @@
 "use strict";
+/*
+ * INDEX
+ *
+ * Imports & Variables
+ * Electron Window Functions
+ * IPC functions
+ */
 
+// > Imports & Variables
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 const { dialog, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const xml2js = require("xml2js");
 const mm = require("music-metadata");
+
 let parser = new xml2js.Parser();
 var builder = new xml2js.Builder({
   xmldec: { version: "1.0", encoding: "UTF-8", standalone: false },
 });
-// import Blob from "cross-blob";
-// import { Blob, Buffer } from "buffer";
-// var Buffer = require('buffer/').Buffer
-// import { Buffer } from "buffer";
-// import { Blob } from "node:buffer";
 let win = null;
-// const ipcMain = electron.ipcMain;
 
+// > Electron Window Functions
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
@@ -36,7 +41,6 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      // contextIsolation: false,
       preload: path.join(__dirname, "preload.js"),
     },
   });
@@ -85,72 +89,6 @@ app.on("ready", async () => {
   createWindow();
 });
 
-ipcMain.on("toMain", function(event) {
-  let file = dialog.showOpenDialogSync({
-    title: "Find Library File",
-    defaultPath: path.join(app.getPath("home"), "Music", "dj", "Traktor 3.4"),
-    buttonLabel: "Open Library",
-    properties: ["openFile"],
-  });
-  if (file == undefined) return console.log("no file selected, just continue");
-  win.webContents.send("fromMain", file);
-});
-
-ipcMain.on("parseXML", function(event, arg) {
-  // console.log(arg);
-  let file = arg[0];
-  fs.readFile(file, function(err, data) {
-    parser.parseString(data, function(err, result) {
-      // console.log(result);
-      win.webContents.send("sendJSobject", result);
-    });
-  });
-});
-
-ipcMain.on("buildXML", function(event, arg) {
-  let js = arg[0];
-  let path = arg[1];
-  console.log(path);
-  let xml = builder.buildObject(js);
-  // console.log(xml);
-  fs.writeFile(path, xml, function(err) {
-    if (err) return console.log(err);
-    console.log("Saved document");
-    win.webContents.send("savedXML", "Succes saving XML");
-  });
-});
-
-ipcMain.on("readID3", function(event, arg) {
-  let file = arg[0];
-  let cell = arg[1];
-  (async () => {
-    try {
-      const metadata = await mm.parseFile(file);
-      let picture = metadata.common.picture[0];
-      const src = `data:${picture.format};base64,${picture.data.toString(
-        "base64"
-      )}`;
-
-      win.webContents.send("showCoverArt", [src, cell]);
-    } catch (error) {
-      console.error(error.message);
-    }
-  })();
-});
-
-ipcMain.on("readAudio", function(event, arg) {
-  let path = arg;
-  console.log(path);
-  fs.readFile(path, function(err, buffer) {
-    // var arr = new Uint8Array(buffer);
-    // var buff = new Buffer.from(arr);
-    // const buff = new Blob([arr]);
-    // let arr = buffer;
-    // var blob = new Blob([new Uint8Array(buffer)]);
-    win.webContents.send("sendAudioBlob", buffer);
-  });
-});
-
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === "win32") {
@@ -165,3 +103,79 @@ if (isDevelopment) {
     });
   }
 }
+
+// > IPC functions
+ipcMain.on("openLibrary", function(event) {
+  let file = dialog.showOpenDialogSync({
+    title: "Find Library File",
+    defaultPath: path.join(app.getPath("home"), "Music", "dj", "Traktor 3.4"),
+    buttonLabel: "Open Library",
+    properties: ["openFile"],
+  });
+  if (file == undefined) return console.log("no file selected, just continue");
+  win.webContents.send("openLibrary", file);
+});
+
+ipcMain.on("parseXML", function(event, arg) {
+  let file = arg[0];
+  fs.readFile(file, function(err, data) {
+    parser.parseString(data, function(err, result) {
+      win.webContents.send("parseXML", result);
+    });
+  });
+});
+
+ipcMain.on("buildXML", function(event, arg) {
+  let js = arg[0];
+  let path = arg[1];
+  let xml = builder.buildObject(js);
+  fs.writeFile(path, xml, function(err) {
+    if (err) return console.log(err);
+    console.log("Saved document");
+    win.webContents.send("buildXML", "Succes saving XML");
+  });
+});
+
+ipcMain.on("coverArtList", function(event, arg) {
+  let file = arg[0];
+  let cell = arg[1];
+  let data = arg[2];
+  let rowIndex = arg[3];
+  (async () => {
+    try {
+      const metadata = await mm.parseFile(file);
+      let picture = metadata.common.picture[0];
+      const src = `data:${picture.format};base64,${picture.data.toString(
+        "base64"
+      )}`;
+
+      win.webContents.send("coverArtList", [src, cell, data, rowIndex]);
+    } catch (error) {
+      console.error(error.message);
+    }
+  })();
+});
+
+ipcMain.on("coverArtSingle", function(event, arg) {
+  let file = arg[0];
+  (async () => {
+    try {
+      const metadata = await mm.parseFile(file);
+      let picture = metadata.common.picture[0];
+      const src = `data:${picture.format};base64,${picture.data.toString(
+        "base64"
+      )}`;
+
+      win.webContents.send("coverArtSingle", [src]);
+    } catch (error) {
+      console.error(error.message);
+    }
+  })();
+});
+
+ipcMain.on("loadAudio", function(event, arg) {
+  let path = arg;
+  fs.readFile(path, function(err, buffer) {
+    win.webContents.send("loadAudio", buffer);
+  });
+});

@@ -12,6 +12,7 @@ const store = createStore({
 	state() {
 		return {
 			loading: false,
+			display: "split",
 		};
 	},
 	mutations: {
@@ -20,6 +21,9 @@ const store = createStore({
 		},
 		setFalse(state) {
 			state.loading = false;
+		},
+		setDisplay(state, display_type) {
+			state.display = display_type;
 		},
 	},
 });
