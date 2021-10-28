@@ -27,8 +27,8 @@
     "v-tooltip": "^4.0.0-alpha.1",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-rc.1",
+    "vue-slider-component": "^4.0.0-beta.4",
     "vue-spinner": "^1.0.4",
-    "vue3-slider": "^1.6.6",
     "vuex": "^4.0.2",
     "wavesurfer.js": "^5.2.0",
     "xml2js": "^0.4.23"

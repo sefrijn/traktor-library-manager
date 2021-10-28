@@ -27,7 +27,7 @@ let column_defs = [
     hide: false,
     editable: false,
     width: 100,
-    cellRendererFramework: CoverArtRenderer,
+    // cellRendererFramework: CoverArtRenderer,
   },
   {
     headerName: "Artist",

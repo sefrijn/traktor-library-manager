@@ -8588,10 +8588,23 @@ vue-loader@^15.9.2:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
+vue-property-decorator@^9.0.2:
+  version "9.1.2"
+  resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-9.1.2.tgz#266a2eac61ba6527e2e68a6933cfb98fddab5457"
+  integrity sha512-xYA8MkZynPBGd/w5QFJ2d/NM0z/YeegMqYTphy7NJQXbZcuU6FC6AOdUAcy4SXP+YnkerC6AfH+ldg7PDk9ESQ==
+
 vue-resize@^2.0.0-alpha.1:
   version "2.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/vue-resize/-/vue-resize-2.0.0-alpha.1.tgz#43eeb79e74febe932b9b20c5c57e0ebc14e2df3a"
   integrity sha512-7+iqOueLU7uc9NrMfrzbG8hwMqchfVfSzpVlCMeJQe4pyibqyoifDNbKTZvwxZKDvGkB+PdFeKvnGZMoEb8esg==
+
+vue-slider-component@^4.0.0-beta.4:
+  version "4.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/vue-slider-component/-/vue-slider-component-4.0.0-beta.4.tgz#b72d7964f3c1e6368c3f1eece726a73066e0f567"
+  integrity sha512-ooKDv/FKLPR4N2O8BL3QvMoAvrSwSjj2+tx38dgvGRQaYYr0lpfH8vd175Hb1ayr6JRlnea7PYAeVtlg/jvTbQ==
+  dependencies:
+    core-js "^3.6.5"
+    vue-property-decorator "^9.0.2"
 
 vue-spinner@^1.0.4:
   version "1.0.4"
@@ -8610,11 +8623,6 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
-
-vue3-slider@^1.6.6:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/vue3-slider/-/vue3-slider-1.6.6.tgz#481a112dd0ca2c75fff850938fc076e738230e50"
-  integrity sha512-6lS8YqdTkr5S3lZLAWTZT/CidUHnvJL7JZkHm7vSHWOYu1DsJoUUxOA9n5B7rF6JZScyH6srhgkyOTvX9wxfTg==
 
 vue@^3.0.0:
   version "3.2.20"

@@ -13,6 +13,11 @@ const store = createStore({
 		return {
 			loading: false,
 			display: "split",
+			scroll: {
+				ratio: 0.0, // a decimal ratio, such as 0.349
+				source: "",
+				human: true,
+			},
 		};
 	},
 	mutations: {
@@ -24,6 +29,13 @@ const store = createStore({
 		},
 		setDisplay(state, display_type) {
 			state.display = display_type;
+		},
+		setScroll(state, scroll) {
+			state.scroll.ratio = scroll.ratio;
+			state.scroll.source = scroll.source;
+		},
+		setHumanScroll(state, human) {
+			state.scroll.human = human;
 		},
 	},
 });

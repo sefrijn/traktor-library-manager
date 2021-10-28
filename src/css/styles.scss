@@ -1,6 +1,3 @@
-@import "~ag-grid-community/src/styles/ag-grid.scss";
-@import "~ag-grid-community/src/styles/ag-theme-alpine-dark/sass/ag-theme-alpine-dark-mixin";
-
 $black-light: #2d2d2d;
 $black-medium: #1c1c1c;
 $black-dark: #131313;
@@ -9,6 +6,29 @@ $gray-dark: #777777;
 
 $traktor-active: #2e91a7;
 $traktor-active-dark: #007f93;
+
+@import "~ag-grid-community/src/styles/ag-grid.scss";
+@import "~ag-grid-community/src/styles/ag-theme-alpine-dark/sass/ag-theme-alpine-dark-mixin";
+
+/* Slider */
+$themeColor: $traktor-active;
+$bgColor: $gray;
+/* $disabledColor: #666 !default;
+$railBorderRadius: 15px !default;
+$railColorDisabled: #ccc !default;
+
+$dotBorderRadius: 50% !default;
+$dotShadowColor: rgba($themeColor, 0.38) !default;
+
+$tooltipFontSize: 12px !default;
+$tooltipSize: 30px !default;
+$tooltipColor: #fff !default;
+
+$stepBorderRadius: 50% !default;
+
+$labelFontSize: 14px !default;
+ */
+@import "~vue-slider-component/lib/theme/material.scss";
 
 .ag-theme-alpine-dark {
 	@include ag-theme-alpine-dark(

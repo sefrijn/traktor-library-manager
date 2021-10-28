@@ -20,7 +20,7 @@
       </aside>
       <section class="w-full relative" style="height: calc(100vh - 150px);">
         <ag-grid-vue
-          #trackList
+          ref="trackList"
           class="ag-theme-alpine-dark w-full"
           :class="classesGrid"
           :column-defs="columnDefs"
@@ -31,11 +31,13 @@
           @viewport-changed="onViewportChanged"
           @cell-value-changed="onCellValueChanged"
           @cell-clicked="onCellClicked"
+          @body-scroll="onBodyScroll"
         >
         </ag-grid-vue>
         <visual-browser
           :class="classesVisualBrowser"
           :tracks="visibleTracks"
+          :total="totalSongs"
         ></visual-browser>
       </section>
     </main>
@@ -107,6 +109,24 @@ export default {
         "h-full hidden": this.$store.state.display === "list",
       };
     },
+    scroll() {
+      return this.$store.state.scroll.ratio;
+    },
+  },
+  watch: {
+    scroll(newscroll, oldscroll) {
+      if (
+        this.$store.state.scroll.source == "visualbrowser" &&
+        this.$store.state.scroll.human
+      ) {
+        let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
+        this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newscroll * h;
+        // this.$store.commit("setHumanScroll", true);
+      } else {
+        // console.log("human scroll activated!");
+        // this.$store.commit("setHumanScroll", false);
+      }
+    },
   },
   components: {
     AgGridVue,
@@ -119,8 +139,26 @@ export default {
     this.gridOptions = {};
     this.columnDefs = column_defs;
   },
-
   methods: {
+    onBodyScroll(event) {
+      console.log(this.$store.state.scroll.human);
+      if (
+        this.$store.state.scroll.source == "visualbrowser" &&
+        this.$store.state.scroll.human
+      ) {
+        this.$store.commit("setHumanScroll", false);
+        return;
+      }
+      let newScroll = {};
+      let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
+
+      newScroll.ratio = this.gridApi.gridBodyCon.eBodyViewport.scrollTop / h;
+      newScroll.ratio = newScroll.ratio.toFixed(5);
+
+      newScroll.source = "list";
+      this.$store.commit("setHumanScroll", true);
+      this.$store.commit("setScroll", newScroll);
+    },
     load(event) {
       window.ipcRenderer.send("openLibrary", "trigger open file");
     },
@@ -134,7 +172,7 @@ export default {
       this.visibleTracks = this.gridApi.getRenderedNodes();
     },
     onViewportChanged(params) {
-      console.log("onViewportChanged");
+      // console.log("onViewportChanged");
       if (this.gridApi != null) {
         // console.log(this.gridApi.getRenderedNodes());
         this.visibleTracks = this.gridApi.getRenderedNodes();
@@ -201,7 +239,7 @@ export default {
     });
 
     window.ipcRenderer.receive("parseXML", (message) => {
-      console.log(message);
+      // console.log(message);
       self.library = message;
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
       let collectionFiltered = [];
