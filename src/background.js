@@ -5,6 +5,7 @@
  * Imports & Variables
  * Electron Window Functions
  * IPC functions
+ * - ALT FUNCTION FOR IMAGES
  */
 
 // > Imports & Variables
@@ -13,7 +14,7 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
-const { dialog, ipcMain } = require("electron");
+const { dialog, ipcMain, desktopCapturer } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const xml2js = require("xml2js");
@@ -57,6 +58,18 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
   }
+
+  desktopCapturer
+    .getSources({ types: ["window", "screen"] })
+    .then(async (sources) => {
+      for (const source of sources) {
+        if (source.name == "Traktor") {
+          console.log(
+            "WARNING - traktor is open, close it before you continue to avoid any library conflict"
+          );
+        }
+      }
+    });
 }
 
 // Quit when all windows are closed.
@@ -136,20 +149,27 @@ ipcMain.on("buildXML", function(event, arg) {
   });
 });
 
+// >> ALT FUNCTION FOR IMAGES
 ipcMain.on("coverArtList", function(event, arg) {
-  let file = arg[0];
-  let cell = arg[1];
-  let data = arg[2];
-  let rowIndex = arg[3];
+  let files = arg[0];
+  let images = {};
   (async () => {
     try {
-      const metadata = await mm.parseFile(file);
-      let picture = metadata.common.picture[0];
-      const src = `data:${picture.format};base64,${picture.data.toString(
-        "base64"
-      )}`;
-
-      win.webContents.send("coverArtList", [src, cell, data, rowIndex]);
+      await Promise.all(
+        Object.keys(files).map(async (index) => {
+          const metadata = await mm.parseFile(files[index]);
+          if (metadata.common.picture !== undefined) {
+            let picture = metadata.common.picture[0];
+            const src = `data:${picture.format};base64,${picture.data.toString(
+              "base64"
+            )}`;
+            images[index] = src;
+          } else {
+            images[index] = undefined;
+          }
+        })
+      );
+      win.webContents.send("coverArtList", images);
     } catch (error) {
       console.error(error.message);
     }

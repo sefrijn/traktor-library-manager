@@ -1,12 +1,6 @@
 <template>
   <div class="h-screen bg-black-dark text-white font-sans">
-    <app-header
-      ref="header"
-      style="height:100px;"
-      @load="load"
-      :src="src"
-      :current-track="currentTrack"
-    ></app-header>
+    <app-header ref="header" style="height:100px;" @load="load"></app-header>
 
     <main class="flex">
       <aside class="border-r border-black w-1/4 flex flex-col justify-end">
@@ -14,7 +8,7 @@
           lists
         </div>
         <div class="nowplaying text-xs font-medium text-center text-gray">
-          <img :src="src" />
+          <img :src="currentImageSrc" />
           <p class="px-4 py-3">{{ currentArtist }} - {{ currentTitle }}</p>
         </div>
       </aside>
@@ -23,6 +17,7 @@
           ref="trackList"
           class="ag-theme-alpine-dark w-full"
           :class="classesGrid"
+          :rowBuffer="5"
           :column-defs="columnDefs"
           :default-col-def="defaultColDef"
           :row-data="rowData"
@@ -32,12 +27,14 @@
           @cell-value-changed="onCellValueChanged"
           @cell-clicked="onCellClicked"
           @body-scroll="onBodyScroll"
+          @grid-size-changed="onGridSizeChanged"
         >
         </ag-grid-vue>
         <visual-browser
           :class="classesVisualBrowser"
           :tracks="visibleTracks"
           :total="totalSongs"
+          @play-track="playTrack"
         ></visual-browser>
       </section>
     </main>
@@ -70,19 +67,19 @@ export default {
   data() {
     return {
       pathToLibrary: "",
+
+      library: null,
+      libraryImageData: null,
+      totalSongs: null,
+      genres: [],
+      trackLoaded: null,
+      trackLoadedImage: null,
+
       columnDefs: null,
       rowData: null,
       gridApi: null,
       columnApi: null,
       gridOptions: null,
-      library: null,
-      totalSongs: null,
-      genres: [],
-      trackLoaded: null,
-      trackLoadedImage: null,
-      currentArtist: null,
-      currentTitle: null,
-      currentTrack: "",
       defaultColDef: {
         editable: true,
       },
@@ -92,21 +89,30 @@ export default {
     };
   },
   computed: {
+    currentArtist() {
+      return this.$store.state.artist;
+    },
+    currentTitle() {
+      return this.$store.state.title;
+    },
+    currentImageSrc() {
+      return this.$store.state.image;
+    },
     display() {
       return this.$store.state.display;
     },
     classesGrid() {
       return {
-        "h-full": this.$store.state.display === "list",
+        "h-full relative z-10": this.$store.state.display === "list",
         "h-1/2": this.$store.state.display === "split",
-        "h-full hidden": this.$store.state.display === "grid",
+        "h-full relative z-0": this.$store.state.display === "grid",
       };
     },
     classesVisualBrowser() {
       return {
-        "h-full": this.$store.state.display === "grid",
+        "h-full absolute top-0 z-10": this.$store.state.display === "grid",
         "h-1/2": this.$store.state.display === "split",
-        "h-full hidden": this.$store.state.display === "list",
+        "h-full absolute top-0 z-0": this.$store.state.display === "list",
       };
     },
     scroll() {
@@ -121,10 +127,6 @@ export default {
       ) {
         let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
         this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newscroll * h;
-        // this.$store.commit("setHumanScroll", true);
-      } else {
-        // console.log("human scroll activated!");
-        // this.$store.commit("setHumanScroll", false);
       }
     },
   },
@@ -141,7 +143,6 @@ export default {
   },
   methods: {
     onBodyScroll(event) {
-      console.log(this.$store.state.scroll.human);
       if (
         this.$store.state.scroll.source == "visualbrowser" &&
         this.$store.state.scroll.human
@@ -168,27 +169,48 @@ export default {
     onGridReady(params) {
       this.gridApi = params.api;
       console.log("Grid ready");
-      // console.log(this.gridApi.getRenderedNodes());
       this.visibleTracks = this.gridApi.getRenderedNodes();
     },
-    onViewportChanged(params) {
-      // console.log("onViewportChanged");
+    onGridSizeChanged(params) {
+      console.log("onGridSizeChanged");
       if (this.gridApi != null) {
-        // console.log(this.gridApi.getRenderedNodes());
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
     },
+    onViewportChanged(params) {
+      console.log("onViewportChanged");
+      if (this.gridApi != null) {
+        this.visibleTracks = this.gridApi.getRenderedNodes();
+      }
+    },
+    playTrack(filename, artist, title) {
+      // this.$refs.header.emptyWavesurfer();
+      window.ipcRenderer.send("loadAudio", filename);
+
+      this.trackLoaded = filename;
+      this.$store.commit("setArtist", artist);
+      this.$store.commit("setTitle", title);
+      // this.currentArtist = artist;
+      // this.currentTitle = title;
+      // this.currentTrack = this.currentArtist + " - " + this.currentTitle;
+      window.ipcRenderer.send("coverArtSingle", [this.trackLoaded]);
+    },
     onCellClicked(params) {
       if (params.colDef.field == this.track_fields[16]) {
-        this.$store.commit("setTrue");
-        this.$refs.header.emptyWavesurfer();
-        window.ipcRenderer.send("loadAudio", params.data.filename);
+        this.playTrack(
+          params.data.filename,
+          params.data.artist,
+          params.data.title
+        );
+        // this.$store.commit("setTrue");
+        // this.$refs.header.emptyWavesurfer();
+        // window.ipcRenderer.send("loadAudio", params.data.filename);
 
-        this.trackLoaded = params.data.filename;
-        this.currentArtist = params.data.artist;
-        this.currentTitle = params.data.title;
-        this.currentTrack = this.currentArtist + " - " + this.currentTitle;
-        window.ipcRenderer.send("coverArtSingle", [this.trackLoaded]);
+        // this.trackLoaded = params.data.filename;
+        // this.currentArtist = params.data.artist;
+        // this.currentTitle = params.data.title;
+        // this.currentTrack = this.currentArtist + " - " + this.currentTitle;
+        // window.ipcRenderer.send("coverArtSingle", [this.trackLoaded]);
       }
     },
     onCellValueChanged(params) {
@@ -238,9 +260,7 @@ export default {
       console.log(message);
     });
 
-    window.ipcRenderer.receive("parseXML", (message) => {
-      // console.log(message);
-      self.library = message;
+    window.ipcRenderer.receive("coverArtList", (images) => {
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
       let collectionFiltered = [];
       collection.forEach(function(track, index) {
@@ -265,18 +285,34 @@ export default {
               ? ""
               : Math.round(track["TEMPO"][0]["$"]["BPM"] * 100) / 100,
           [self.track_fields[12]]: track["INFO"][0]["$"]["IMPORT_DATE"],
-          [self.track_fields[15]]:
+          [self.track_fields[14]]:
             track["LOCATION"][0]["$"]["DIR"].replace(/:/g, "") +
-            track["LOCATION"][0]["$"]["FILE"],
+            track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":"),
+          [self.track_fields[15]]: images[index],
         };
       });
       self.updateRowData(collectionFiltered);
       self.totalSongs = Object.keys(collectionFiltered).length;
     });
 
+    window.ipcRenderer.receive("parseXML", (message) => {
+      self.library = message;
+
+      let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
+      let paths = {};
+      collection.forEach(function(track, index) {
+        paths[index] =
+          track["LOCATION"][0]["$"]["DIR"].replace(/:/g, "") +
+          track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":");
+      });
+
+      window.ipcRenderer.send("coverArtList", [
+        JSON.parse(JSON.stringify(paths)),
+      ]);
+    });
+
     window.ipcRenderer.receive("coverArtSingle", function(picture) {
-      // console.log(picture);
-      self.src = picture;
+      self.$store.commit("setImage", picture);
     });
   },
 };

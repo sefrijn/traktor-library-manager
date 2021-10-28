@@ -18,6 +18,9 @@ const store = createStore({
 				source: "",
 				human: true,
 			},
+			artist: "", // current track
+			title: "", // current track
+			image: "", // current image src data attribute
 		};
 	},
 	mutations: {
@@ -36,6 +39,15 @@ const store = createStore({
 		},
 		setHumanScroll(state, human) {
 			state.scroll.human = human;
+		},
+		setArtist(state, name) {
+			state.artist = name;
+		},
+		setTitle(state, name) {
+			state.title = name;
+		},
+		setImage(state, src) {
+			state.image = src;
 		},
 	},
 });

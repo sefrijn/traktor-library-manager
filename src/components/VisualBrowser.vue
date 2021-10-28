@@ -1,5 +1,5 @@
 <template>
-    <div class="visual-browser relative -mb-4" :class="class">
+    <div class="visual-browser w-full bg-black-dark -mb-4" :class="class">
         <div
             @scroll="onScroll"
             ref="smallWrapper"
@@ -38,12 +38,20 @@
                     }"
                     v-for="(row, index) in tracks"
                     :key="index"
+                    @click="
+                        $emit(
+                            'playTrack',
+                            row.data.filename,
+                            row.data.artist,
+                            row.data.title
+                        )
+                    "
                 >
                     <component
                         :is="image"
                         :artist="row.data.artist"
                         :title="row.data.title"
-                        :src="images[row.rowIndex]"
+                        :src="row.data.image"
                         :textHeight="coverTextHeight"
                     >
                     </component>
@@ -85,10 +93,8 @@ export default {
     },
     data() {
         return {
-            // wrapperHeight: "1000%",
             image: "Image",
-            images: {},
-            coverSize: 5,
+            coverSize: 6,
             coverTextHeight: 48,
         };
     },
@@ -106,13 +112,8 @@ export default {
                 this.$store.state.scroll.source == "list" &&
                 this.$store.state.scroll.human
             ) {
-                // console.log("external scroll sync from list");
                 let h = this.$refs.hugeWrapper.clientHeight;
                 this.$refs.smallWrapper.scrollTop = newscroll * h;
-                // this.$store.commit("setHumanScroll", true);
-            } else {
-                // console.log("human scroll activated!");
-                // this.$store.commit("setHumanScroll", false);
             }
         },
     },
@@ -122,7 +123,6 @@ export default {
     },
     methods: {
         onScroll(event) {
-            console.log(this.$store.state.scroll.human);
             if (
                 this.$store.state.scroll.source == "list" &&
                 this.$store.state.scroll.human
@@ -140,15 +140,6 @@ export default {
             this.$store.commit("setHumanScroll", true);
             this.$store.commit("setScroll", newScroll);
         },
-    },
-    beforeMount() {
-        let self = this;
-
-        window.ipcRenderer.receive("coverArtList", function(picture) {
-            const rowIndex = picture[3];
-            const src = picture[0];
-            self.images[rowIndex] = src;
-        });
     },
 };
 </script>

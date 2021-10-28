@@ -17,7 +17,7 @@ export default track_fields = [
   "bpm",
   "import_date",
   "play_count",
-  "folder",
   "filename",
+  "image",
   "index",
 ];

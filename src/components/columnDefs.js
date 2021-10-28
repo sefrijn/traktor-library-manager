@@ -16,18 +16,18 @@ let column_defs = [
     editable: false,
   },
   {
-    headerName: "Folder",
+    headerName: "Filename",
     field: track_fields[14],
     hide: true,
     editable: false,
   },
   {
-    headerName: "Filename",
+    headerName: "Image",
     field: track_fields[15],
     hide: false,
     editable: false,
     width: 100,
-    // cellRendererFramework: CoverArtRenderer,
+    cellRendererFramework: CoverArtRenderer,
   },
   {
     headerName: "Artist",
