@@ -12,6 +12,7 @@
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+import { client_secret, client_id } from "./config.js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 const { dialog, ipcMain, desktopCapturer } = require("electron");
@@ -19,12 +20,25 @@ const path = require("path");
 const fs = require("fs");
 const xml2js = require("xml2js");
 const mm = require("music-metadata");
+const axios = require("axios");
+const qs = require("qs");
 
 let parser = new xml2js.Parser();
 var builder = new xml2js.Builder({
   xmldec: { version: "1.0", encoding: "UTF-8", standalone: false },
 });
 let win = null;
+
+// var authOptions = {
+//   url: 'https://accounts.spotify.com/api/token',
+//   headers: {
+//     'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+//   },
+//   form: {
+//     grant_type: 'client_credentials'
+//   },
+//   json: true
+// };
 
 // > Electron Window Functions
 // Scheme must be registered before the app is ready
@@ -70,8 +84,61 @@ async function createWindow() {
         }
       }
     });
+  let token = await spotifyApi();
+  console.log("Token: " + token);
+  // var options = {
+  //     url: 'https://api.spotify.com/v1/users/jmperezperez',
+  //     headers: {
+  //       'Authorization': 'Bearer ' + token
+  //     },
+  //     json: true
+  //   };
+  await axios
+    .get(
+      "https://api.spotify.com/v1/search?q=Islandman+Drums+Colca&type=track",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then(function(response) {
+      console.log(response.data.tracks.items[0]);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
 }
 
+async function spotifyApi() {
+  const headers = {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    auth: {
+      username: client_id,
+      password: client_secret,
+    },
+  };
+  const data = {
+    grant_type: "client_credentials",
+  };
+
+  try {
+    const response = await axios.post(
+      "https://accounts.spotify.com/api/token",
+      qs.stringify(data),
+      headers
+    );
+    // console.log(response.data.access_token);
+    return response.data.access_token;
+  } catch (error) {
+    console.log(error);
+  }
+}
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar
