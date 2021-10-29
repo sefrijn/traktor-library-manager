@@ -1,19 +1,12 @@
 # traktor-vue
 
 ## Project setup
-```
-yarn install
-```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+Create a `config.js` file containing:
 
-### Compiles and minifies for production
 ```
-yarn build
-```
+const client_id = ""; // Your client id
+const client_secret = ""; // Your secret
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+export { client_secret, client_id };
+```
