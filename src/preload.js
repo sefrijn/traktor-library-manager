@@ -7,6 +7,7 @@ const validChannels = [
 	"buildXML",
 	"coverArtList",
 	"coverArtSingle",
+	"coverArtCell",
 	"loadAudio",
 ];
 
@@ -14,29 +15,14 @@ const validChannels = [
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld("ipcRenderer", {
 	send: (channel, data) => {
-		// whitelist channels
-		// let validChannels = [
-		// 	"toMain",
-		// 	"parseXML",
-		// 	"buildXML",
-		// 	"readID3",
-		// 	"readID3single",
-		// 	"readAudio",
-		// ];
-		if (validChannels.includes(channel)) {
+		let channelStripped = channel.replace(/[0-9]/g, "");
+		if (validChannels.includes(channelStripped)) {
 			ipcRenderer.send(channel, data);
 		}
 	},
 	receive: (channel, func) => {
-		// let validChannels = [
-		// 	"fromMain",
-		// 	"sendJSobject",
-		// 	"savedXML",
-		// 	"showCoverArt",
-		// 	"showCoverArtSingle",
-		// 	"sendAudioBlob",
-		// ];
-		if (validChannels.includes(channel)) {
+		let channelStripped = channel.replace(/[0-9]/g, "");
+		if (validChannels.includes(channelStripped)) {
 			// Deliberately strip event as it includes `sender`
 			ipcRenderer.on(channel, (event, ...args) => func(...args));
 		}

@@ -17,7 +17,7 @@
           ref="trackList"
           class="ag-theme-alpine-dark w-full"
           :class="classesGrid"
-          :rowBuffer="5"
+          :rowBuffer="8"
           :column-defs="columnDefs"
           :default-col-def="defaultColDef"
           :row-data="rowData"
@@ -172,13 +172,13 @@ export default {
       this.visibleTracks = this.gridApi.getRenderedNodes();
     },
     onGridSizeChanged(params) {
-      console.log("onGridSizeChanged");
+      // console.log("onGridSizeChanged");
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
     },
     onViewportChanged(params) {
-      console.log("onViewportChanged");
+      // console.log("onViewportChanged");
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
@@ -260,7 +260,9 @@ export default {
       console.log(message);
     });
 
-    window.ipcRenderer.receive("coverArtList", (images) => {
+    // >> NEW OPTION
+    window.ipcRenderer.receive("parseXML", (message) => {
+      self.library = message;
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
       let collectionFiltered = [];
       collection.forEach(function(track, index) {
@@ -288,28 +290,66 @@ export default {
           [self.track_fields[14]]:
             track["LOCATION"][0]["$"]["DIR"].replace(/:/g, "") +
             track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":"),
-          [self.track_fields[15]]: images[index],
+          [self.track_fields[15]]: "",
+          // [self.track_fields[15]]: images[index],
         };
       });
       self.updateRowData(collectionFiltered);
       self.totalSongs = Object.keys(collectionFiltered).length;
     });
 
-    window.ipcRenderer.receive("parseXML", (message) => {
-      self.library = message;
+    // >> LOAD ALL IMAGES AT ONCE
+    // window.ipcRenderer.receive("coverArtList", (images) => {
+    //   let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
+    //   let collectionFiltered = [];
+    //   collection.forEach(function(track, index) {
+    //     let genre = track["INFO"][0]["$"]["GENRE"];
+    //     if (self.genres.indexOf(genre) < 0 && genre != undefined)
+    //       self.genres.push(genre);
+    //     collectionFiltered[index] = {
+    //       [self.track_fields[16]]: index,
+    //       [self.track_fields[1]]: track["$"]["ARTIST"],
+    //       [self.track_fields[2]]: track["$"]["TITLE"],
+    //       [self.track_fields[5]]: genre,
+    //       [self.track_fields[6]]: track["INFO"][0]["$"]["COMMENT"],
+    //       [self.track_fields[7]]: track["INFO"][0]["$"]["RATING"],
+    //       [self.track_fields[8]]: track["INFO"][0]["$"]["RANKING"] / 51,
+    //       [self.track_fields[9][0]]: track["INFO"][0]["$"]["COLOR"],
+    //       [self.track_fields[10]]:
+    //         typeof track["MUSICAL_KEY"] === "undefined"
+    //           ? 0
+    //           : track["MUSICAL_KEY"][0]["$"]["VALUE"],
+    //       [self.track_fields[11]]:
+    //         typeof track["TEMPO"] === "undefined"
+    //           ? ""
+    //           : Math.round(track["TEMPO"][0]["$"]["BPM"] * 100) / 100,
+    //       [self.track_fields[12]]: track["INFO"][0]["$"]["IMPORT_DATE"],
+    //       [self.track_fields[14]]:
+    //         track["LOCATION"][0]["$"]["DIR"].replace(/:/g, "") +
+    //         track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":"),
+    //       [self.track_fields[15]]: images[index],
+    //     };
+    //   });
+    //   self.updateRowData(collectionFiltered);
+    //   self.totalSongs = Object.keys(collectionFiltered).length;
+    // });
 
-      let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
-      let paths = {};
-      collection.forEach(function(track, index) {
-        paths[index] =
-          track["LOCATION"][0]["$"]["DIR"].replace(/:/g, "") +
-          track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":");
-      });
+    // window.ipcRenderer.receive("parseXML", (message) => {
+    //   self.library = message;
 
-      window.ipcRenderer.send("coverArtList", [
-        JSON.parse(JSON.stringify(paths)),
-      ]);
-    });
+    //   let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
+    //   let paths = {};
+    //   collection.forEach(function(track, index) {
+    //     paths[index] =
+    //       track["LOCATION"][0]["$"]["DIR"].replace(/:/g, "") +
+    //       track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":");
+    //   });
+
+    //   window.ipcRenderer.send("coverArtList", [
+    //     JSON.parse(JSON.stringify(paths)),
+    //   ]);
+    // });
+    // END LOAD ALL IMAGES AT ONCE
 
     window.ipcRenderer.receive("coverArtSingle", function(picture) {
       self.$store.commit("setImage", picture);

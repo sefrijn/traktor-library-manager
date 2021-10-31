@@ -4,8 +4,9 @@
  *
  * Imports & Variables
  * Electron Window Functions
+ * Spotify Test
  * IPC functions
- * - ALT FUNCTION FOR IMAGES
+ * - LOAD ALL IMAGES
  */
 
 // > Imports & Variables
@@ -22,23 +23,14 @@ const xml2js = require("xml2js");
 const mm = require("music-metadata");
 const axios = require("axios");
 const qs = require("qs");
+const mime = require("mime-types");
+const sharp = require("sharp");
 
 let parser = new xml2js.Parser();
 var builder = new xml2js.Builder({
   xmldec: { version: "1.0", encoding: "UTF-8", standalone: false },
 });
 let win = null;
-
-// var authOptions = {
-//   url: 'https://accounts.spotify.com/api/token',
-//   headers: {
-//     'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-//   },
-//   form: {
-//     grant_type: 'client_credentials'
-//   },
-//   json: true
-// };
 
 // > Electron Window Functions
 // Scheme must be registered before the app is ready
@@ -86,30 +78,25 @@ async function createWindow() {
     });
   let token = await spotifyApi();
   console.log("Token: " + token);
-  // var options = {
-  //     url: 'https://api.spotify.com/v1/users/jmperezperez',
-  //     headers: {
-  //       'Authorization': 'Bearer ' + token
-  //     },
-  //     json: true
-  //   };
-  await axios
-    .get(
-      "https://api.spotify.com/v1/search?q=Islandman+Drums+Colca&type=track",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    .then(function(response) {
-      console.log(response.data.tracks.items[0]);
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
+
+  // > Spotify Test
+  // await axios
+  //   .get(
+  //     "https://api.spotify.com/v1/search?q=Islandman+Drums+Colca&type=track",
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //     }
+  //   )
+  //   .then(function(response) {
+  //     console.log(response.data.tracks.items[0]);
+  //   })
+  //   .catch(function(error) {
+  //     console.log(error);
+  //   });
 }
 
 async function spotifyApi() {
@@ -216,7 +203,31 @@ ipcMain.on("buildXML", function(event, arg) {
   });
 });
 
-// >> ALT FUNCTION FOR IMAGES
+ipcMain.on("coverArtCell", function(event, arg) {
+  let file = arg[0];
+  let index = arg[1];
+  // console.log("coverArtCell");
+  // console.log(file);
+
+  (async () => {
+    try {
+      // console.log("try");
+      const metadata = await mm.parseFile(file);
+      let picture = metadata.common.picture[0];
+      const src = `data:${picture.format};base64,${picture.data.toString(
+        "base64"
+      )}`;
+      console.log(index + ": " + file);
+      let channel = "coverArtCell" + index;
+      win.webContents.send("coverArtCell", [src, index, file]);
+      win.webContents.send(channel, [src, index, file]);
+    } catch (error) {
+      console.error(error.message);
+    }
+  })();
+});
+
+// >> LOAD ALL IMAGES
 ipcMain.on("coverArtList", function(event, arg) {
   let files = arg[0];
   let images = {};
@@ -243,6 +254,12 @@ ipcMain.on("coverArtList", function(event, arg) {
   })();
 });
 
+let saved = false;
+const savePath = path.join(app.getAppPath(), "coverart", "300");
+// const savePath = app.getAppPath();
+if (!fs.existsSync(savePath)) {
+  fs.mkdirSync(savePath, { recursive: true });
+}
 ipcMain.on("coverArtSingle", function(event, arg) {
   let file = arg[0];
   (async () => {
@@ -252,7 +269,22 @@ ipcMain.on("coverArtSingle", function(event, arg) {
       const src = `data:${picture.format};base64,${picture.data.toString(
         "base64"
       )}`;
-
+      console.log(arg);
+      console.log("save to: " + savePath);
+      let filename = path.join(
+        savePath,
+        "test300." + mime.extension(picture.format)
+      );
+      console.log(filename);
+      // fs.writeFile(filename, picture.data);
+      sharp(picture.data)
+        .resize(300, 300)
+        .toFile(filename);
+      // try {
+      //   fs.writeFileSync(filename, picture.data);
+      // } catch (e) {
+      //   console.log("Failed to save the file !");
+      // }
       win.webContents.send("coverArtSingle", [src]);
     } catch (error) {
       console.error(error.message);

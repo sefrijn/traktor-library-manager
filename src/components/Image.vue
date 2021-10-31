@@ -14,7 +14,9 @@
         overflow: hidden;
         text-overflow: ellipsis;"
 	>
-		{{ artist }}<span v-if="artist"><br /></span>{{ title }}
+		{{ artist }}
+		<span v-if="artist"><br /></span
+		><span class="text-white">{{ title }}</span>
 	</div>
 </template>
 

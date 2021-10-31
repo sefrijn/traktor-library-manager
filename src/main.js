@@ -21,6 +21,7 @@ const store = createStore({
 			artist: "", // current track
 			title: "", // current track
 			image: "", // current image src data attribute
+			images: {},
 		};
 	},
 	mutations: {
@@ -48,6 +49,9 @@ const store = createStore({
 		},
 		setImage(state, src) {
 			state.image = src;
+		},
+		setImages(state, image) {
+			state.images[image.index] = image.src;
 		},
 	},
 });
