@@ -1,6 +1,6 @@
 <template>
-	<footer class="px-4 flex justify-between font-medium text-xs text-gray">
-		<span>Currently editing: {{ path }}</span>
+	<footer class="px-4 flex justify-between font-medium text-xxs text-gray">
+		<span>Selected NML library file: {{ path }}</span>
 		<span>{{ total }} songs</span>
 	</footer>
 </template>

@@ -20,6 +20,7 @@ module.exports = {
       fontSize: {
         xxs: ".6rem",
       },
+      cursor: { "divider-h": "col-resize" },
     },
   },
   variants: {

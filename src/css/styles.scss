@@ -39,6 +39,7 @@ $labelFontSize: 14px !default;
 			background-color: $black-dark,
 			odd-row-background-color: $black-medium,
 			row-hover-color: $traktor-active,
+			cell-horizontal-padding: 12px,
 		)
 	);
 	.ag-cell-focus {

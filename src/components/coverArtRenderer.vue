@@ -1,26 +1,21 @@
 <template>
-    <img :src="file" />
+    <img v-if="src != ''" :src="src" @error="imageUrlAlt" />
 </template>
 
 <script>
 export default {
     data() {
         return {
-            file: "",
-            // file: require("../assets/testimage.jpg"),
+            src: "",
         };
     },
+    methods: {
+        imageUrlAlt(event) {
+            this.src = "";
+        },
+    },
     beforeMount() {
-        let self = this;
-        // let index = this.params.data.index;
-        let rowIndex = this.params.rowIndex;
-        let file = this.params.data.filename;
-        window.ipcRenderer.send("coverArtCell", [file, rowIndex]);
-        // Detect right IPC event with numbered channel
-        let channel = "coverArtCell" + rowIndex;
-        window.ipcRenderer.receive(channel, function(message) {
-            self.file = message[0];
-        });
+        this.src = "local-resource://coverart/60/" + this.params.data.image;
     },
 };
 </script>

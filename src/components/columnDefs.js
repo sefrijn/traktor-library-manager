@@ -1,67 +1,73 @@
-import track_fields from "./columnHeaders.js";
 import CoverArtRenderer from "./CoverArtRenderer.vue";
 
 let column_defs = [
   {
     headerName: "Index",
-    field: track_fields[16],
+    field: "index",
     editable: false,
     width: 80,
-    sort: "desc",
+    // sort: "desc",
+    sort: "asc",
   },
   {
     headerName: "Track ID",
-    field: track_fields[0],
+    field: "track_id",
+    hide: true,
+    editable: false,
+  },
+  {
+    headerName: "Path",
+    field: "path",
     hide: true,
     editable: false,
   },
   {
     headerName: "Filename",
-    field: track_fields[14],
+    field: "filename",
     hide: true,
     editable: false,
   },
   {
     headerName: "Image",
-    field: track_fields[15],
+    field: "image",
     hide: false,
     editable: false,
-    width: 100,
+    width: 84,
     cellRendererFramework: CoverArtRenderer,
   },
   {
     headerName: "Artist",
-    field: track_fields[1],
+    field: "artist",
   },
-  { headerName: "Title", field: track_fields[2] },
+  { headerName: "Title", field: "title" },
   {
     headerName: "Genre",
-    field: track_fields[5],
+    field: "genre",
     width: 200,
   },
   {
     headerName: "Style",
-    field: track_fields[6],
+    field: "comment_1",
     width: 240,
   },
   {
     headerName: "Timbre",
-    field: track_fields[7],
+    field: "comment_2",
     width: 240,
   },
   {
     headerName: "Energy Level",
-    field: track_fields[8],
+    field: "rating",
     width: 112,
   },
-  { headerName: "Feeling", field: track_fields[9][0], width: 240 },
+  { headerName: "Color", field: "color_code", width: 240 },
   {
     headerName: "Musical Key",
-    field: track_fields[10],
+    field: "musical_key",
     editable: false,
   },
-  { headerName: "BPM", field: track_fields[11], editable: false },
-  { headerName: "Import Date", field: track_fields[12] },
-  { headerName: "Play Count", field: track_fields[13] },
+  { headerName: "BPM", field: "bpm", editable: false },
+  { headerName: "Import Date", field: "import_date" },
+  { headerName: "Play Count", field: "play_count" },
 ];
 export { column_defs };

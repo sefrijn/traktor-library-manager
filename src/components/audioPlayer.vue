@@ -1,18 +1,13 @@
 <template>
 	<div class="flex relative mx-1.5">
 		<p
-			v-if="currentArtist"
+			v-if="artist"
 			class="absolute top-full w-full pt-2 text-gray-dark text-xs"
 		>
-			{{ currentArtist }} - {{ currentTitle }}
+			{{ artist }} - {{ title }}
 		</p>
 
-		<img
-			v-if="currentArtist"
-			:src="currentImageSrc"
-			class="h-9 w-9"
-			alt=""
-		/>
+		<img v-if="artist" :src="image" class="h-9 w-9" alt="" />
 		<button
 			@click="togglePlayback"
 			class="h-9 w-9 flex justify-center items-center"
@@ -60,14 +55,17 @@ export default {
 		};
 	},
 	computed: {
-		currentArtist() {
-			return this.$store.state.artist;
+		artist() {
+			return this.$store.state.trackPlaying.artist;
 		},
-		currentTitle() {
-			return this.$store.state.title;
+		title() {
+			return this.$store.state.trackPlaying.title;
 		},
-		currentImageSrc() {
-			return this.$store.state.image;
+		image() {
+			return this.$store.state.trackPlaying.image
+				? "local-resource://coverart/400/" +
+						this.$store.state.trackPlaying.image
+				: null;
 		},
 		loading() {
 			return this.$store.state.loading;
@@ -105,13 +103,15 @@ export default {
 		this.createWavesurfer();
 
 		window.ipcRenderer.receive("loadAudio", function(message) {
-			self.$store.commit("setTrue");
+			// self.$store.commit("setTrue");
 			self.emptyWavesurfer();
 			var blob = new window.Blob([message]);
 			wavesurfer.loadBlob(blob);
+			console.log("load audio file");
 		});
 		wavesurfer.on("ready", function() {
-			self.$store.commit("setFalse");
+			// self.$store.commit("setFalse");
+			self.$store.commit("setLoading", false);
 			wavesurfer.play();
 			self.isPlaying = true;
 		});

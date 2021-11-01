@@ -11,13 +11,15 @@ const app = createApp(App);
 const store = createStore({
 	state() {
 		return {
-			loading: false,
-			display: "split",
+			loading: false, // is audio being loaded? show loader
+			display: "split", // display setting [split,list,grid]
 			scroll: {
 				ratio: 0.0, // a decimal ratio, such as 0.349
 				source: "",
 				human: true,
 			},
+			trackPlaying: {},
+			trackSelected: {},
 			artist: "", // current track
 			title: "", // current track
 			image: "", // current image src data attribute
@@ -25,11 +27,12 @@ const store = createStore({
 		};
 	},
 	mutations: {
-		setTrue(state) {
-			state.loading = true;
+		// NEW CLEAN
+		setTrackPlaying(state, track) {
+			state.trackPlaying = track;
 		},
-		setFalse(state) {
-			state.loading = false;
+		setLoading(state, loading) {
+			state.loading = loading;
 		},
 		setDisplay(state, display_type) {
 			state.display = display_type;
@@ -40,18 +43,6 @@ const store = createStore({
 		},
 		setHumanScroll(state, human) {
 			state.scroll.human = human;
-		},
-		setArtist(state, name) {
-			state.artist = name;
-		},
-		setTitle(state, name) {
-			state.title = name;
-		},
-		setImage(state, src) {
-			state.image = src;
-		},
-		setImages(state, image) {
-			state.images[image.index] = image.src;
 		},
 	},
 });

@@ -7,6 +7,7 @@
  * Spotify Test
  * IPC functions
  * - LOAD ALL IMAGES
+ * - Generate all coverart files
  */
 
 // > Imports & Variables
@@ -35,7 +36,10 @@ let win = null;
 // > Electron Window Functions
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
+  {
+    scheme: "app",
+    privileges: { secure: true, standard: true, supportFetchAPI: true },
+  },
 ]);
 
 async function createWindow() {
@@ -51,8 +55,6 @@ async function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  console.log("node integration:");
-  console.log(process.env.ELECTRON_NODE_INTEGRATION);
   win.setPosition(1280, 0);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -145,6 +147,8 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
+  registerLocalResourceProtocol();
+
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
@@ -203,97 +207,100 @@ ipcMain.on("buildXML", function(event, arg) {
   });
 });
 
-ipcMain.on("coverArtCell", function(event, arg) {
-  let file = arg[0];
-  let index = arg[1];
-  // console.log("coverArtCell");
-  // console.log(file);
-
-  (async () => {
-    try {
-      // console.log("try");
-      const metadata = await mm.parseFile(file);
-      let picture = metadata.common.picture[0];
-      const src = `data:${picture.format};base64,${picture.data.toString(
-        "base64"
-      )}`;
-      console.log(index + ": " + file);
-      let channel = "coverArtCell" + index;
-      win.webContents.send("coverArtCell", [src, index, file]);
-      win.webContents.send(channel, [src, index, file]);
-    } catch (error) {
-      console.error(error.message);
-    }
-  })();
-});
-
 // >> LOAD ALL IMAGES
+const cover_size_small = 60;
+const cover_path_small = path.join(
+  app.getPath("userData"),
+  "coverart",
+  cover_size_small.toString()
+);
+if (!fs.existsSync(cover_path_small)) {
+  fs.mkdirSync(cover_path_small, { recursive: true });
+}
+
+// >> Generate all coverart files
+// Large and small
+const cover_size_large = 400;
+const cover_path_large = path.join(
+  app.getPath("userData"),
+  "coverart",
+  cover_size_large.toString()
+);
+if (!fs.existsSync(cover_path_large)) {
+  fs.mkdirSync(cover_path_large, { recursive: true });
+}
 ipcMain.on("coverArtList", function(event, arg) {
   let files = arg[0];
   let images = {};
+  // console.log("started processing images: " + Date.now());
+  let start = Date.now();
   (async () => {
     try {
       await Promise.all(
         Object.keys(files).map(async (index) => {
-          const metadata = await mm.parseFile(files[index]);
-          if (metadata.common.picture !== undefined) {
-            let picture = metadata.common.picture[0];
-            const src = `data:${picture.format};base64,${picture.data.toString(
-              "base64"
-            )}`;
-            images[index] = src;
-          } else {
-            images[index] = undefined;
+          let path_small = path.join(
+            cover_path_small,
+            path.parse(files[index].file).name + ".jpeg"
+          );
+          let path_large = path.join(
+            cover_path_large,
+            path.parse(files[index].file).name + ".jpeg"
+          );
+          if (
+            index < 150 &&
+            (!fs.existsSync(path_small) || !fs.existsSync(path_large))
+          ) {
+            const metadata = await mm.parseFile(
+              files[index].path + files[index].file
+            );
+            if (metadata.common.picture !== undefined) {
+              let picture = metadata.common.picture[0];
+
+              // SMALL
+              sharp(picture.data)
+                .resize(cover_size_small, cover_size_small)
+                .jpeg({
+                  quality: 75,
+                })
+                .toFile(path_small);
+              // LARGE
+              sharp(picture.data)
+                .resize(cover_size_large, cover_size_large)
+                .jpeg({
+                  quality: 75,
+                })
+                .toFile(path_large);
+            }
           }
         })
       );
-      win.webContents.send("coverArtList", images);
+      // console.log("finished: " + (Date.now() - start));
+      win.webContents.send("coverArtList", "finished!");
     } catch (error) {
       console.error(error.message);
     }
   })();
 });
 
-let saved = false;
-const savePath = path.join(app.getAppPath(), "coverart", "300");
-// const savePath = app.getAppPath();
-if (!fs.existsSync(savePath)) {
-  fs.mkdirSync(savePath, { recursive: true });
-}
-ipcMain.on("coverArtSingle", function(event, arg) {
-  let file = arg[0];
-  (async () => {
+function registerLocalResourceProtocol() {
+  // console.log("started register protocol");
+  protocol.registerFileProtocol("local-resource", (request, callback) => {
+    const url = request.url.replace(/^local-resource:\/\//, "");
+    // Decode URL to prevent errors when loading filenames with UTF-8 chars or chars like "#"
+    const decodedUrl = decodeURI(url); // Needed in case URL contains spaces
+    // console.log(decodedUrl);
     try {
-      const metadata = await mm.parseFile(file);
-      let picture = metadata.common.picture[0];
-      const src = `data:${picture.format};base64,${picture.data.toString(
-        "base64"
-      )}`;
-      console.log(arg);
-      console.log("save to: " + savePath);
-      let filename = path.join(
-        savePath,
-        "test300." + mime.extension(picture.format)
-      );
-      console.log(filename);
-      // fs.writeFile(filename, picture.data);
-      sharp(picture.data)
-        .resize(300, 300)
-        .toFile(filename);
-      // try {
-      //   fs.writeFileSync(filename, picture.data);
-      // } catch (e) {
-      //   console.log("Failed to save the file !");
-      // }
-      win.webContents.send("coverArtSingle", [src]);
+      return callback(path.join(app.getPath("userData"), decodedUrl));
     } catch (error) {
-      console.error(error.message);
+      console.error(
+        "ERROR: registerLocalResourceProtocol: Could not get file path:",
+        error
+      );
     }
-  })();
-});
+  });
+}
 
-ipcMain.on("loadAudio", function(event, arg) {
-  let path = arg;
+ipcMain.on("loadAudio", function(event, path) {
   fs.readFile(path, function(err, buffer) {
     win.webContents.send("loadAudio", buffer);
   });

@@ -10,6 +10,18 @@
 			<audio-player></audio-player>
 
 			<button
+				v-tooltip="'Toggle Sidebar'"
+				class="mx-1.5 flex justify-center items-center h-9 w-9"
+				@click="$emit('toggleSidebar')"
+			>
+				<svg-icon
+					type="mdi"
+					:path="iconToggleSidebar"
+					size="18"
+				></svg-icon>
+			</button>
+
+			<button
 				v-tooltip="'Open Traktor Library File'"
 				class="mx-1.5 flex justify-center items-center h-9 w-9"
 				@click="$emit('load')"
@@ -25,7 +37,7 @@
 <script>
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiArchiveSearch } from "@mdi/js";
-import { mdiPlay } from "@mdi/js";
+import { mdiArrowCollapseLeft } from "@mdi/js";
 import Search from "./Search.vue";
 import AudioPlayer from "./AudioPlayer.vue";
 import DisplaySetting from "./DisplaySetting.vue";
@@ -42,6 +54,7 @@ export default {
 	data() {
 		return {
 			iconOpenLib: mdiArchiveSearch,
+			iconToggleSidebar: mdiArrowCollapseLeft,
 		};
 	},
 };

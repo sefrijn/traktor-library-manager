@@ -52,7 +52,7 @@
                         :artist="row.data.artist"
                         :title="row.data.title"
                         :textHeight="coverTextHeight"
-                        :src="images[row.rowIndex]"
+                        :src="'local-resource://coverart/400/' + row.data.image"
                     >
                     </component>
                 </div>
@@ -141,29 +141,6 @@ export default {
             this.$store.commit("setHumanScroll", true);
             this.$store.commit("setScroll", newScroll);
         },
-    },
-    beforeMount() {
-        let self = this;
-
-        window.ipcRenderer.receive("coverArtCell", function(picture) {
-            const index = picture[1];
-
-            if (Object.keys(self.images).length > 15) {
-                let first = self.tracks[0].rowIndex;
-                let last = self.tracks[self.tracks.length - 1].rowIndex;
-                for (let image in self.images) {
-                    if (image < first || image > last) {
-                        console.log("delete it!");
-                        delete self.images[image];
-                    }
-                }
-            }
-            const src = picture[0];
-            self.images[index] = src;
-            console.log(
-                "lengte van images object: " + Object.keys(self.images).length
-            );
-        });
     },
 };
 </script>
