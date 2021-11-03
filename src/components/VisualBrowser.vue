@@ -21,33 +21,23 @@
             >
                 <div
                     class="p-2 absolute transition-width hover:bg-black-light cursor-pointer"
-                    :class="`w-1/${coverSize}`"
+                    :class="[
+                        `w-1/${coverSize}`,
+                        trackPlayingIndex == row.data.index ? 'active' : '',
+                    ]"
                     :style="{
-                        left:
-                            'calc(' +
-                            (row.rowIndex % coverSize) +
-                            '* 100% / ' +
-                            coverSize +
-                            ')',
-                        top:
-                            'calc(' +
-                            Math.floor(row.rowIndex / coverSize) +
-                            '* 100% / ' +
-                            wrapperLines +
-                            ')',
+                        left: `calc(${row.rowIndex %
+                            coverSize} * 100% / ${coverSize})`,
+                        top: `calc(${Math.floor(
+                            row.rowIndex / coverSize
+                        )} * 100% / ${wrapperLines})`,
                     }"
                     v-for="(row, index) in tracks"
                     :key="index"
-                    @click="
-                        $emit(
-                            'playTrack',
-                            row.data.filename,
-                            row.data.artist,
-                            row.data.title
-                        )
-                    "
+                    @click="$emit('playTrack', row.data)"
                 >
                     <component
+                        :key="coverSize"
                         :is="image"
                         :artist="row.data.artist"
                         :title="row.data.title"
@@ -59,20 +49,18 @@
             </div>
         </div>
         <div
-            class="absolute bottom-0 flex justify-start items-center px-4 h-4 w-full bg-black-dark  z-10"
+            class="absolute bottom-0 border-t border-black flex justify-start items-center px-4 h-8 w-full bg-black-medium  z-10"
         >
-            <span class="text-xs font-bold tracking-wider mr-5 text-gray-dark"
-                >Size</span
-            >
+            <span class="text-xs tracking-wider mr-5 text-gray-dark">Size</span>
             <vue-slider
                 v-model="coverSize"
                 width="250px"
-                :min="3"
-                :max="12"
+                :min="4"
+                :max="8"
                 :adsorb="true"
                 :tooltip="'none'"
             />
-            <span class="text-xs font-bold tracking-wider ml-5 text-gray-dark"
+            <span class="text-xs tracking-wider ml-5 text-gray-dark"
                 >{{ coverSize }} per row</span
             >
         </div>
@@ -100,6 +88,9 @@ export default {
         };
     },
     computed: {
+        trackPlayingIndex() {
+            return this.$store.state.trackPlaying.index;
+        },
         wrapperLines() {
             return Math.ceil(this.total / this.coverSize);
         },
@@ -108,6 +99,9 @@ export default {
         },
     },
     watch: {
+        coverSize(newCoverSize, oldCoverSize) {
+            console.log("changed slider");
+        },
         scroll(newscroll, oldscroll) {
             if (
                 this.$store.state.scroll.source == "list" &&
@@ -123,6 +117,13 @@ export default {
         VueSlider,
     },
     methods: {
+        active(index) {
+            if (index == trackPlayingIndex) {
+                return "active";
+            } else {
+                return "";
+            }
+        },
         onScroll(event) {
             if (
                 this.$store.state.scroll.source == "list" &&

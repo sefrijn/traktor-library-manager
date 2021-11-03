@@ -55,7 +55,7 @@ async function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  win.setPosition(1280, 0);
+  win.setPosition(80, 0);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -247,7 +247,7 @@ ipcMain.on("coverArtList", function(event, arg) {
             path.parse(files[index].file).name + ".jpeg"
           );
           if (
-            index < 150 &&
+            index < 1500 &&
             (!fs.existsSync(path_small) || !fs.existsSync(path_large))
           ) {
             const metadata = await mm.parseFile(

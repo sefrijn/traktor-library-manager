@@ -1,5 +1,5 @@
 <template>
-	<div class="flex mx-1 items-center h-9">
+	<div class="flex ml-1 items-center h-9">
 		<div>
 			<input
 				type="radio"
@@ -8,7 +8,7 @@
 				id="viewlist"
 				v-model="display"
 			/>
-			<label for="viewlist" v-tooltip="'Show collection as list'">
+			<label for="viewlist" v-tooltip="'List view'">
 				<svg-icon type="mdi" :path="iconList" size="22"></svg-icon
 			></label>
 		</div>
@@ -21,7 +21,7 @@
 				v-model="display"
 				checked
 			/>
-			<label for="viewsplit" v-tooltip="'Split list and coverview'"
+			<label for="viewsplit" v-tooltip="'Split view'"
 				><svg-icon type="mdi" :path="iconSplit" size="22"></svg-icon
 			></label>
 		</div>
@@ -33,7 +33,7 @@
 				id="viewgrid"
 				v-model="display"
 			/>
-			<label for="viewgrid" v-tooltip="'Show only coverview'"
+			<label for="viewgrid" v-tooltip="'Coverview'"
 				><svg-icon type="mdi" :path="iconGrid" size="22"></svg-icon
 			></label>
 		</div>
@@ -78,17 +78,13 @@ input[type="radio"] {
 	@apply hidden;
 }
 input[type="radio"] + label {
-	@apply mx-0.5 bg-black-medium;
+	@apply mx-0.5;
 }
 input[type="radio"] + label:hover {
-	@apply bg-black-dark cursor-pointer;
+	@apply cursor-pointer;
 }
 
 label {
 	@apply flex justify-center items-center h-9 w-9;
-}
-input[type="radio"]:checked + label {
-	/*background-color: red;*/
-	@apply bg-active;
 }
 </style>

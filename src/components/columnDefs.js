@@ -1,4 +1,5 @@
 import CoverArtRenderer from "./CoverArtRenderer.vue";
+import RatingRenderer from "./RatingRenderer.vue";
 
 let column_defs = [
   {
@@ -6,8 +7,8 @@ let column_defs = [
     field: "index",
     editable: false,
     width: 80,
-    // sort: "desc",
-    sort: "asc",
+    sort: "desc",
+    // sort: "asc",
   },
   {
     headerName: "Track ID",
@@ -59,6 +60,7 @@ let column_defs = [
     headerName: "Energy Level",
     field: "rating",
     width: 112,
+    cellRendererFramework: RatingRenderer,
   },
   { headerName: "Color", field: "color_code", width: 240 },
   {
@@ -69,5 +71,6 @@ let column_defs = [
   { headerName: "BPM", field: "bpm", editable: false },
   { headerName: "Import Date", field: "import_date" },
   { headerName: "Play Count", field: "play_count" },
+  { headerName: "Cue Points", field: "cue_points", hide: true },
 ];
 export { column_defs };

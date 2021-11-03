@@ -20,14 +20,14 @@ const store = createStore({
 			},
 			trackPlaying: {},
 			trackSelected: {},
-			artist: "", // current track
-			title: "", // current track
-			image: "", // current image src data attribute
-			images: {},
+			query: "",
+			sidebar: false,
 		};
 	},
 	mutations: {
-		// NEW CLEAN
+		showSidebar(state, show) {
+			state.sidebar = show;
+		},
 		setTrackPlaying(state, track) {
 			state.trackPlaying = track;
 		},
@@ -43,6 +43,9 @@ const store = createStore({
 		},
 		setHumanScroll(state, human) {
 			state.scroll.human = human;
+		},
+		setQuery(state, text) {
+			state.query = text;
 		},
 	},
 });

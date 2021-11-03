@@ -4,6 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        "black-very-light": "#343434",
         "black-light": "#2d2d2d",
         "black-medium": "#1c1c1c",
         "black-dark": "#131313",
@@ -13,6 +14,8 @@ module.exports = {
         "gray-very-light": "#C5C5C5",
         active: "#2e91a7",
         "active-dark": "#007f93",
+        "active-very-dark": "#255571",
+        "active-orange": "#F3980C",
       },
       transitionProperty: {
         width: "width",

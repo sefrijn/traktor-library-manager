@@ -1,10 +1,11 @@
 <template>
   <div class="h-screen bg-black-dark text-white font-sans">
-    <app-header ref="header" style="height:100px;" @load="load"></app-header>
+    <app-header ref="header" style="height:82px;" @load="load"></app-header>
 
     <main class="flex" @mouseup="endDragging">
       <aside
-        class="border-r border-black max-w-sm flex flex-col justify-end"
+        v-if="sidebar"
+        class="max-w-sm flex flex-col justify-end"
         :style="{ width: `${asideWidth}%` }"
       >
         <browser></browser>
@@ -14,12 +15,13 @@
         </div>
       </aside>
       <div
-        class="divider w-3 flex justify-center items-center bg-black-medium hover:bg-black-light cursor-divider-h"
+        v-if="sidebar"
+        class="divider w-2 flex justify-center items-center bg-black-light hover:bg-gray-dark cursor-divider-h"
         @mousedown="startDragging"
       >
         <img src="./assets/vsizegrip.png" alt="" />
       </div>
-      <section class="flex-grow relative" style="height: calc(100vh - 150px);">
+      <section class="flex-grow relative" style="height: calc(100vh - 132px);">
         <ag-grid-vue
           ref="trackList"
           class="ag-theme-alpine-dark w-full"
@@ -64,7 +66,6 @@ import { h, reactive, onMounted } from "vue";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
 import Browser from "./components/Browser.vue";
-import CoverArtRenderer from "./components/CoverArtRenderer.vue";
 import VisualBrowser from "./components/VisualBrowser.vue";
 
 import { column_defs } from "./components/columnDefs.js";
@@ -73,7 +74,6 @@ export default {
   name: "App",
   components: {
     AgGridVue,
-    CoverArtRenderer,
     AppHeader,
     AppFooter,
     VisualBrowser,
@@ -102,6 +102,12 @@ export default {
     };
   },
   computed: {
+    sidebar() {
+      return this.$store.state.sidebar;
+    },
+    query() {
+      return this.$store.state.query;
+    },
     artist() {
       return this.$store.state.trackPlaying.artist;
     },
@@ -136,6 +142,9 @@ export default {
     },
   },
   watch: {
+    query(newtext, oldtext) {
+      this.gridApi.setQuickFilter(newtext);
+    },
     scroll(newscroll, oldscroll) {
       if (
         this.$store.state.scroll.source == "visualbrowser" &&
@@ -172,18 +181,13 @@ export default {
     load(event) {
       window.ipcRenderer.send("openLibrary", "trigger open file");
     },
-    // resize(event) {
-    //   console.log(event);
-    // },
     handleDragging(e) {
-      // console.log(e);
       const percentage = (e.pageX / window.innerWidth) * 100;
       if (percentage >= 10 && percentage <= 90) {
         this.asideWidth = percentage.toFixed(2);
       }
     },
     startDragging(event) {
-      // console.log(event);
       document.addEventListener("mousemove", this.handleDragging);
     },
     endDragging() {
@@ -209,44 +213,18 @@ export default {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
     },
-    playTrack(filename, artist, title) {
-      // this.$refs.header.emptyWavesurfer();
-      window.ipcRenderer.send("loadAudio", filename);
-
-      // this.trackLoaded = filename;
-      // this.$store.commit("setArtist", artist);
-      // this.$store.commit("setTitle", title);
-      // this.currentArtist = artist;
-      // this.currentTitle = title;
-      // this.currentTrack = this.currentArtist + " - " + this.currentTitle;
-      // window.ipcRenderer.send("coverArtSingle", [this.trackLoaded]);
+    playTrack(track) {
+      this.$store.commit("setTrackPlaying", track);
+      this.$store.commit("setLoading", true);
+      window.ipcRenderer.send("loadAudio", track.path + track.filename);
     },
     onCellClicked(params) {
       if (params.colDef.field == "index") {
-        let track = params.data;
-        this.$store.commit("setTrackPlaying", track);
-        this.$store.commit("setLoading", true);
-        window.ipcRenderer.send("loadAudio", track.path + track.filename);
-        // this.playTrack(
-        //   params.data.path + params.data.filename,
-        //   params.data.artist,
-        //   params.data.title
-        // );
-
-        // this.$store.commit("setTrue");
-        // this.$refs.header.emptyWavesurfer();
-        // window.ipcRenderer.send("loadAudio", params.data.filename);
-
-        // this.trackLoaded = params.data.filename;
-        // this.currentArtist = params.data.artist;
-        // this.currentTitle = params.data.title;
-        // this.currentTrack = this.currentArtist + " - " + this.currentTitle;
-        // window.ipcRenderer.send("coverArtSingle", [this.trackLoaded]);
+        this.playTrack(params.data);
       }
     },
     onCellValueChanged(params) {
       console.log("You'v edited a cell");
-      // console.log(params.data);
 
       this.library["NML"]["COLLECTION"][0]["ENTRY"][params.rowIndex]["INFO"][0][
         "$"
@@ -307,7 +285,9 @@ export default {
           ["genre"]: genre,
           ["comment_1"]: track["INFO"][0]["$"]["COMMENT"],
           ["comment_2"]: track["INFO"][0]["$"]["RATING"],
-          ["rating"]: track["INFO"][0]["$"]["RANKING"] / 51,
+          ["rating"]: track["INFO"][0]["$"]["RANKING"]
+            ? track["INFO"][0]["$"]["RANKING"] / 51
+            : 0,
           ["color"]: track["INFO"][0]["$"]["COLOR"],
           ["musical_key"]:
             typeof track["MUSICAL_KEY"] === "undefined"
@@ -321,9 +301,10 @@ export default {
           ["path"]: track["LOCATION"][0]["$"]["DIR"].replace(/:/g, ""),
           ["image"]: filename.substring(0, filename.lastIndexOf(".")) + ".jpeg",
           ["filename"]: filename,
+          ["cue_points"]: track["CUE_V2"],
         };
       });
-      console.log(collectionFiltered);
+      // console.log(collectionFiltered);
       self.updateRowData(collectionFiltered);
       self.totalSongs = Object.keys(collectionFiltered).length;
     });
