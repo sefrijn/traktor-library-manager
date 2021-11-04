@@ -77,6 +77,10 @@ $labelFontSize: 14px !default;
 	input[type="radio"]:checked + label {
 		@apply bg-active hover:bg-active-dark text-white;
 	}
+	::selection {
+		color: white;
+		background: $traktor-active-dark;
+	}
 }
 
 .w-1\/7 {

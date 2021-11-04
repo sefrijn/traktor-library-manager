@@ -55,7 +55,7 @@ async function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  win.setPosition(80, 0);
+  win.setPosition(1280, 0);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

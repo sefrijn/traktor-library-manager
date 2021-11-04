@@ -21,10 +21,27 @@ const store = createStore({
 			trackPlaying: {},
 			trackSelected: {},
 			query: "",
-			sidebar: false,
+			sidebar: true,
+			playlists: {},
+			collection: null,
+			rowData: null,
+			filenameToIndex: null,
+			activePlaylist: null,
 		};
 	},
 	mutations: {
+		setActivePlaylist(state, playlist) {
+			state.activePlaylist = playlist;
+		},
+		setCollection(state, data) {
+			state.collection = data;
+		},
+		setFilenameToIndex(state, data) {
+			state.filenameToIndex = data;
+		},
+		setRowData(state, data) {
+			state.rowData = data;
+		},
 		showSidebar(state, show) {
 			state.sidebar = show;
 		},
@@ -46,6 +63,9 @@ const store = createStore({
 		},
 		setQuery(state, text) {
 			state.query = text;
+		},
+		addPlaylist(state, playlist) {
+			state.playslists["playlist.name"] = playlist.entries;
 		},
 	},
 });

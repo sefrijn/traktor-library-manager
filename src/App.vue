@@ -5,10 +5,11 @@
     <main class="flex" @mouseup="endDragging">
       <aside
         v-if="sidebar"
-        class="max-w-sm flex flex-col justify-end"
+        class="max-w-sm flex flex-col justify-between"
+        style="height: calc(100vh - 132px);"
         :style="{ width: `${asideWidth}%` }"
       >
-        <browser></browser>
+        <browser :playlists="playlists"></browser>
         <div class="nowplaying text-xs font-medium text-center text-gray">
           <img v-if="image" :src="image" />
           <p v-if="artist" class="px-4 py-3">{{ artist }} - {{ title }}</p>
@@ -24,7 +25,7 @@
       <section class="flex-grow relative" style="height: calc(100vh - 132px);">
         <ag-grid-vue
           ref="trackList"
-          class="ag-theme-alpine-dark w-full"
+          class="ag-theme-alpine-dark w-full border-t border-black-medium"
           :class="classesGrid"
           :rowBuffer="10"
           :column-defs="columnDefs"
@@ -81,13 +82,13 @@ export default {
   },
   data() {
     return {
-      library: null, // NML Traktor collection XML converted to JSON
+      library: null, // NML Traktor collection XML converted to JSON (unfiltered for AG grid)
       pathToLibrary: "", // Selected NML library file
       totalSongs: null, // Amount of tracks in collection
       genres: [], // List of used genres for autocomplete
 
       columnDefs: null, // AG Grid column settings
-      rowData: null, // AG Grid row content
+      //rowData: null, // AG Grid row content
       gridApi: null, // AG Grid methods
       gridOptions: null, // AG Grid general setings
       defaultColDef: {
@@ -98,10 +99,18 @@ export default {
       visibleTracks: {},
       asideWidth: 20,
 
+      playlists: null,
+
       // columnApi: null, // AG Grid column methods
     };
   },
   computed: {
+    collection() {
+      return this.$store.state.collection;
+    },
+    rowData() {
+      return this.$store.state.rowData;
+    },
     sidebar() {
       return this.$store.state.sidebar;
     },
@@ -194,7 +203,8 @@ export default {
       document.removeEventListener("mousemove", this.handleDragging);
     },
     updateRowData(data) {
-      this.rowData = data;
+      this.$store.commit("setRowData", data);
+      // this.rowData = data;
     },
     onGridReady(params) {
       this.gridApi = params.api;
@@ -208,6 +218,10 @@ export default {
       }
     },
     onViewportChanged(params) {
+      // console.log(this.$store.state.rowData.length);
+      if (this.$store.state.rowData != null) {
+        this.totalSongs = this.$store.state.rowData.length;
+      }
       console.log("set visibleTracks - onViewportChanged");
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();
@@ -269,10 +283,11 @@ export default {
       console.log(message);
     });
 
-    // >> Save images locally in Userdata
     window.ipcRenderer.receive("coverArtList", (message) => {
+      // >> Create collection data
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
       let collectionFiltered = [];
+      let filenameToIndex = {};
       collection.forEach(function(track, index) {
         let genre = track["INFO"][0]["$"]["GENRE"];
         let filename = track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":");
@@ -303,47 +318,19 @@ export default {
           ["filename"]: filename,
           ["cue_points"]: track["CUE_V2"],
         };
+        filenameToIndex[filename] = index;
       });
-      // console.log(collectionFiltered);
-      self.updateRowData(collectionFiltered);
+      this.$store.commit("setCollection", collectionFiltered);
+      this.$store.commit("setRowData", collectionFiltered);
+      this.$store.commit("setFilenameToIndex", filenameToIndex);
+
+      // >> Create playlist data
+      this.playlists = self.library["NML"]["PLAYLISTS"][0]["NODE"][0];
+      console.log(this.playlists);
+
+      // self.updateRowData(collectionFiltered);
       self.totalSongs = Object.keys(collectionFiltered).length;
     });
-
-    // >> LOAD ALL IMAGES AT ONCE
-    // window.ipcRenderer.receive("coverArtList", (images) => {
-    //   let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
-    //   let collectionFiltered = [];
-    //   collection.forEach(function(track, index) {
-    //     let genre = track["INFO"][0]["$"]["GENRE"];
-    //     if (self.genres.indexOf(genre) < 0 && genre != undefined)
-    //       self.genres.push(genre);
-    //     collectionFiltered[index] = {
-    //       [self.track_fields[16]]: index,
-    //       [self.track_fields[1]]: track["$"]["ARTIST"],
-    //       [self.track_fields[2]]: track["$"]["TITLE"],
-    //       [self.track_fields[5]]: genre,
-    //       [self.track_fields[6]]: track["INFO"][0]["$"]["COMMENT"],
-    //       [self.track_fields[7]]: track["INFO"][0]["$"]["RATING"],
-    //       [self.track_fields[8]]: track["INFO"][0]["$"]["RANKING"] / 51,
-    //       [self.track_fields[9][0]]: track["INFO"][0]["$"]["COLOR"],
-    //       [self.track_fields[10]]:
-    //         typeof track["MUSICAL_KEY"] === "undefined"
-    //           ? 0
-    //           : track["MUSICAL_KEY"][0]["$"]["VALUE"],
-    //       [self.track_fields[11]]:
-    //         typeof track["TEMPO"] === "undefined"
-    //           ? ""
-    //           : Math.round(track["TEMPO"][0]["$"]["BPM"] * 100) / 100,
-    //       [self.track_fields[12]]: track["INFO"][0]["$"]["IMPORT_DATE"],
-    //       [self.track_fields[14]]:
-    //         track["LOCATION"][0]["$"]["DIR"].replace(/:/g, "") +
-    //         track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":"),
-    //       [self.track_fields[15]]: images[index],
-    //     };
-    //   });
-    //   self.updateRowData(collectionFiltered);
-    //   self.totalSongs = Object.keys(collectionFiltered).length;
-    // });
 
     window.ipcRenderer.receive("parseXML", (message) => {
       self.library = message;
@@ -356,17 +343,10 @@ export default {
           file: track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":"),
         };
       });
-      // paths = Object.entries(paths).slice(-15);
-      // console.log(paths);
       window.ipcRenderer.send("coverArtList", [
         JSON.parse(JSON.stringify(paths)),
       ]);
     });
-    // END LOAD ALL IMAGES AT ONCE
-
-    // window.ipcRenderer.receive("coverArtSingle", function(picture) {
-    //   self.$store.commit("setImage", picture);
-    // });
   },
 };
 </script>

@@ -1,7 +1,5 @@
 <template>
-	<header
-		class="bg-black-light border-b border-black-medium flex justify-between items-center px-2"
-	>
+	<header class="bg-black-light flex justify-between items-center px-2">
 		<logo></logo>
 
 		<div class="flex relative">

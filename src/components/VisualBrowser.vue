@@ -1,5 +1,8 @@
 <template>
-    <div class="visual-browser w-full bg-black-dark -mb-4" :class="class">
+    <div
+        class="visual-browser w-full bg-black-dark -mb-4 border-t border-black"
+        :class="class"
+    >
         <div
             @scroll="onScroll"
             ref="smallWrapper"
@@ -20,6 +23,8 @@
                 }"
             >
                 <div
+                    v-for="(row, index) in tracks"
+                    :key="index"
                     class="p-2 absolute transition-width hover:bg-black-light cursor-pointer"
                     :class="[
                         `w-1/${coverSize}`,
@@ -32,12 +37,9 @@
                             row.rowIndex / coverSize
                         )} * 100% / ${wrapperLines})`,
                     }"
-                    v-for="(row, index) in tracks"
-                    :key="index"
                     @click="$emit('playTrack', row.data)"
                 >
                     <component
-                        :key="coverSize"
                         :is="image"
                         :artist="row.data.artist"
                         :title="row.data.title"
@@ -88,6 +90,9 @@ export default {
         };
     },
     computed: {
+        // total() {
+        //     return this.$store.state.rowData.length;
+        // },
         trackPlayingIndex() {
             return this.$store.state.trackPlaying.index;
         },
@@ -100,7 +105,18 @@ export default {
     },
     watch: {
         coverSize(newCoverSize, oldCoverSize) {
-            console.log("changed slider");
+            console.log(this.total);
+            let h =
+                (this.$refs.hugeWrapper.clientWidth / newCoverSize +
+                    this.coverTextHeight) *
+                Math.ceil(this.total / newCoverSize);
+
+            let newscroll = {};
+            newscroll.ratio = this.$store.state.scroll.ratio;
+            newscroll.source = "visualbrowser";
+            this.$store.commit("setHumanScroll", true);
+            this.$store.commit("setScroll", newscroll);
+            this.$refs.smallWrapper.scrollTop = newscroll.ratio * h;
         },
         scroll(newscroll, oldscroll) {
             if (
