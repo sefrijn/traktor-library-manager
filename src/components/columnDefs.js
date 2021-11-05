@@ -1,5 +1,6 @@
 import CoverArtRenderer from "./CoverArtRenderer.vue";
 import RatingRenderer from "./RatingRenderer.vue";
+import ColorRenderer from "./ColorRenderer.vue";
 
 let column_defs = [
   {
@@ -62,7 +63,12 @@ let column_defs = [
     width: 112,
     cellRendererFramework: RatingRenderer,
   },
-  { headerName: "Color", field: "color_code", width: 240 },
+  {
+    headerName: "Color",
+    field: "color_code",
+    width: 240,
+    cellRendererFramework: ColorRenderer,
+  },
   {
     headerName: "Musical Key",
     field: "musical_key",

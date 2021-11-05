@@ -5,7 +5,7 @@
                 class="inline text-active-orange"
                 type="mdi"
                 :path="iconStar"
-                size="14"
+                size="16"
             ></svg-icon>
         </span>
         <span
@@ -17,7 +17,7 @@
                 class="inline text-black-light"
                 type="mdi"
                 :path="iconStar"
-                size="14"
+                size="16"
             ></svg-icon>
         </span>
     </div>

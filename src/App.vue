@@ -264,24 +264,32 @@ export default {
     },
     onCellValueChanged(params) {
       console.log("You'v edited a cell");
+      console.log(params);
 
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.rowIndex]["INFO"][0][
-        "$"
-      ]["GENRE"] = params.data.genre;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.rowIndex]["INFO"][0][
-        "$"
-      ]["COMMENT"] = params.data.comment_1;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.rowIndex]["INFO"][0][
-        "$"
-      ]["RATING"] = params.data.comment_2;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.rowIndex]["$"][
+      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
+        "INFO"
+      ][0]["$"]["COLOR"] = params.data.color_code;
+      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
+        "INFO"
+      ][0]["$"]["RANKING"] = params.data.rating * 51;
+      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
+        "INFO"
+      ][0]["$"]["GENRE"] = params.data.genre;
+      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
+        "INFO"
+      ][0]["$"]["COMMENT"] = params.data.comment_1;
+      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
+        "INFO"
+      ][0]["$"]["RATING"] = params.data.comment_2;
+      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index]["$"][
         "ARTIST"
       ] = params.data.artist;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.rowIndex]["$"][
+      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index]["$"][
         "TITLE"
       ] = params.data.title;
 
       let updatedLibrary = JSON.parse(JSON.stringify(this.library));
+      console.log(updatedLibrary);
       window.ipcRenderer.send("buildXML", [
         updatedLibrary,
         localStorage.pathToLibrary,

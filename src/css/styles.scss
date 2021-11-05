@@ -59,6 +59,53 @@ $stepBorderRadius: 50% !default;
 $labelFontSize: 14px !default;
  */
 @import "~vue-slider-component/lib/theme/material.scss";
+.color-dot {
+	.color-1 {
+		background-color: $red-dark;
+	}
+	.color-2 {
+		background-color: $orange-dark;
+	}
+	.color-3 {
+		background-color: $yellow-dark;
+	}
+	.color-4 {
+		background-color: $green-dark;
+	}
+	.color-5 {
+		background-color: $blue-dark;
+	}
+	.color-6 {
+		background-color: $violet-dark;
+	}
+	.color-7 {
+		background-color: $magenta-dark;
+	}
+}
+.color-dot:hover,
+.color-dot.active-color {
+	.color-1 {
+		background-color: $red-bright;
+	}
+	.color-2 {
+		background-color: $orange-bright;
+	}
+	.color-3 {
+		background-color: $yellow-bright;
+	}
+	.color-4 {
+		background-color: $green-bright;
+	}
+	.color-5 {
+		background-color: $blue-bright;
+	}
+	.color-6 {
+		background-color: $violet-bright;
+	}
+	.color-7 {
+		background-color: $magenta-bright;
+	}
+}
 
 .ag-theme-alpine-dark {
 	@include ag-theme-alpine-dark(
