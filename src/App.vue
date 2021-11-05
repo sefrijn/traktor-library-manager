@@ -31,6 +31,7 @@
           :column-defs="columnDefs"
           :default-col-def="defaultColDef"
           :row-data="rowData"
+          :row-class-rules="rowClassRules"
           :grid-options="gridOptions"
           @grid-ready="onGridReady"
           @viewport-changed="onViewportChanged"
@@ -98,6 +99,7 @@ export default {
       src: null,
       visibleTracks: {},
       asideWidth: 20,
+      rowClassRules: null, // styling of rows
 
       playlists: null,
 
@@ -167,6 +169,29 @@ export default {
   beforeMount() {
     this.gridOptions = {};
     this.columnDefs = column_defs;
+    this.rowClassRules = {
+      "color-1": (params) => {
+        return params.data.color_code == 1;
+      },
+      "color-2": (params) => {
+        return params.data.color_code == 2;
+      },
+      "color-3": (params) => {
+        return params.data.color_code == 3;
+      },
+      "color-4": (params) => {
+        return params.data.color_code == 4;
+      },
+      "color-5": (params) => {
+        return params.data.color_code == 5;
+      },
+      "color-6": (params) => {
+        return params.data.color_code == 6;
+      },
+      "color-7": (params) => {
+        return params.data.color_code == 7;
+      },
+    };
   },
   methods: {
     onBodyScroll(event) {
@@ -303,7 +328,7 @@ export default {
           ["rating"]: track["INFO"][0]["$"]["RANKING"]
             ? track["INFO"][0]["$"]["RANKING"] / 51
             : 0,
-          ["color"]: track["INFO"][0]["$"]["COLOR"],
+          ["color_code"]: track["INFO"][0]["$"]["COLOR"],
           ["musical_key"]:
             typeof track["MUSICAL_KEY"] === "undefined"
               ? 0

@@ -9,6 +9,34 @@ $traktor-active: #2e91a7;
 $traktor-active-dark: #007f93;
 $traktor-active-orange: #f3980c;
 
+$red-bright: #cc4140;
+$red-darker: #3b2120;
+$red-dark: #402b2a;
+
+$orange-bright: #c97428;
+$orange-darker: #3a281e;
+$orange-dark: #3f2f28;
+
+$yellow-bright: #cece0a;
+$yellow-darker: #3a3a1e;
+$yellow-dark: #3f3f28;
+
+$green-bright: #30ab31;
+$green-darker: #1d3a21;
+$green-dark: #263f2a;
+
+$blue-bright: #3872cc;
+$blue-darker: #1e273a;
+$blue-dark: #272f3f;
+
+$violet-bright: #8c55ce;
+$violet-darker: #2b243a;
+$violet-dark: #322b3f;
+
+$magenta-bright: #ce3abe;
+$magenta-darker: #3b2237;
+$magenta-dark: #3f2b3d;
+
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-alpine-dark/sass/ag-theme-alpine-dark-mixin";
 
@@ -55,6 +83,81 @@ $labelFontSize: 14px !default;
 	.ag-header {
 		// or write CSS selectors to make customisations beyond what the parameters support
 		text-style: italic;
+	}
+	.ag-row {
+		&.color-1 {
+			background-color: $red-dark;
+			&.ag-row-odd {
+				background-color: $red-darker;
+			}
+			&.ag-row-hover,
+			&.ag-row-focus {
+				background-color: $red-bright;
+			}
+		}
+		&.color-2 {
+			background-color: $orange-dark;
+			&.ag-row-odd {
+				background-color: $orange-darker;
+			}
+			&.ag-row-hover,
+			&.ag-row-focus {
+				background-color: $orange-bright;
+			}
+		}
+		&.color-3 {
+			background-color: $yellow-dark;
+			&.ag-row-odd {
+				background-color: $yellow-darker;
+			}
+			&.ag-row-hover,
+			&.ag-row-focus {
+				background-color: $yellow-bright;
+			}
+		}
+		&.color-4 {
+			background-color: $green-dark;
+			&.ag-row-odd {
+				background-color: $green-darker;
+			}
+			&.ag-row-hover,
+			&.ag-row-focus {
+				background-color: $green-bright;
+			}
+		}
+		&.color-5 {
+			background-color: $blue-dark;
+			&.ag-row-odd {
+				background-color: $blue-darker;
+			}
+			&.ag-row-hover,
+			&.ag-row-focus {
+				background-color: $blue-bright;
+			}
+		}
+		&.color-6 {
+			background-color: $violet-dark;
+			&.ag-row-odd {
+				background-color: $violet-darker;
+			}
+			&.ag-row-hover,
+			&.ag-row-focus {
+				background-color: $violet-bright;
+			}
+		}
+		&.color-7 {
+			background-color: $magenta-dark;
+			&.ag-row-odd {
+				background-color: $magenta-darker;
+			}
+			&.ag-row-hover,
+			&.ag-row-focus {
+				background-color: $magenta-bright;
+			}
+		}
+	}
+
+	.ag-row-even {
 	}
 }
 
