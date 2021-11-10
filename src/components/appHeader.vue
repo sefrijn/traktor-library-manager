@@ -23,6 +23,7 @@
 <script>
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiArchiveSearch } from "@mdi/js";
+import { mdiContentSave } from "@mdi/js";
 import Search from "./Search.vue";
 import AudioPlayer from "./AudioPlayer.vue";
 import DisplaySetting from "./DisplaySetting.vue";

@@ -117,6 +117,8 @@ $labelFontSize: 14px !default;
 			odd-row-background-color: $black-medium,
 			row-hover-color: $traktor-active,
 			cell-horizontal-padding: 12px,
+			font-size: 12px,
+			grid-size: 4.6px,
 		)
 	);
 	.ag-cell-focus {
@@ -203,8 +205,19 @@ $labelFontSize: 14px !default;
 			}
 		}
 	}
-
-	.ag-row-even {
+}
+#app .ag-theme-alpine-dark {
+	.ag-cell-inline-editing {
+		@apply ring ring-active ring-offset-0 rounded-none bg-active-dark;
+		.ag-cell-edit-wrapper input[class^="ag-"] {
+			@apply rounded-none bg-transparent pl-3;
+		}
+	}
+	.ag-popup-editor {
+		@apply rounded-none bg-active-dark;
+		li.active {
+			@apply hover:bg-active;
+		}
 	}
 }
 
@@ -229,10 +242,15 @@ $labelFontSize: 14px !default;
 	}
 	::selection {
 		color: white;
-		background: $traktor-active-dark;
+		background: $traktor-active-orange;
+	}
+	input:focus,
+	textarea:focus,
+	select:focus,
+	[contenteditable] {
+		@apply outline-none ring-0 ring-offset-0 border-none border-0;
 	}
 }
-
 .w-1\/7 {
 	width: calc(100% / 7);
 }

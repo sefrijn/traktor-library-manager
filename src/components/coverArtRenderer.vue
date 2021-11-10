@@ -1,5 +1,5 @@
 <template>
-    <img v-if="src != ''" :src="src" @error="imageUrlAlt" />
+    <img v-if="src != ''" :src="src" />
 </template>
 
 <script>
@@ -9,13 +9,9 @@ export default {
             src: "",
         };
     },
-    methods: {
-        imageUrlAlt(event) {
-            this.src = "";
-        },
-    },
     beforeMount() {
-        this.src = "local-resource://coverart/60/" + this.params.data.image;
+        if (this.params.data.image)
+            this.src = "local-resource://coverart/60/" + this.params.data.image;
     },
 };
 </script>

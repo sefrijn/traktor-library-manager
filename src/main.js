@@ -12,12 +12,14 @@ const store = createStore({
 	state() {
 		return {
 			loading: false, // is audio being loaded? show loader
+			saving: false, // is document being saved
 			display: "split", // display setting [split,list,grid]
 			scroll: {
 				ratio: 0.0, // a decimal ratio, such as 0.349
 				source: "",
 				human: true,
 			},
+			preventScroll: false,
 			trackPlaying: {},
 			trackSelected: {},
 			query: "",
@@ -27,9 +29,42 @@ const store = createStore({
 			rowData: null,
 			filenameToIndex: null,
 			activePlaylist: null,
+			genres: [],
+			comments_1: [],
+			comments_2: [],
 		};
 	},
 	mutations: {
+		setPreventScroll(state, prevent) {
+			state.preventScroll = prevent;
+		},
+		addGenre(state, genre) {
+			state.genres.push(genre);
+			state.genres.sort();
+		},
+		clearAllGenres(state) {
+			state.genres = [];
+		},
+
+		addComment_1(state, tag) {
+			state.comments_1.push(tag);
+			state.comments_1.sort();
+		},
+		clearComments_1(state) {
+			state.comments_1 = [];
+		},
+
+		addComment_2(state, tag) {
+			state.comments_2.push(tag);
+			state.comments_2.sort();
+		},
+		clearComments_2(state) {
+			state.comments_2 = [];
+		},
+
+		setSaving(state, saving) {
+			state.saving = saving;
+		},
 		setActivePlaylist(state, playlist) {
 			state.activePlaylist = playlist;
 		},
@@ -40,6 +75,7 @@ const store = createStore({
 			state.filenameToIndex = data;
 		},
 		setRowData(state, data) {
+			console.log("setRowData in Vuex Store");
 			state.rowData = data;
 		},
 		showSidebar(state, show) {

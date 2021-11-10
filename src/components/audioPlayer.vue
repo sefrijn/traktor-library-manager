@@ -16,7 +16,24 @@
 			>/{{ duration }}
 		</p>
 
-		<img v-if="artist" :src="image" class="h-9 w-9" alt="" />
+		<img
+			v-if="this.$store.state.trackPlaying.image"
+			:src="image"
+			class="h-9 w-9"
+			alt=""
+		/>
+		<div
+			v-if="!this.$store.state.trackPlaying.image && artist"
+			class="h-9 w-9 bg-black-dark flex justify-center items-center font-bold text-gray-dark"
+		>
+			<span>?</span>
+		</div>
+		<div
+			v-if="!this.$store.state.trackPlaying.image && !artist"
+			class="h-9 w-9 bg-black-dark flex justify-center items-center text-gray-dark text-xxs"
+			v-tooltip="'Load track to view waveform'"
+		></div>
+
 		<button
 			@click="togglePlayback"
 			class="h-9 w-9 flex justify-center items-center"
@@ -27,7 +44,7 @@
 		<div
 			id="waveform"
 			ref="waveform"
-			class="h-9 relative bg-black-dark"
+			class="cursor-pointer h-9 relative bg-black-medium hover:bg-black-dark"
 			style="width:450px;"
 		>
 			<div class="absolute w-full h-full flex justify-center items-end">
@@ -76,11 +93,6 @@
 		font-size: 10px !important;
 		@apply text-center text-black font-medium;
 	}
-	// &:hover {
-	// 	span {
-	// 		display: block;
-	// 	}
-	// }
 }
 </style>
 <script>

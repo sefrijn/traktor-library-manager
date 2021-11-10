@@ -1,6 +1,8 @@
 import CoverArtRenderer from "./CoverArtRenderer.vue";
 import RatingRenderer from "./RatingRenderer.vue";
 import ColorRenderer from "./ColorRenderer.vue";
+import Genre from "./Editor/Genre.vue";
+import Tagging from "./Editor/Tagging.vue";
 
 let column_defs = [
   {
@@ -45,17 +47,19 @@ let column_defs = [
   {
     headerName: "Genre",
     field: "genre",
-    width: 200,
+    width: 140,
+    cellEditorFramework: Genre,
   },
   {
     headerName: "Style",
     field: "comment_1",
-    width: 240,
+    width: 220,
+    cellEditorFramework: Tagging,
   },
   {
     headerName: "Timbre",
     field: "comment_2",
-    width: 240,
+    width: 220,
   },
   {
     headerName: "Energy Level",

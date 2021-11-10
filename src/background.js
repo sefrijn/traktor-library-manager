@@ -55,7 +55,7 @@ async function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  win.setPosition(1280, 0);
+  win.setPosition(80, 0);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -270,12 +270,15 @@ ipcMain.on("coverArtList", function(event, arg) {
                   quality: 75,
                 })
                 .toFile(path_large);
+            } else {
+              // remove item from array
+              files[index].file = null;
             }
           }
         })
       );
       // console.log("finished: " + (Date.now() - start));
-      win.webContents.send("coverArtList", "finished!");
+      win.webContents.send("coverArtList", files);
     } catch (error) {
       console.error(error.message);
     }

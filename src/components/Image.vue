@@ -1,6 +1,11 @@
 <template>
 	<div class="relative image w-full" style="padding-bottom:100%;">
-		<img class="absolute top-0 left-0 z-10" :src="src" alt="" />
+		<img
+			v-if="exists"
+			class="absolute top-0 left-0 z-10"
+			:src="src"
+			alt=""
+		/>
 		<div
 			class="absolute text-gray-dark text-xs uppercase font-medium w-full h-full flex justify-center items-center z-0"
 		>
@@ -25,8 +30,23 @@ export default {
 	name: "Image",
 	props: ["artist", "title", "src", "textHeight"],
 	data() {
-		return {};
+		return {
+			// exists: false,
+		};
 	},
-	methods: {},
+	computed: {
+		exists() {
+			return this.src.slice(-5) !== "/null" ? true : false;
+		},
+	},
+	beforeMount() {
+		// console.log(this.src.indexOf("null") > -1);
+		// if (this.src.indexOf("null") < 0) this.exists = true;
+	},
+	methods: {
+		imageLoadError() {
+			console.log("error loading...");
+		},
+	},
 };
 </script>

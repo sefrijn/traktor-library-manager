@@ -20,6 +20,9 @@ module.exports = {
       transitionProperty: {
         width: "width",
       },
+      boxShadow: {
+        black: "0 0 3px 1px rgba(0, 0, 0, 0.25)",
+      },
       fontSize: {
         xxs: ".6rem",
       },

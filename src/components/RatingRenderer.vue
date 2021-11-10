@@ -1,6 +1,11 @@
 <template>
     <div class="rating flex" @mouseleave="resetStar" @click="saveCell">
-        <span v-for="star in rating" @mouseenter="setStar" :star="star">
+        <span
+            v-for="star in rating"
+            @mouseenter="setStar"
+            :star="star"
+            class="cursor-pointer"
+        >
             <svg-icon
                 class="inline text-active-orange"
                 type="mdi"
@@ -12,9 +17,10 @@
             v-for="star in 5 - rating"
             @mouseenter="setStar"
             :star="star + rating"
+            class="cursor-pointer"
         >
             <svg-icon
-                class="inline text-black-light"
+                class="inline text-white opacity-20"
                 type="mdi"
                 :path="iconStar"
                 size="16"
@@ -47,11 +53,9 @@ export default {
             this.params.setValue(this.rating);
         },
         setStar(e) {
-            // console.log(e);
             this.rating = parseInt(e.target.attributes.star.nodeValue);
         },
         resetStar() {
-            // console.log("reset");
             this.rating = this.params.value;
         },
     },

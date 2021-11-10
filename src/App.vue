@@ -1,6 +1,11 @@
 <template>
   <div class="h-screen bg-black-dark text-white font-sans">
-    <app-header ref="header" style="height:82px;" @load="load"></app-header>
+    <app-header
+      ref="header"
+      style="height:82px;"
+      @save="save"
+      @load="load"
+    ></app-header>
 
     <main class="flex" @mouseup="endDragging">
       <aside
@@ -10,7 +15,9 @@
         :style="{ width: `${asideWidth}%` }"
       >
         <browser :playlists="playlists"></browser>
-        <div class="nowplaying text-xs font-medium text-center text-gray">
+        <div
+          class="border-t border-black nowplaying text-xs font-medium text-center text-gray"
+        >
           <img v-if="image" :src="image" />
           <p v-if="artist" class="px-4 py-3">{{ artist }} - {{ title }}</p>
         </div>
@@ -30,12 +37,14 @@
           :rowBuffer="10"
           :column-defs="columnDefs"
           :default-col-def="defaultColDef"
+          :suppress-scroll-on-new-data="preventScroll"
           :row-data="rowData"
           :row-class-rules="rowClassRules"
           :grid-options="gridOptions"
           @grid-ready="onGridReady"
           @viewport-changed="onViewportChanged"
           @cell-value-changed="onCellValueChanged"
+          @cell-editing-started="onCellEditingStarted"
           @cell-clicked="onCellClicked"
           @body-scroll="onBodyScroll"
           @grid-size-changed="onGridSizeChanged"
@@ -107,6 +116,9 @@ export default {
     };
   },
   computed: {
+    preventScroll() {
+      return this.$store.state.preventScroll;
+    },
     collection() {
       return this.$store.state.collection;
     },
@@ -195,6 +207,7 @@ export default {
   },
   methods: {
     onBodyScroll(event) {
+      console.log("scrolling");
       if (
         this.$store.state.scroll.source == "visualbrowser" &&
         this.$store.state.scroll.human
@@ -227,10 +240,11 @@ export default {
     endDragging() {
       document.removeEventListener("mousemove", this.handleDragging);
     },
-    updateRowData(data) {
-      this.$store.commit("setRowData", data);
-      // this.rowData = data;
-    },
+    // updateRowData(data) {
+    //   console.log("updateRowData");
+    //   this.$store.commit("setRowData", data);
+    //   // this.rowData = data;
+    // },
     onGridReady(params) {
       this.gridApi = params.api;
       console.log("set visibleTracks - onGridReady");
@@ -262,9 +276,26 @@ export default {
         this.playTrack(params.data);
       }
     },
+    onCellEditingStarted(params) {
+      this.$store.commit("setPreventScroll", true);
+      console.log("started editing");
+    },
     onCellValueChanged(params) {
+      this.$store.commit("setSaving", true);
+      // this.$store.commit("setPreventScroll", true);
+
       console.log("You'v edited a cell");
-      console.log(params);
+
+      let self = this;
+      setTimeout(function() {
+        self.save(params);
+      }, 5);
+    },
+    save(params) {
+      let self = this;
+      this.$store.commit("setSaving", true);
+      console.log("Save these changes:");
+      console.log(params.data);
 
       this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
         "INFO"
@@ -288,8 +319,23 @@ export default {
         "TITLE"
       ] = params.data.title;
 
+      // Update Genres
+      if (params.column.colId == "genre") {
+        console.log("rebuild genre autocomplete");
+        self.$store.commit("clearAllGenres", true);
+        let collection = this.library["NML"]["COLLECTION"][0]["ENTRY"];
+        collection.forEach(function(track, index) {
+          let genre = track["INFO"][0]["$"]["GENRE"];
+          if (
+            self.$store.state.genres.indexOf(genre) < 0 &&
+            genre != undefined &&
+            genre != ""
+          )
+            self.$store.commit("addGenre", genre);
+        });
+      }
+
       let updatedLibrary = JSON.parse(JSON.stringify(this.library));
-      console.log(updatedLibrary);
       window.ipcRenderer.send("buildXML", [
         updatedLibrary,
         localStorage.pathToLibrary,
@@ -314,18 +360,25 @@ export default {
 
     window.ipcRenderer.receive("buildXML", function(message) {
       console.log(message);
+      self.$store.commit("setSaving", false);
+      self.$store.commit("setPreventScroll", false);
     });
 
     window.ipcRenderer.receive("coverArtList", (message) => {
       // >> Create collection data
+      // console.log(message);
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
       let collectionFiltered = [];
       let filenameToIndex = {};
       collection.forEach(function(track, index) {
         let genre = track["INFO"][0]["$"]["GENRE"];
         let filename = track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":");
-        if (self.genres.indexOf(genre) < 0 && genre != undefined)
-          self.genres.push(genre);
+        if (
+          self.$store.state.genres.indexOf(genre) < 0 &&
+          genre != undefined &&
+          genre != ""
+        )
+          self.$store.commit("addGenre", genre);
         collectionFiltered[index] = {
           ["index"]: index,
           ["artist"]: track["$"]["ARTIST"],
@@ -347,19 +400,25 @@ export default {
               : Math.round(track["TEMPO"][0]["$"]["BPM"] * 100) / 100,
           ["import_date"]: track["INFO"][0]["$"]["IMPORT_DATE"],
           ["path"]: track["LOCATION"][0]["$"]["DIR"].replace(/:/g, ""),
-          ["image"]: filename.substring(0, filename.lastIndexOf(".")) + ".jpeg",
+          ["image"]:
+            message[index].file == null
+              ? null
+              : filename.substring(0, filename.lastIndexOf(".")) + ".jpeg",
           ["filename"]: filename,
           ["cue_points"]: track["CUE_V2"],
         };
         filenameToIndex[filename] = index;
       });
       this.$store.commit("setCollection", collectionFiltered);
+      // console.log("setRowData");
       this.$store.commit("setRowData", collectionFiltered);
       this.$store.commit("setFilenameToIndex", filenameToIndex);
 
       // >> Create playlist data
       this.playlists = self.library["NML"]["PLAYLISTS"][0]["NODE"][0];
-      console.log(this.playlists);
+      // console.log(this.playlists);
+      // console.log(collectionFiltered);
+      // console.log(this.$store.state.genres);
 
       // self.updateRowData(collectionFiltered);
       self.totalSongs = Object.keys(collectionFiltered).length;

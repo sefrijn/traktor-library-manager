@@ -12,8 +12,11 @@
             :class="{ 'active-color': color == index }"
         >
             <div
-                class="h-3 w-3 rounded-full shadow ring-white ring-opacity-50"
-                :class="[`color-${index}`, { 'ring-4': color == index }]"
+                class="h-3 w-3 rounded-full transition-transform"
+                :class="[
+                    `color-${index}`,
+                    { 'transform scale-125 shadow-black': color == index },
+                ]"
             ></div>
         </div>
     </div>

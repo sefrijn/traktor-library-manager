@@ -8,6 +8,7 @@
 		</p>
 
 		<input
+			ref="input"
 			type="text"
 			placeholder="Search"
 			class="h-9 w-48 border-none bg-black-medium hover:bg-black-dark focus:outline-none focus:ring-0 focus:bg-black-dark"
@@ -26,6 +27,7 @@
 		<button
 			v-if="!query"
 			class="h-9 w-9 block flex justify-center items-center"
+			@click="focusInput"
 		>
 			<svg-icon v-if="!query" type="mdi" :path="iconSearch"></svg-icon>
 		</button>
@@ -54,6 +56,9 @@ export default {
 		},
 	},
 	methods: {
+		focusInput() {
+			this.$refs.input.focus();
+		},
 		searching(event) {
 			console.log(this.text);
 			this.$store.commit("setQuery", this.text);
