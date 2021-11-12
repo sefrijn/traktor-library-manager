@@ -1,14 +1,16 @@
 <template>
-	<div class="flex flex-col justify-center items-start">
+	<div class="flex flex justify-center items-center">
 		<img
-			class="w-auto"
-			style="height:20px;"
-			src="./../assets/traktor_logo.png"
+			class="w-auto mr-1"
+			style="height:50px;"
+			src="./../assets/logo.png"
 			alt=""
 		/>
-		<p class="text-xs tracking-wider mt-1 text-gray-dark">
-			<span class="font-medium uppercase text-gray">Library Manager</span>
-			by Sefrijn.nl
+		<p class="text-gray-dark -mt-1">
+			<div class="font-bold uppercase">Traktor Pro 3</div>
+			<div class="-mt-1 text-xs tracking-wide"
+				>Library Manager</div
+			>
 		</p>
 	</div>
 </template>
