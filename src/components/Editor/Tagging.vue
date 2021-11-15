@@ -10,7 +10,7 @@
 				ref="input"
 				@input="onInput"
 				type="text"
-				class="font-xs w-auto py-0 pl-0 pr-2 m-0 text-sm flex-grow bg-transparent text-white border-none"
+				class="font-xs w-auto py-1 pl-0 pr-2 m-0 text-sm flex-grow bg-transparent text-white border-none"
 				@keydown="onKeyDown"
 			>
 				{{ value }}
@@ -22,11 +22,6 @@
 			>
 				<svg-icon type="mdi" :path="iconClear" size="15"></svg-icon>
 			</div>
-		</div>
-		<div
-			class="px-3 py-2 uppercase font-xxs font-bold text-white text-opacity-40"
-		>
-			existing tags
 		</div>
 		<ul
 			v-if="genres.length > 0 && genres[0] !== value"
@@ -52,6 +47,7 @@ import { mdiClose } from "@mdi/js";
 const KEY_UP = 38;
 const KEY_DOWN = 40;
 const KEY_ENTER = 13;
+const KEY_BACKSPACE = 8;
 
 export default {
 	components: {
@@ -103,9 +99,27 @@ export default {
 		},
 		onInput(e) {
 			console.log(e.target.innerText);
+			this.value = e.target.innerText;
 		},
 		onKeyDown(event) {
 			const keyCode = event.keyCode;
+			if (keyCode === KEY_BACKSPACE) {
+				console.log("backspace");
+				if (this.value.length == 0) {
+					console.log("select previous tag: ");
+				}
+			}
+			if (
+				keyCode === KEY_ENTER &&
+				this.value.length > 0 &&
+				this.autocompleteSelected == -1
+			) {
+				event.preventDefault();
+				event.stopPropagation();
+				this.tags.push(this.value);
+				this.value = "";
+				console.log("add tag");
+			}
 			if (
 				keyCode === KEY_ENTER &&
 				this.autocompleteSelected >= 0 &&
