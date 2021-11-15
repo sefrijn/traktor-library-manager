@@ -16,7 +16,7 @@
       >
         <browser :playlists="playlists"></browser>
         <div
-          class="border-t border-black nowplaying text-xs font-medium text-center text-gray"
+          class="border-t border-black-medium nowplaying text-xs font-medium text-center text-gray"
         >
           <img v-if="image" :src="image" />
           <p v-if="artist" class="px-4 py-3">{{ artist }} - {{ title }}</p>
@@ -24,7 +24,7 @@
       </aside>
       <div
         v-if="sidebar"
-        class="divider w-2 flex justify-center items-center bg-black-light hover:bg-gray-dark cursor-divider-h"
+        class="divider w-2 flex justify-center items-center bg-black-medium hover:bg-black-light cursor-divider-h"
         @mousedown="startDragging"
       >
         <img src="./assets/vsizegrip.png" alt="" />
@@ -32,7 +32,7 @@
       <section class="flex-grow relative" style="height: calc(100vh - 132px);">
         <ag-grid-vue
           ref="trackList"
-          class="ag-theme-alpine-dark w-full border-t border-black-medium"
+          class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
           :class="classesGrid"
           :rowBuffer="10"
           :column-defs="columnDefs"
@@ -267,9 +267,11 @@ export default {
       }
     },
     playTrack(track) {
-      this.$store.commit("setTrackPlaying", track);
-      this.$store.commit("setLoading", true);
-      window.ipcRenderer.send("loadAudio", track.path + track.filename);
+      if (track.index != this.$store.state.trackPlaying.index) {
+        this.$store.commit("setTrackPlaying", track);
+        this.$store.commit("setLoading", true);
+        window.ipcRenderer.send("loadAudio", track.path + track.filename);
+      }
     },
     onCellClicked(params) {
       if (params.colDef.field == "index") {

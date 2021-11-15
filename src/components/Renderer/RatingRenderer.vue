@@ -10,7 +10,7 @@
                 class="inline text-active-orange"
                 type="mdi"
                 :path="iconStar"
-                size="16"
+                size="13"
             ></svg-icon>
         </span>
         <span
@@ -23,7 +23,7 @@
                 class="inline text-white opacity-20"
                 type="mdi"
                 :path="iconStar"
-                size="16"
+                size="13"
             ></svg-icon>
         </span>
     </div>

@@ -2,6 +2,9 @@ module.exports = {
   purge: { content: ["./public/**/*.html", "./src/**/*.vue"] },
   darkMode: false, // or 'media' or 'class'
   theme: {
+    fontFamily: {
+      sans: ["Mulish", "ui-sans-serif", "system-ui"],
+    },
     extend: {
       colors: {
         "black-very-light": "#343434",

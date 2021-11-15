@@ -6,9 +6,9 @@
 			src="./../assets/logo.png"
 			alt=""
 		/>
-		<p class="text-gray-dark -mt-1">
-			<div class="font-bold uppercase">Traktor Pro 3</div>
-			<div class="-mt-1 text-xs tracking-wide"
+		<p class="text-white -mt-1 text-lg">
+			<div class="font-extrabold uppercase">Traktor <span class="font-light">Pro</span> 3</div>
+			<div class="-mt-1 text-xs text-gray tracking-wide"
 				>Library Manager</div
 			>
 		</p>

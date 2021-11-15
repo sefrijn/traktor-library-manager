@@ -1,11 +1,11 @@
 <template>
-	<div class="ring ring-active ring-offset-0" :style="{ width: width }">
+	<div class="ring-0 ring-offset-0" :style="{ width: width }">
 		<div class="relative">
 			<input
 				ref="input"
 				v-model="value"
 				type="text"
-				class="text-sm w-full bg-transparent text-white border-none"
+				class="text-xs font-semibold w-full bg-transparent text-white border-none"
 				:style="{ height: height }"
 				@keydown="onKeyDown"
 			/>
@@ -59,7 +59,13 @@ export default {
 	computed: {
 		genres() {
 			return this.$store.state.genres.filter((genre) => {
-				return genre.toLowerCase().includes(this.value.toLowerCase());
+				if (this.value) {
+					return genre
+						.toLowerCase()
+						.includes(this.value.toLowerCase());
+				} else {
+					return true;
+				}
 			});
 		},
 	},
@@ -121,19 +127,6 @@ export default {
 			if (this.autocompleteSelected >= this.genres.length) {
 				this.autocompleteSelected = -1;
 			}
-			// const isNavigationKey = keyCode === KEY_LEFT ||
-			//     keyCode === KEY_RIGHT ||
-			// keyCode === KEY_UP ||
-			// keyCode === KEY_DOWN ||
-			// keyCode === KEY_PAGE_DOWN ||
-			// keyCode === KEY_PAGE_UP ||
-			// keyCode === KEY_PAGE_HOME ||
-			// keyCode === KEY_PAGE_END;
-
-			// if (isNavigationKey) {
-			//     // this stops the grid from receiving the event and executing keyboard navigation
-			//     event.stopPropagation();
-			// }
 		},
 
 		getItems() {
@@ -148,7 +141,7 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			this.$refs.input.focus();
+			this.$refs.input.select();
 		});
 	},
 };

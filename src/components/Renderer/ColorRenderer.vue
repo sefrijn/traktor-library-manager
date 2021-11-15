@@ -12,7 +12,7 @@
             :class="{ 'active-color': color == index }"
         >
             <div
-                class="h-3 w-3 rounded-full transition-transform"
+                class="h-2 w-2 rounded-full transition-transform"
                 :class="[
                     `color-${index}`,
                     { 'transform scale-125 shadow-black': color == index },

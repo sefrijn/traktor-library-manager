@@ -1,5 +1,5 @@
 <template>
-	<div class="ring ring-active ring-offset-0" :style="{ width: width }">
+	<div class="ring-0 ring-offset-0" :style="{ width: width }">
 		<div class="relative flex flex-wrap items-center pl-3 pr-1 pt-1">
 			<div class="bg-active mr-1 py-1 px-2 rounded" v-for="tag in tags">
 				{{ tag }}

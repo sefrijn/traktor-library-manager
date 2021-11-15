@@ -7,7 +7,7 @@
 			alt=""
 		/>
 		<div
-			class="absolute text-gray-dark text-xs uppercase font-medium w-full h-full flex justify-center items-center z-0"
+			class="no-image absolute text-gray-dark text-xs uppercase font-medium w-full h-full flex justify-center items-center z-0"
 		>
 			<p class="text-center">no image</p>
 		</div>
@@ -25,6 +25,11 @@
 	</div>
 </template>
 
+<style lang="scss">
+.active .no-image {
+	@apply text-active-very-dark;
+}
+</style>
 <script>
 export default {
 	name: "Image",
