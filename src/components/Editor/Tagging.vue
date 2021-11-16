@@ -1,7 +1,12 @@
 <template>
 	<div class="ring-0 ring-offset-0" :style="{ width: width }">
 		<div class="relative flex flex-wrap items-center pl-3 pr-1 pt-1">
-			<div class="bg-active mr-1 py-1 px-2 rounded" v-for="tag in tags">
+			<div
+				class="bg-active mb-1 mr-1 py-1 px-2 rounded cursor-pointer hover:bg-active-orange hover:line-through"
+				:class="{ 'clear-tag': tagSelect && index == tags.length - 1 }"
+				@click="deleteTag(index)"
+				v-for="(tag, index) in tags"
+			>
 				{{ tag }}
 			</div>
 			<div
@@ -15,59 +20,48 @@
 			>
 				{{ value }}
 			</div>
-			<div
-				v-if="value"
-				@click="clear"
-				class="h-full w-8 text-white absolute right-0 top-0 block flex justify-center items-center cursor-pointer hover:bg-active"
-			>
-				<svg-icon type="mdi" :path="iconClear" size="15"></svg-icon>
-			</div>
 		</div>
 		<ul
-			v-if="genres.length > 0 && genres[0] !== value"
+			v-if="tagsAutocomplete.length > 0 && tagsAutocomplete[0] !== value"
 			class="text-white text-opacity-40 max-h-40 overflow-scroll"
+			@mouseleave="hoverTag(-1)"
 		>
 			<li
 				class="px-3 py-1 cursor-pointer"
-				v-for="(genre, index) in genres"
+				v-for="(tag, index) in tagsAutocomplete"
 				:class="{ active: index == autocompleteSelected }"
-				@mouseenter="hoverGenre(index)"
-				@click="selectGenre(index)"
+				@mouseenter="hoverTag(index)"
+				@click="selectTag(index)"
 			>
-				{{ genre }}
+				{{ tag }}
 			</li>
 		</ul>
 	</div>
 </template>
 
 <script>
-import SvgIcon from "@jamescoyle/vue-icon";
-import { mdiClose } from "@mdi/js";
-
 const KEY_UP = 38;
 const KEY_DOWN = 40;
 const KEY_ENTER = 13;
 const KEY_BACKSPACE = 8;
+const KEY_ESCAPE = 27;
 
 export default {
-	components: {
-		SvgIcon,
-	},
 	data() {
 		return {
-			iconClear: mdiClose,
 			text: "",
 			value: "",
 			tags: [],
 			width: "",
 			height: "",
+			tagSelect: false,
 			autocompleteSelected: -1,
 		};
 	},
 	computed: {
-		genres() {
-			return this.$store.state.genres.filter((genre) => {
-				return genre.toLowerCase().includes(this.value.toLowerCase());
+		tagsAutocomplete() {
+			return this.$store.state.tags.filter((tag) => {
+				return tag.toLowerCase().includes(this.value.toLowerCase());
 			});
 		},
 	},
@@ -80,19 +74,19 @@ export default {
 		isPopup() {
 			return true;
 		},
-		hoverGenre(index) {
-			// console.log(index);
+		hoverTag(index) {
 			this.autocompleteSelected = index;
 		},
-		selectGenre(index) {
-			this.value = this.genres[index];
+		selectTag(index) {
+			this.value = "";
+			this.tags.push(this.tagsAutocomplete[index]);
 			this.autocompleteSelected = -1;
 			this.$nextTick(() => {
 				this.$refs.input.focus();
 			});
 		},
-		clear() {
-			this.value = "";
+		deleteTag(index) {
+			this.tags.splice(index, 1);
 			this.$nextTick(() => {
 				this.$refs.input.focus();
 			});
@@ -100,13 +94,21 @@ export default {
 		onInput(e) {
 			console.log(e.target.innerText);
 			this.value = e.target.innerText;
+			console.log(this.tagsAutocomplete.length);
+			if (this.tagsAutocomplete.length == 0) {
+				this.autocompleteSelected = -1;
+			}
 		},
 		onKeyDown(event) {
 			const keyCode = event.keyCode;
 			if (keyCode === KEY_BACKSPACE) {
-				console.log("backspace");
+				if (this.tagSelect == true) {
+					this.tags.pop();
+					this.tagSelect = false;
+					return;
+				}
 				if (this.value.length == 0) {
-					console.log("select previous tag: ");
+					this.tagSelect = true;
 				}
 			}
 			if (
@@ -118,22 +120,26 @@ export default {
 				event.stopPropagation();
 				this.tags.push(this.value);
 				this.value = "";
-				console.log("add tag");
 			}
 			if (
 				keyCode === KEY_ENTER &&
 				this.autocompleteSelected >= 0 &&
-				this.genres[0] !== this.value
+				this.tagsAutocomplete[0] !== this.value
 			) {
 				event.preventDefault();
 				event.stopPropagation();
-				this.value = this.genres[this.autocompleteSelected];
-				console.log("set to autocomplete value");
+				this.tags.push(
+					this.tagsAutocomplete[this.autocompleteSelected]
+				);
+				this.value = "";
 				this.autocompleteSelected = -1;
 			}
 			if (keyCode === KEY_DOWN) {
 				event.preventDefault();
-				if (this.autocompleteSelected >= this.genres.length - 1) {
+				if (
+					this.autocompleteSelected >=
+					this.tagsAutocomplete.length - 1
+				) {
 					this.autocompleteSelected = -1;
 				} else {
 					this.autocompleteSelected++;
@@ -144,17 +150,26 @@ export default {
 				if (this.autocompleteSelected >= 0) {
 					this.autocompleteSelected--;
 				} else {
-					this.autocompleteSelected = this.genres.length - 1;
+					this.autocompleteSelected =
+						this.tagsAutocomplete.length - 1;
 				}
 			}
-			if (this.autocompleteSelected >= this.genres.length) {
+			if (keyCode === KEY_ESCAPE && this.autocompleteSelected >= 0) {
+				event.preventDefault();
+				event.stopPropagation();
+				this.autocompleteSelected = -1;
+			}
+			if (this.autocompleteSelected >= this.tagsAutocomplete.length) {
 				this.autocompleteSelected = -1;
 			}
 		},
 	},
 	created() {
-		this.tags = this.params.value.split(/[;,]+/).map((item) => item.trim());
-		console.log(this.tags);
+		if (this.params.value) {
+			this.tags = this.params.value
+				.split(/[;,]+/)
+				.map((item) => item.trim());
+		}
 
 		this.width = this.params.column.actualWidth + "px";
 		this.height = this.params.node.rowHeight + "px";

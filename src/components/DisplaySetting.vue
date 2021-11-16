@@ -19,7 +19,6 @@
 				value="split"
 				id="viewsplit"
 				v-model="display"
-				checked
 			/>
 			<label for="viewsplit" v-tooltip="'Split view'"
 				><svg-icon type="mdi" :path="iconSplit" size="22"></svg-icon

@@ -45,6 +45,7 @@
           @viewport-changed="onViewportChanged"
           @cell-value-changed="onCellValueChanged"
           @cell-editing-started="onCellEditingStarted"
+          @cell-editing-stopped="onCellEditingStopped"
           @cell-clicked="onCellClicked"
           @body-scroll="onBodyScroll"
           @grid-size-changed="onGridSizeChanged"
@@ -78,8 +79,10 @@ import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
 import Browser from "./components/Browser.vue";
 import VisualBrowser from "./components/VisualBrowser.vue";
-
 import { column_defs } from "./components/columnDefs.js";
+import tinykeys from "tinykeys";
+// var debounceLib = require("debounce");
+import { throttle } from "throttle-debounce";
 
 export default {
   name: "App",
@@ -95,24 +98,18 @@ export default {
       library: null, // NML Traktor collection XML converted to JSON (unfiltered for AG grid)
       pathToLibrary: "", // Selected NML library file
       totalSongs: null, // Amount of tracks in collection
-      genres: [], // List of used genres for autocomplete
-
       columnDefs: null, // AG Grid column settings
-      //rowData: null, // AG Grid row content
       gridApi: null, // AG Grid methods
       gridOptions: null, // AG Grid general setings
       defaultColDef: {
         editable: true,
         sortable: true,
       },
-      src: null,
       visibleTracks: {},
       asideWidth: 20,
       rowClassRules: null, // styling of rows
-
       playlists: null,
-
-      // columnApi: null, // AG Grid column methods
+      unsubscribe: null,
     };
   },
   computed: {
@@ -130,6 +127,9 @@ export default {
     },
     query() {
       return this.$store.state.query;
+    },
+    filterRating() {
+      return this.$store.state.filterRating;
     },
     artist() {
       return this.$store.state.trackPlaying.artist;
@@ -177,6 +177,19 @@ export default {
         this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newscroll * h;
       }
     },
+    filterRating(newval, oldval) {
+      console.log(newval);
+      if (newval <= 0) this.gridApi.setFilterModel(null);
+      else {
+        let filter = {
+          rating: {
+            type: "set",
+            filter: newval,
+          },
+        };
+        this.gridApi.setFilterModel(filter);
+      }
+    },
   },
   beforeMount() {
     this.gridOptions = {};
@@ -204,10 +217,25 @@ export default {
         return params.data.color_code == 7;
       },
     };
+
+    if (localStorage.display) {
+      this.$store.commit("setDisplay", localStorage.display);
+    }
+
+    this.unsubscribe = tinykeys(window, {
+      "$mod+F": () => {
+        console.log("Search");
+        this.$refs.header.$refs.search.$refs.input.focus();
+        // this.search();
+      },
+    });
   },
   methods: {
-    onBodyScroll(event) {
-      console.log("scrolling");
+    search() {
+      console.log("focus search");
+    },
+    onBodyScroll: throttle(16, function(event) {
+      // Throttle scroll to 60 FPS to optimise scrolling visual browser
       if (
         this.$store.state.scroll.source == "visualbrowser" &&
         this.$store.state.scroll.human
@@ -224,7 +252,7 @@ export default {
       newScroll.source = "list";
       this.$store.commit("setHumanScroll", true);
       this.$store.commit("setScroll", newScroll);
-    },
+    }),
     load(event) {
       window.ipcRenderer.send("openLibrary", "trigger open file");
     },
@@ -240,18 +268,13 @@ export default {
     endDragging() {
       document.removeEventListener("mousemove", this.handleDragging);
     },
-    // updateRowData(data) {
-    //   console.log("updateRowData");
-    //   this.$store.commit("setRowData", data);
-    //   // this.rowData = data;
-    // },
     onGridReady(params) {
       this.gridApi = params.api;
-      console.log("set visibleTracks - onGridReady");
+      // console.log("set visibleTracks - onGridReady");
       this.visibleTracks = this.gridApi.getRenderedNodes();
     },
     onGridSizeChanged(params) {
-      console.log("set visibleTracks - onGridSizeChanged");
+      // console.log("set visibleTracks - onGridSizeChanged");
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
@@ -261,7 +284,7 @@ export default {
       if (this.$store.state.rowData != null) {
         this.totalSongs = this.$store.state.rowData.length;
       }
-      console.log("set visibleTracks - onViewportChanged");
+      // console.log("set visibleTracks - onViewportChanged");
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
@@ -282,10 +305,14 @@ export default {
       this.$store.commit("setPreventScroll", true);
       console.log("started editing");
     },
+    onCellEditingStopped(params) {
+      console.log("stopped editing");
+      if (params.newValue == params.oldValue) {
+        this.$store.commit("setPreventScroll", false);
+      }
+    },
     onCellValueChanged(params) {
       this.$store.commit("setSaving", true);
-      // this.$store.commit("setPreventScroll", true);
-
       console.log("You'v edited a cell");
 
       let self = this;
@@ -294,6 +321,7 @@ export default {
       }, 5);
     },
     save(params) {
+      // > Save changes to Traktor XML
       let self = this;
       this.$store.commit("setSaving", true);
       console.log("Save these changes:");
@@ -321,10 +349,10 @@ export default {
         "TITLE"
       ] = params.data.title;
 
-      // Update Genres
+      // >> Update Genres
       if (params.column.colId == "genre") {
         console.log("rebuild genre autocomplete");
-        self.$store.commit("clearAllGenres", true);
+        self.$store.commit("clearAllGenres");
         let collection = this.library["NML"]["COLLECTION"][0]["ENTRY"];
         collection.forEach(function(track, index) {
           let genre = track["INFO"][0]["$"]["GENRE"];
@@ -334,6 +362,41 @@ export default {
             genre != ""
           )
             self.$store.commit("addGenre", genre);
+        });
+      }
+
+      if (
+        params.column.colId == "comment_1" ||
+        params.column.colId == "comment_2"
+      ) {
+        console.log("rebuild tags autocomplete");
+        self.$store.commit("clearTags");
+        let collection = this.library["NML"]["COLLECTION"][0]["ENTRY"];
+        collection.forEach(function(track, index) {
+          let tags1 = track["INFO"][0]["$"]["COMMENT"];
+          if (tags1 != undefined && tags1 != "") {
+            tags1 = tags1.split(/[;,]+/).map((item) => item.trim());
+          } else {
+            tags1 = [];
+          }
+          let tags2 = track["INFO"][0]["$"]["RATING"];
+          if (tags2 != undefined && tags2 != "") {
+            tags2 = tags2.split(/[;,]+/).map((item) => item.trim());
+          } else {
+            tags2 = [];
+          }
+          let tags = [...tags1, ...tags2];
+
+          if (tags.length > 0) {
+            tags.forEach(function(tag, index) {
+              if (
+                self.$store.state.tags.indexOf(tag) < 0 &&
+                tag != undefined &&
+                tag != ""
+              )
+                self.$store.commit("addTag", tag);
+            });
+          }
         });
       }
 
@@ -367,20 +430,50 @@ export default {
     });
 
     window.ipcRenderer.receive("coverArtList", (message) => {
-      // >> Create collection data
-      // console.log(message);
+      // >> Create data from XML
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
       let collectionFiltered = [];
       let filenameToIndex = {};
+
       collection.forEach(function(track, index) {
-        let genre = track["INFO"][0]["$"]["GENRE"];
         let filename = track["LOCATION"][0]["$"]["FILE"].replace(/\/\//g, ":");
+
+        // >>> Autocomplete Genre
+        let genre = track["INFO"][0]["$"]["GENRE"];
         if (
           self.$store.state.genres.indexOf(genre) < 0 &&
           genre != undefined &&
           genre != ""
         )
           self.$store.commit("addGenre", genre);
+
+        // >>> Autocomplete Tags
+        let tags1 = track["INFO"][0]["$"]["COMMENT"];
+        if (tags1 != undefined && tags1 != "") {
+          tags1 = tags1.split(/[;,]+/).map((item) => item.trim());
+        } else {
+          tags1 = [];
+        }
+        let tags2 = track["INFO"][0]["$"]["RATING"];
+        if (tags2 != undefined && tags2 != "") {
+          tags2 = tags2.split(/[;,]+/).map((item) => item.trim());
+        } else {
+          tags2 = [];
+        }
+        let tags = [...tags1, ...tags2];
+
+        if (tags.length > 0) {
+          tags.forEach(function(tag, index) {
+            if (
+              self.$store.state.tags.indexOf(tag) < 0 &&
+              tag != undefined &&
+              tag != ""
+            )
+              self.$store.commit("addTag", tag);
+          });
+        }
+
+        // >>> Create Collection rowdata from XML
         collectionFiltered[index] = {
           ["index"]: index,
           ["artist"]: track["$"]["ARTIST"],
@@ -409,20 +502,17 @@ export default {
           ["filename"]: filename,
           ["cue_points"]: track["CUE_V2"],
         };
+
+        // >>> Find tracks by Filename
         filenameToIndex[filename] = index;
       });
       this.$store.commit("setCollection", collectionFiltered);
-      // console.log("setRowData");
       this.$store.commit("setRowData", collectionFiltered);
       this.$store.commit("setFilenameToIndex", filenameToIndex);
 
       // >> Create playlist data
       this.playlists = self.library["NML"]["PLAYLISTS"][0]["NODE"][0];
-      // console.log(this.playlists);
-      // console.log(collectionFiltered);
-      // console.log(this.$store.state.genres);
 
-      // self.updateRowData(collectionFiltered);
       self.totalSongs = Object.keys(collectionFiltered).length;
     });
 
@@ -441,6 +531,10 @@ export default {
         JSON.parse(JSON.stringify(paths)),
       ]);
     });
+  },
+  beforeUnmount() {
+    console.log("remove watcher");
+    this.unsubscribe();
   },
 };
 </script>

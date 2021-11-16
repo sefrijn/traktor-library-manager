@@ -23,6 +23,7 @@ const store = createStore({
 			trackPlaying: {},
 			trackSelected: {},
 			query: "",
+			filterRating: 0,
 			sidebar: true,
 			playlists: {},
 			collection: null,
@@ -30,8 +31,7 @@ const store = createStore({
 			filenameToIndex: null,
 			activePlaylist: null,
 			genres: [],
-			comments_1: [],
-			comments_2: [],
+			tags: [],
 		};
 	},
 	mutations: {
@@ -46,20 +46,12 @@ const store = createStore({
 			state.genres = [];
 		},
 
-		addComment_1(state, tag) {
-			state.comments_1.push(tag);
-			state.comments_1.sort();
+		addTag(state, tag) {
+			state.tags.push(tag);
+			state.tags.sort();
 		},
-		clearComments_1(state) {
-			state.comments_1 = [];
-		},
-
-		addComment_2(state, tag) {
-			state.comments_2.push(tag);
-			state.comments_2.sort();
-		},
-		clearComments_2(state) {
-			state.comments_2 = [];
+		clearTags(state) {
+			state.tags = [];
 		},
 
 		setSaving(state, saving) {
@@ -89,6 +81,7 @@ const store = createStore({
 		},
 		setDisplay(state, display_type) {
 			state.display = display_type;
+			localStorage.display = display_type;
 		},
 		setScroll(state, scroll) {
 			state.scroll.ratio = scroll.ratio;
@@ -100,8 +93,16 @@ const store = createStore({
 		setQuery(state, text) {
 			state.query = text;
 		},
+		setFilterRating(state, value) {
+			state.filterRating = value;
+		},
 		addPlaylist(state, playlist) {
 			state.playslists["playlist.name"] = playlist.entries;
+		},
+	},
+	actions: {
+		setPreventScroll({ commit }, prevent) {
+			commit("setPreventScroll", prevent);
 		},
 	},
 });

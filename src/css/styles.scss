@@ -272,6 +272,9 @@ $labelFontSize: 14px !default;
 	input[type="radio"]:checked + label {
 		@apply bg-active hover:bg-active-dark text-white;
 	}
+	.clear-tag {
+		@apply bg-active-orange text-white line-through;
+	}
 	::selection {
 		color: white;
 		background: $traktor-active-orange;
@@ -281,6 +284,35 @@ $labelFontSize: 14px !default;
 	select:focus,
 	[contenteditable] {
 		@apply outline-none ring-0 ring-offset-0 border-none border-0;
+	}
+	.index-wrapper {
+		.icon {
+			display: none;
+			width: 0;
+			height: 0;
+			border-top: 7px solid transparent;
+			border-bottom: 7px solid transparent;
+
+			border-left: 11px solid white;
+		}
+		&:hover {
+			.icon {
+				display: block;
+			}
+			.index {
+				display: none;
+			}
+		}
+	}
+	.rating:hover > span svg {
+		color: $traktor-active-orange;
+		opacity: 1;
+	}
+	.rating:hover > span:hover {
+		& ~ span svg {
+			color: white;
+			opacity: 0.2;
+		}
 	}
 }
 .w-1\/7 {

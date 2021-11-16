@@ -3,7 +3,7 @@
 		<logo></logo>
 
 		<div class="flex relative">
-			<search></search>
+			<search ref="search"></search>
 
 			<audio-player></audio-player>
 

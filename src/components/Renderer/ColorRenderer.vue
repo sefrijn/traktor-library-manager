@@ -35,7 +35,10 @@ export default {
     },
     methods: {
         saveCell() {
-            this.params.setValue(this.color);
+            // prevent scrolling and set value
+            this.$store.dispatch("setPreventScroll", true).then(() => {
+                this.params.setValue(this.color);
+            });
         },
         setColor(e) {
             this.color = parseInt(e.target.attributes.color.nodeValue);

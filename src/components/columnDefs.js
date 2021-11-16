@@ -79,6 +79,7 @@ let column_defs = [
     headerName: "Timbre",
     field: "comment_2",
     width: 200,
+    cellEditorFramework: Tagging,
   },
   {
     headerName: "Key",
