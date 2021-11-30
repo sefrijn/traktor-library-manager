@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="flex items-center relative border-r border-black bg-black-medium"
+		class="flex items-center relative border-r border-t border-b border-black bg-black-medium"
 	>
 		<button
 			@click="togglePlayback"

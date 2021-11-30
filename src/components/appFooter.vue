@@ -1,6 +1,6 @@
 <template>
 	<footer
-		class="pr-2 flex justify-between font-medium text-xxs text-gray-dark bg-black-light"
+		class="px-2 flex justify-between font-medium text-xxs text-gray-dark bg-black-light"
 	>
 		<div class="flex items-center space-x-3">
 			<audio-player></audio-player>

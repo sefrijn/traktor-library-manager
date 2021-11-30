@@ -11,7 +11,7 @@
       <aside
         v-if="sidebar"
         class="max-w-sm flex flex-col justify-between"
-        style="height: calc(100vh - 139px);"
+        style="height: calc(100vh - 149px);"
         :style="{ width: `${asideWidth}%` }"
       >
         <browser :playlists="playlists"></browser>
@@ -32,7 +32,7 @@
       >
         <img src="./assets/vsizegrip.png" alt="" />
       </div>
-      <section class="flex-grow relative" style="height: calc(100vh - 139px);">
+      <section class="flex-grow relative" style="height: calc(100vh - 149px);">
         <ag-grid-vue
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
@@ -65,7 +65,7 @@
     </main>
 
     <app-footer
-      style="height: 57px;"
+      style="height: 67px;"
       class="border-t border-black flex justify-center items-center"
       :path="pathToLibrary"
       :filtered-songs="filteredSongs"

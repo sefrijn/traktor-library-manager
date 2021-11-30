@@ -51,7 +51,7 @@
             </div>
         </div>
         <div
-            class="absolute bottom-0 border-t border-black flex justify-start items-center px-4 h-8 w-full bg-black-medium  z-10"
+            class="absolute bottom-0 border-t border-black flex justify-end items-center px-4 h-8 w-full bg-black-medium  z-10"
         >
             <span class="text-xs tracking-wider mr-5 text-gray-dark">Size</span>
             <vue-slider
