@@ -905,10 +905,10 @@ ag-grid-community@^26.1.0:
   resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-26.1.0.tgz#d4ee3e9591b351a5ae477a21dd3dc44491ccd7fa"
   integrity sha512-vGnbiaxN6TxsDGcC2uIOrgjx+zwXlBK99aYiWcuiyzSPvNpz1fG29nSNx/fMeVRzc3FOru8h8vvk41vszh5AMg==
 
-ag-grid-vue3@^26.1.2:
-  version "26.1.2"
-  resolved "https://registry.yarnpkg.com/ag-grid-vue3/-/ag-grid-vue3-26.1.2.tgz#3aed84ce99792ed866489ea71a9902a5b1396c4d"
-  integrity sha512-omyRdFI5esgh+DQ3EdWaUF/vt2aJEwtxHcFmD1iKDZ4BdvpXEedfyjBqCa0Ubxw4fxMNzsERDM33BJP2W8O0aA==
+ag-grid-vue3@^26.2.0:
+  version "26.2.0"
+  resolved "https://registry.yarnpkg.com/ag-grid-vue3/-/ag-grid-vue3-26.2.0.tgz#2b391111e542b7d6b60e5dc66725eb2c2bd5d4ae"
+  integrity sha512-m9Y67x4JbekltU/IijnlJlSt2dplRhH1Oz+VXmB5Tx1i5uTv1Pk+i1R31tFZb4DUU4aW1GGIIIliOIbOfY+3WQ==
 
 aggregate-error@^3.0.0:
   version "3.1.0"

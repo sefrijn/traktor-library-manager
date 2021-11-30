@@ -11,25 +11,38 @@ const app = createApp(App);
 const store = createStore({
 	state() {
 		return {
+			// Functional
 			loading: false, // is audio being loaded? show loader
 			saving: false, // is document being saved
+
+			// Display
 			display: "split", // display setting [split,list,grid]
+			sidebar: true,
 			scroll: {
 				ratio: 0.0, // a decimal ratio, such as 0.349
 				source: "",
 				human: true,
 			},
-			preventScroll: false,
-			trackPlaying: {},
-			trackSelected: {},
+			preventScroll: false, // prevent during editing rowdata
+			activePlaylist: null, // selected playlist, null means all tracks
+			showMarkers: false,
+
+			// Filters
 			query: "",
-			filterRating: 0,
-			sidebar: true,
-			playlists: {},
+			filter: {
+				rating: 0,
+				color: 0,
+			},
+
+			// Tracks
 			collection: null,
+			playlists: {},
 			rowData: null,
 			filenameToIndex: null,
-			activePlaylist: null,
+			trackPlaying: {},
+			trackSelected: {},
+
+			// Autocomplete
 			genres: [],
 			tags: [],
 		};
@@ -59,6 +72,9 @@ const store = createStore({
 		},
 		setActivePlaylist(state, playlist) {
 			state.activePlaylist = playlist;
+		},
+		setShowMarkers(state, value) {
+			state.showMarkers = value;
 		},
 		setCollection(state, data) {
 			state.collection = data;
@@ -93,8 +109,8 @@ const store = createStore({
 		setQuery(state, text) {
 			state.query = text;
 		},
-		setFilterRating(state, value) {
-			state.filterRating = value;
+		setFilter(state, value) {
+			state.filter = value;
 		},
 		addPlaylist(state, playlist) {
 			state.playslists["playlist.name"] = playlist.entries;

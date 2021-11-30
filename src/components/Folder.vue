@@ -80,6 +80,7 @@ export default {
       this.open = !this.open;
     },
     openPlaylist(list) {
+      this.$store.commit("setFilter", { rating: 0, color: 0 });
       this.$store.commit("setActivePlaylist", list.$.UUID);
       console.log("open list " + list.$.UUID);
 

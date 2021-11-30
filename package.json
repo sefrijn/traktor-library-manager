@@ -16,7 +16,7 @@
     "@mdi/js": "^6.4.95",
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "ag-grid-community": "^26.1.0",
-    "ag-grid-vue3": "^26.1.2",
+    "ag-grid-vue3": "^26.2.0",
     "autoprefixer": "^9",
     "axios": "^0.24.0",
     "buffer": "^6.0.3",

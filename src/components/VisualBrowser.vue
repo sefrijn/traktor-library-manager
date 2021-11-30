@@ -79,7 +79,7 @@ export default {
     props: {
         tracks: Object,
         class: String,
-        total: Number,
+        filteredSongs: Number,
     },
     data() {
         return {
@@ -90,14 +90,14 @@ export default {
         };
     },
     computed: {
-        // total() {
+        // filteredSongs() {
         //     return this.$store.state.rowData.length;
         // },
         trackPlayingIndex() {
             return this.$store.state.trackPlaying.index;
         },
         wrapperLines() {
-            return Math.ceil(this.total / this.coverSize);
+            return Math.ceil(this.filteredSongs / this.coverSize);
         },
         scroll() {
             return this.$store.state.scroll.ratio;
@@ -105,11 +105,11 @@ export default {
     },
     watch: {
         coverSize(newCoverSize, oldCoverSize) {
-            console.log(this.total);
+            console.log(this.filteredSongs);
             let h =
                 (this.$refs.hugeWrapper.clientWidth / newCoverSize +
                     this.coverTextHeight) *
-                Math.ceil(this.total / newCoverSize);
+                Math.ceil(this.filteredSongs / newCoverSize);
 
             let newscroll = {};
             newscroll.ratio = this.$store.state.scroll.ratio;

@@ -1,5 +1,5 @@
 <template>
-	<div class="flex ml-1 items-center h-9">
+	<div class="flex space-x-0.5 items-center h-9">
 		<div>
 			<input
 				type="radio"
@@ -75,9 +75,6 @@ export default {
 <style scoped>
 input[type="radio"] {
 	@apply hidden;
-}
-input[type="radio"] + label {
-	@apply mx-0.5;
 }
 input[type="radio"] + label:hover {
 	@apply cursor-pointer;

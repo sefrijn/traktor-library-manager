@@ -11,15 +11,18 @@
       <aside
         v-if="sidebar"
         class="max-w-sm flex flex-col justify-between"
-        style="height: calc(100vh - 132px);"
+        style="height: calc(100vh - 139px);"
         :style="{ width: `${asideWidth}%` }"
       >
         <browser :playlists="playlists"></browser>
         <div
-          class="border-t border-black-medium nowplaying text-xs font-medium text-center text-gray"
+          class="border-t border-black-medium nowplaying text-sm font-medium text-center text-white bg-black-light"
         >
           <img v-if="image" :src="image" />
-          <p v-if="artist" class="px-4 py-3">{{ artist }} - {{ title }}</p>
+          <span class="block uppercase text-xxs text-gray pt-2"
+            >now playing</span
+          >
+          <p v-if="artist" class="pb-3 px-1">{{ artist }} - {{ title }}</p>
         </div>
       </aside>
       <div
@@ -29,7 +32,7 @@
       >
         <img src="./assets/vsizegrip.png" alt="" />
       </div>
-      <section class="flex-grow relative" style="height: calc(100vh - 132px);">
+      <section class="flex-grow relative" style="height: calc(100vh - 139px);">
         <ag-grid-vue
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
@@ -49,22 +52,24 @@
           @cell-clicked="onCellClicked"
           @body-scroll="onBodyScroll"
           @grid-size-changed="onGridSizeChanged"
+          @filter-changed="onFilterChanged"
         >
         </ag-grid-vue>
         <visual-browser
           :class="classesVisualBrowser"
           :tracks="visibleTracks"
-          :total="totalSongs"
+          :filtered-songs="filteredSongs"
           @play-track="playTrack"
         ></visual-browser>
       </section>
     </main>
 
     <app-footer
-      style="height: 50px;"
+      style="height: 57px;"
       class="border-t border-black flex justify-center items-center"
       :path="pathToLibrary"
-      :total="totalSongs"
+      :filtered-songs="filteredSongs"
+      :total-songs="totalSongs"
     >
     </app-footer>
   </div>
@@ -97,7 +102,8 @@ export default {
     return {
       library: null, // NML Traktor collection XML converted to JSON (unfiltered for AG grid)
       pathToLibrary: "", // Selected NML library file
-      totalSongs: null, // Amount of tracks in collection
+      totalSongs: null, // All tracks in collection
+      filteredSongs: null, // Tracks within playlist, filter and search
       columnDefs: null, // AG Grid column settings
       gridApi: null, // AG Grid methods
       gridOptions: null, // AG Grid general setings
@@ -128,8 +134,8 @@ export default {
     query() {
       return this.$store.state.query;
     },
-    filterRating() {
-      return this.$store.state.filterRating;
+    filter() {
+      return this.$store.state.filter;
     },
     artist() {
       return this.$store.state.trackPlaying.artist;
@@ -177,16 +183,24 @@ export default {
         this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newscroll * h;
       }
     },
-    filterRating(newval, oldval) {
+    filter(newval, oldval) {
       console.log(newval);
-      if (newval <= 0) this.gridApi.setFilterModel(null);
+      if (newval.rating <= 0 && newval.color <= 0)
+        this.gridApi.setFilterModel(null);
       else {
-        let filter = {
-          rating: {
+        let filter = {};
+        if (newval.rating > 0) {
+          filter.rating = {
             type: "set",
-            filter: newval,
-          },
-        };
+            filter: newval.rating,
+          };
+        }
+        if (newval.color > 0) {
+          filter.color_code = {
+            type: "set",
+            filter: newval.color,
+          };
+        }
         this.gridApi.setFilterModel(filter);
       }
     },
@@ -279,12 +293,19 @@ export default {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
     },
+    onFilterChanged(params) {
+      this.filteredSongs = this.gridOptions.api.getModel().rootNode.childrenAfterFilter.length;
+    },
     onViewportChanged(params) {
-      // console.log(this.$store.state.rowData.length);
-      if (this.$store.state.rowData != null) {
-        this.totalSongs = this.$store.state.rowData.length;
-      }
-      // console.log("set visibleTracks - onViewportChanged");
+      // if (this.$store.state.rowData != null) {
+      // this.totalSongs = this.$store.state.rowData.length;
+      this;
+      this.filteredSongs = this.gridOptions.api.getModel().rootNode.childrenAfterFilter.length;
+      // }
+      console.log("set visibleTracks - onViewportChanged");
+      // console.log(
+      //   this.gridOptions.api.getModel().rootNode.childrenAfterFilter.length
+      // );
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }

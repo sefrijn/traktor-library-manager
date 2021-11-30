@@ -1,53 +1,24 @@
 <template>
-	<div class="flex relative mx-1.5">
-		<p
-			v-if="artist"
-			class="absolute bottom-full uppercase w-full py-1 font-medium text-gray-dark text-xxs whitespace-nowrap overflow-hidden overflow-ellipsis"
-		>
-			now playing
-			<span class="text-white">{{ artist }} - {{ title }}</span>
-		</p>
-
-		<p
-			v-if="progress"
-			class="absolute top-full uppercase w-full py-1 font-medium font-mono text-gray-dark text-xxs"
-		>
-			<span class="text-white">{{ progress }}</span
-			>/{{ duration }}
-		</p>
-
-		<img
-			v-if="this.$store.state.trackPlaying.image"
-			:src="image"
-			class="h-9 w-9"
-			alt=""
-		/>
-		<div
-			v-if="!this.$store.state.trackPlaying.image && artist"
-			class="h-9 w-9 bg-black-dark flex justify-center items-center font-bold text-gray-dark"
-		>
-			<span>?</span>
-		</div>
-		<div
-			v-if="!this.$store.state.trackPlaying.image && !artist"
-			class="h-9 w-9 bg-black-dark flex justify-center items-center text-gray-dark text-xxs"
-			v-tooltip="'Load track to view waveform'"
-		></div>
-
+	<div
+		class="flex items-center relative border-r border-black bg-black-medium"
+	>
 		<button
 			@click="togglePlayback"
-			class="h-9 w-9 flex justify-center items-center"
+			class="h-14 w-14 flex justify-center items-center border-r border-black"
 			:class="{ active: isPlaying }"
 		>
-			<svg-icon type="mdi" :path="iconPlayPause"></svg-icon>
+			<svg-icon type="mdi" :path="iconPlayPause" size="38"></svg-icon>
 		</button>
 		<div
 			id="waveform"
 			ref="waveform"
-			class="cursor-pointer h-9 relative bg-black-medium hover:bg-black-dark"
+			class="cursor-pointer h-14 relative"
+			:class="{ 'show-markers': showMarkers }"
 			style="width:450px;"
 		>
-			<div class="absolute w-full h-full flex justify-center items-end">
+			<div
+				class="absolute w-full h-full flex justify-center items-center"
+			>
 				<scale-loader
 					:color="color"
 					:height="height"
@@ -56,15 +27,51 @@
 				></scale-loader>
 			</div>
 		</div>
+		<div
+			v-if="progress"
+			class="px-2 uppercase font-medium font-mono text-gray-dark text-xs"
+		>
+			<span>{{ duration }}</span
+			><br />
+			<span class="text-white">{{ progress }}</span>
+		</div>
+		<img
+			v-if="this.$store.state.trackPlaying.image && !sidebar"
+			:src="image"
+			class="h-14 w-14"
+			alt=""
+		/>
+		<div
+			v-if="!this.$store.state.trackPlaying.image && artist && !sidebar"
+			class="h-14 w-14 bg-black-dark flex justify-center items-center font-bold text-gray-dark"
+		>
+			<span>?</span>
+		</div>
+		<div
+			v-if="!this.$store.state.trackPlaying.image && !artist && !sidebar"
+			class="h-14 w-14 bg-black-dark flex justify-center items-center text-gray-dark text-xxs"
+			v-tooltip="'Load track to view waveform'"
+		></div>
+	</div>
+	<div v-if="!sidebar" class="font-medium text-gray-dark">
+		<p class="uppercase">now playing</p>
+		<p
+			class="text-white text-xs whitespace-nowrap overflow-hidden overflow-ellipsis"
+			style="max-width:calc(100vw - 900px)"
+		>
+			{{ artist }} - {{ title }}
+		</p>
 	</div>
 </template>
 
 <style lang="scss">
+@import "../css/colors";
 #waveform > wave {
 	overflow: visible !important;
-	// > wave {
-	// 	border-right-width: 3px !important;
-	// }
+}
+#waveform:hover > wave > wave {
+	border-right-color: $traktor-active !important;
+	// @apply border-active;
 }
 .wavesurfer-marker svg {
 	height: 15px !important;
@@ -81,17 +88,23 @@
 	fill: #007f93;
 }
 .wavesurfer-marker {
-	top: 17px;
+	display: none !important;
+	bottom: 0px;
 	span {
 		position: absolute;
 		z-index: 4;
 		width: 11px;
 		// display: none;
-		margin-top: -5px;
-		margin-bottom: -7px;
+		margin-bottom: -5px;
+		margin-top: -7px;
 		pointer-events: none;
 		font-size: 10px !important;
 		@apply text-center text-black font-medium;
+	}
+}
+#waveform.show-markers {
+	.wavesurfer-marker {
+		display: flex !important;
 	}
 }
 </style>
@@ -117,9 +130,13 @@ export default {
 			width: "5px", // scale loader
 			duration: null,
 			progress: null,
+			showCues: false,
 		};
 	},
 	computed: {
+		showMarkers() {
+			return this.$store.state.showMarkers;
+		},
 		artist() {
 			return this.$store.state.trackPlaying.artist;
 		},
@@ -134,6 +151,9 @@ export default {
 		},
 		loading() {
 			return this.$store.state.loading;
+		},
+		sidebar() {
+			return this.$store.state.sidebar;
 		},
 	},
 	methods: {
@@ -154,12 +174,9 @@ export default {
 				cursorColor: "#ddd",
 				cursorWidth: 2,
 				// barWidth: 2,
-				height: 36,
+				height: 56,
 				mediaControls: true,
-				plugins: [
-					MarkersPlugin.create(),
-					// CursorPlugin.create(),
-				],
+				plugins: [MarkersPlugin.create()],
 			});
 		},
 		fancyTimeFormat(duration) {
@@ -214,7 +231,7 @@ export default {
 					time: cue["$"]["START"] / 1000,
 					label: cue["$"]["HOTCUE"],
 					color: "#2e91a7",
-					position: "bottom",
+					position: "top",
 				});
 			}
 			self.duration = self.fancyTimeFormat(

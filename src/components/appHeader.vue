@@ -2,18 +2,37 @@
 	<header class="bg-black-light flex justify-between items-center px-2">
 		<logo></logo>
 
-		<div class="flex relative">
+		<div class="flex relative space-x-3">
 			<search ref="search"></search>
 
-			<audio-player></audio-player>
+			<filter-rating></filter-rating>
+
+			<filter-color></filter-color>
+
+			<div class="spacer w-6"></div>
 
 			<button
 				v-tooltip="'Open Traktor Library File'"
-				class="mx-1.5 flex justify-center items-center h-9 w-9"
+				class="flex justify-center items-center h-9 w-9"
 				@click="$emit('load')"
 			>
 				<svg-icon type="mdi" :path="iconOpenLib" size="18"></svg-icon>
 			</button>
+
+			<button
+				v-tooltip="'Show Cuepoints'"
+				class="flex justify-center items-center h-9 w-9"
+				@click="toggleMarkers"
+				:class="{ active: $store.state.showMarkers }"
+			>
+				<svg-icon
+					type="mdi"
+					:path="iconToggleMarkers"
+					size="18"
+				></svg-icon>
+			</button>
+
+			<toggle-sidebar></toggle-sidebar>
 
 			<display-setting></display-setting>
 		</div>
@@ -24,8 +43,11 @@
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiArchiveSearch } from "@mdi/js";
 import { mdiContentSave } from "@mdi/js";
+import { mdiNumeric1Box } from "@mdi/js";
 import Search from "./Search.vue";
-import AudioPlayer from "./AudioPlayer.vue";
+import FilterRating from "./FilterRating.vue";
+import FilterColor from "./FilterColor.vue";
+import ToggleSidebar from "./ToggleSidebar.vue";
 import DisplaySetting from "./DisplaySetting.vue";
 import Logo from "./Logo.vue";
 
@@ -33,14 +55,25 @@ export default {
 	components: {
 		SvgIcon,
 		Search,
-		AudioPlayer,
+		FilterRating,
+		FilterColor,
 		DisplaySetting,
+		ToggleSidebar,
 		Logo,
 	},
 	data() {
 		return {
 			iconOpenLib: mdiArchiveSearch,
+			iconToggleMarkers: mdiNumeric1Box,
 		};
+	},
+	methods: {
+		toggleMarkers() {
+			this.$store.commit(
+				"setShowMarkers",
+				!this.$store.state.showMarkers
+			);
+		},
 	},
 };
 </script>
