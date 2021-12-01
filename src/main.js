@@ -14,6 +14,7 @@ const store = createStore({
 			// Functional
 			loading: false, // is audio being loaded? show loader
 			saving: false, // is document being saved
+			libraryPath: null, // path to Library NML file
 
 			// Display
 			display: "split", // display setting [split,list,grid]
@@ -48,6 +49,15 @@ const store = createStore({
 		};
 	},
 	mutations: {
+		setLoading(state, loading) {
+			state.loading = loading;
+		},
+		setSaving(state, saving) {
+			state.saving = saving;
+		},
+		setLibraryPath(state, path) {
+			state.libraryPath = path;
+		},
 		setPreventScroll(state, prevent) {
 			state.preventScroll = prevent;
 		},
@@ -67,9 +77,6 @@ const store = createStore({
 			state.tags = [];
 		},
 
-		setSaving(state, saving) {
-			state.saving = saving;
-		},
 		setActivePlaylist(state, playlist) {
 			state.activePlaylist = playlist;
 		},
@@ -91,9 +98,6 @@ const store = createStore({
 		},
 		setTrackPlaying(state, track) {
 			state.trackPlaying = track;
-		},
-		setLoading(state, loading) {
-			state.loading = loading;
 		},
 		setDisplay(state, display_type) {
 			state.display = display_type;

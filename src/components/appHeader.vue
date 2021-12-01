@@ -2,7 +2,10 @@
 	<header class="bg-black-light flex justify-between items-center px-2">
 		<logo></logo>
 
-		<div class="flex relative space-x-3">
+		<div
+			:class="{ 'pointer-events-none opacity-50': !pathToLibrary }"
+			class="flex relative space-x-3"
+		>
 			<search ref="search"></search>
 
 			<filter-rating></filter-rating>
@@ -11,13 +14,7 @@
 
 			<div class="spacer w-6"></div>
 
-			<button
-				v-tooltip="'Open Traktor Library File'"
-				class="flex justify-center items-center h-9 w-9"
-				@click="$emit('load')"
-			>
-				<svg-icon type="mdi" :path="iconOpenLib" size="18"></svg-icon>
-			</button>
+			<btn-open-library></btn-open-library>
 
 			<button
 				v-tooltip="'Show Cuepoints'"
@@ -50,6 +47,7 @@ import FilterColor from "./FilterColor.vue";
 import ToggleSidebar from "./ToggleSidebar.vue";
 import DisplaySetting from "./DisplaySetting.vue";
 import Logo from "./Logo.vue";
+import BtnOpenLibrary from "./BtnOpenLibrary.vue";
 
 export default {
 	components: {
@@ -60,12 +58,18 @@ export default {
 		DisplaySetting,
 		ToggleSidebar,
 		Logo,
+		BtnOpenLibrary,
 	},
 	data() {
 		return {
 			iconOpenLib: mdiArchiveSearch,
 			iconToggleMarkers: mdiNumeric1Box,
 		};
+	},
+	computed: {
+		pathToLibrary() {
+			return this.$store.state.libraryPath;
+		},
 	},
 	methods: {
 		toggleMarkers() {

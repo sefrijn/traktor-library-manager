@@ -66,6 +66,9 @@
                 >{{ coverSize }} per row</span
             >
         </div>
+        <div
+            class="width-helper w-1/4 w-1/5 w-1/6 w-1/7 w-1/8 w-1/9 w-1/10 hidden"
+        ></div>
     </div>
 </template>
 

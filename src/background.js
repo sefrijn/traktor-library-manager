@@ -179,7 +179,7 @@ if (isDevelopment) {
 ipcMain.on("openLibrary", function(event) {
   let file = dialog.showOpenDialogSync({
     title: "Find Library File",
-    defaultPath: path.join(app.getPath("home"), "Music", "dj", "Traktor 3.4"),
+    defaultPath: app.getPath("home"),
     buttonLabel: "Open Library",
     properties: ["openFile"],
   });

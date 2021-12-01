@@ -1,7 +1,5 @@
 <template>
-	<div
-		class="flex items-center relative border-r border-t border-b border-black bg-black-medium"
-	>
+	<div class="flex items-center relative border border-black bg-black-medium">
 		<button
 			@click="togglePlayback"
 			class="h-14 w-14 flex justify-center items-center border-r border-black"

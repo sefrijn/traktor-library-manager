@@ -8,8 +8,10 @@
     ></app-header>
 
     <main class="flex" @mouseup="endDragging">
+      <welcome v-if="!pathToLibrary" style="height: calc(100vh - 149px);">
+      </welcome>
       <aside
-        v-if="sidebar"
+        v-if="sidebar && pathToLibrary"
         class="max-w-sm flex flex-col justify-between"
         style="height: calc(100vh - 149px);"
         :style="{ width: `${asideWidth}%` }"
@@ -26,13 +28,17 @@
         </div>
       </aside>
       <div
-        v-if="sidebar"
+        v-if="sidebar && pathToLibrary"
         class="divider w-2 flex justify-center items-center bg-black-medium hover:bg-black-light cursor-divider-h"
         @mousedown="startDragging"
       >
         <img src="./assets/vsizegrip.png" alt="" />
       </div>
-      <section class="flex-grow relative" style="height: calc(100vh - 149px);">
+      <section
+        v-if="pathToLibrary"
+        class="flex-grow relative"
+        style="height: calc(100vh - 149px);"
+      >
         <ag-grid-vue
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
@@ -67,7 +73,6 @@
     <app-footer
       style="height: 67px;"
       class="border-t border-black flex justify-center items-center"
-      :path="pathToLibrary"
       :filtered-songs="filteredSongs"
       :total-songs="totalSongs"
     >
@@ -84,6 +89,7 @@ import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
 import Browser from "./components/Browser.vue";
 import VisualBrowser from "./components/VisualBrowser.vue";
+import Welcome from "./components/Welcome.vue";
 import { column_defs } from "./components/columnDefs.js";
 import tinykeys from "tinykeys";
 // var debounceLib = require("debounce");
@@ -97,11 +103,11 @@ export default {
     AppFooter,
     VisualBrowser,
     Browser,
+    Welcome,
   },
   data() {
     return {
       library: null, // NML Traktor collection XML converted to JSON (unfiltered for AG grid)
-      pathToLibrary: "", // Selected NML library file
       totalSongs: null, // All tracks in collection
       filteredSongs: null, // Tracks within playlist, filter and search
       columnDefs: null, // AG Grid column settings
@@ -110,6 +116,7 @@ export default {
       defaultColDef: {
         editable: true,
         sortable: true,
+        filter: true,
       },
       visibleTracks: {},
       asideWidth: 20,
@@ -119,6 +126,9 @@ export default {
     };
   },
   computed: {
+    pathToLibrary() {
+      return this.$store.state.libraryPath;
+    },
     preventScroll() {
       return this.$store.state.preventScroll;
     },
@@ -184,7 +194,6 @@ export default {
       }
     },
     filter(newval, oldval) {
-      console.log(newval);
       if (newval.rating <= 0 && newval.color <= 0)
         this.gridApi.setFilterModel(null);
       else {
@@ -238,16 +247,12 @@ export default {
 
     this.unsubscribe = tinykeys(window, {
       "$mod+F": () => {
-        console.log("Search");
         this.$refs.header.$refs.search.$refs.input.focus();
         // this.search();
       },
     });
   },
   methods: {
-    search() {
-      console.log("focus search");
-    },
     onBodyScroll: throttle(16, function(event) {
       // Throttle scroll to 60 FPS to optimise scrolling visual browser
       if (
@@ -283,8 +288,8 @@ export default {
       document.removeEventListener("mousemove", this.handleDragging);
     },
     onGridReady(params) {
-      this.gridApi = params.api;
       // console.log("set visibleTracks - onGridReady");
+      this.gridApi = params.api;
       this.visibleTracks = this.gridApi.getRenderedNodes();
     },
     onGridSizeChanged(params) {
@@ -297,15 +302,8 @@ export default {
       this.filteredSongs = this.gridOptions.api.getModel().rootNode.childrenAfterFilter.length;
     },
     onViewportChanged(params) {
-      // if (this.$store.state.rowData != null) {
-      // this.totalSongs = this.$store.state.rowData.length;
-      this;
+      // console.log("set visibleTracks - onViewportChanged");
       this.filteredSongs = this.gridOptions.api.getModel().rootNode.childrenAfterFilter.length;
-      // }
-      console.log("set visibleTracks - onViewportChanged");
-      // console.log(
-      //   this.gridOptions.api.getModel().rootNode.childrenAfterFilter.length
-      // );
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
@@ -324,10 +322,8 @@ export default {
     },
     onCellEditingStarted(params) {
       this.$store.commit("setPreventScroll", true);
-      console.log("started editing");
     },
     onCellEditingStopped(params) {
-      console.log("stopped editing");
       if (params.newValue == params.oldValue) {
         this.$store.commit("setPreventScroll", false);
       }
@@ -432,14 +428,13 @@ export default {
     let self = this;
 
     if (localStorage.pathToLibrary) {
-      this.pathToLibrary = localStorage.pathToLibrary;
-      console.log(localStorage.pathToLibrary);
+      this.$store.commit("setLibraryPath", localStorage.pathToLibrary);
       window.ipcRenderer.send("parseXML", [this.pathToLibrary]);
     }
 
     window.ipcRenderer.receive("openLibrary", function(message) {
       localStorage.pathToLibrary = message;
-      self.pathToLibrary = message;
+      self.$store.commit("setLibraryPath", localStorage.pathToLibrary);
       console.log(message);
       window.ipcRenderer.send("parseXML", message);
     });

@@ -2,11 +2,17 @@
 	<footer
 		class="px-2 flex justify-between font-medium text-xxs text-gray-dark bg-black-light"
 	>
-		<div class="flex items-center space-x-3">
+		<div
+			class="flex items-center space-x-3"
+			:class="{ 'pointer-events-none opacity-40': !pathToLibrary }"
+		>
 			<audio-player></audio-player>
 		</div>
 
-		<div class="h-5 flex justify-center items-center space-x-6">
+		<div
+			v-if="pathToLibrary"
+			class="h-5 flex justify-center items-center space-x-6"
+		>
 			<div
 				v-if="isSaving"
 				class="flex justify-center items-center space-x-1"
@@ -47,11 +53,15 @@ export default {
 		ClipLoader,
 		AudioPlayer,
 	},
-	props: ["path", "totalSongs", "filteredSongs"],
+	props: ["totalSongs", "filteredSongs"],
 	data() {
 		return {};
 	},
 	computed: {
+		pathToLibrary() {
+			return this.$store.state.libraryPath;
+		},
+
 		isSaving() {
 			return this.$store.state.saving;
 		},

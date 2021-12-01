@@ -223,11 +223,15 @@ header .color-dot:hover {
 .v-popper--theme-tooltip .v-popper__arrow {
 	border-color: $black-medium;
 }
+
+/* Buttons */
+button,
+header button.flex,
+input[type="radio"] + label {
+	@apply bg-black-medium hover:bg-active-dark text-gray-light hover:text-white;
+}
+
 #app {
-	button,
-	input[type="radio"] + label {
-		@apply bg-black-medium hover:bg-active-dark text-gray-light hover:text-white;
-	}
 	.active,
 	input[type="radio"]:checked + label {
 		@apply bg-active hover:bg-active-dark text-white;

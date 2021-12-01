@@ -1,6 +1,11 @@
 {
-  "name": "traktor-vue",
-  "version": "0.1.0",
+  "name": "traktor-library-manager",
+  "description": "Manage your Traktor Pro 3 library with ease! Build with love, with the help of Vue, Tailwind and Electron, and many more packages",
+  "author": {
+    "name": "Sefrijn",
+    "email": "info@howaboutyes.com"
+  },
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -15,7 +20,7 @@
     "@jamescoyle/vue-icon": "^0.1.2",
     "@mdi/js": "^6.4.95",
     "@tailwindcss/postcss7-compat": "^2.0.2",
-    "ag-grid-community": "^26.1.0",
+    "ag-grid-community": "^26.2.0",
     "ag-grid-vue3": "^26.2.0",
     "autoprefixer": "^9",
     "axios": "^0.24.0",
