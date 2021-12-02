@@ -4,7 +4,7 @@
         :class="class"
     >
         <div
-            @scroll="onScroll"
+            @scroll="$emit('scroll')"
             ref="smallWrapper"
             class="overflow-scroll h-full w-full"
         >
@@ -93,43 +93,28 @@ export default {
         };
     },
     computed: {
-        // filteredSongs() {
-        //     return this.$store.state.rowData.length;
-        // },
         trackPlayingIndex() {
             return this.$store.state.trackPlaying.index;
         },
         wrapperLines() {
             return Math.ceil(this.filteredSongs / this.coverSize);
         },
-        scroll() {
-            return this.$store.state.scroll.ratio;
-        },
     },
     watch: {
-        coverSize(newCoverSize, oldCoverSize) {
-            console.log(this.filteredSongs);
-            let h =
-                (this.$refs.hugeWrapper.clientWidth / newCoverSize +
-                    this.coverTextHeight) *
-                Math.ceil(this.filteredSongs / newCoverSize);
-
-            let newscroll = {};
-            newscroll.ratio = this.$store.state.scroll.ratio;
-            newscroll.source = "visualbrowser";
-            this.$store.commit("setHumanScroll", true);
-            this.$store.commit("setScroll", newscroll);
-            this.$refs.smallWrapper.scrollTop = newscroll.ratio * h;
-        },
-        scroll(newscroll, oldscroll) {
-            if (
-                this.$store.state.scroll.source == "list" &&
-                this.$store.state.scroll.human
-            ) {
-                let h = this.$refs.hugeWrapper.clientHeight;
-                this.$refs.smallWrapper.scrollTop = newscroll * h;
-            }
-        },
+        // TODO - MOVE TO APP.VUE
+        // coverSize(newCoverSize, oldCoverSize) {
+        //     console.log(this.filteredSongs);
+        //     let h =
+        //         (this.$refs.hugeWrapper.clientWidth / newCoverSize +
+        //             this.coverTextHeight) *
+        //         Math.ceil(this.filteredSongs / newCoverSize);
+        //     let newscroll = {};
+        //     newscroll.ratio = this.$store.state.scroll.ratio;
+        //     newscroll.source = "visualbrowser";
+        //     this.$store.commit("setHumanScroll", true);
+        //     this.$store.commit("setScroll", newscroll);
+        //     this.$refs.smallWrapper.scrollTop = newscroll.ratio * h;
+        // },
     },
     components: {
         Image,
@@ -142,24 +127,6 @@ export default {
             } else {
                 return "";
             }
-        },
-        onScroll(event) {
-            if (
-                this.$store.state.scroll.source == "list" &&
-                this.$store.state.scroll.human
-            ) {
-                this.$store.commit("setHumanScroll", false);
-                return;
-            }
-            let newScroll = {};
-            let h = this.$refs.hugeWrapper.clientHeight;
-
-            newScroll.ratio = this.$refs.smallWrapper.scrollTop / h;
-            newScroll.ratio = newScroll.ratio.toFixed(5);
-
-            newScroll.source = "visualbrowser";
-            this.$store.commit("setHumanScroll", true);
-            this.$store.commit("setScroll", newScroll);
         },
     },
 };

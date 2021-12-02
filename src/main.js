@@ -21,11 +21,8 @@ const store = createStore({
 			// Display
 			display: "split", // display setting [split,list,grid]
 			sidebar: true,
-			scroll: {
-				ratio: 0.0, // a decimal ratio, such as 0.349
-				source: "",
-				human: true,
-			},
+			scrollSource: "",
+			scrollRatio: 0.0,
 			preventScroll: false, // prevent during editing rowdata
 			activePlaylist: null, // selected playlist, null means all tracks
 			showMarkers: false,
@@ -111,13 +108,15 @@ const store = createStore({
 			state.display = display_type;
 			localStorage.display = display_type;
 		},
-		setScroll(state, scroll) {
-			state.scroll.ratio = scroll.ratio;
-			state.scroll.source = scroll.source;
+
+		// Display
+		setScrollSource(state, source) {
+			state.scrollSource = source;
 		},
-		setHumanScroll(state, human) {
-			state.scroll.human = human;
+		setScrollRatio(state, ratio) {
+			state.scrollRatio = ratio;
 		},
+
 		setQuery(state, text) {
 			state.query = text;
 		},

@@ -2,7 +2,7 @@
 	<div class="search relative flex bg-black-medium">
 		<p
 			v-if="text"
-			class="absolute bottom-full uppercase w-full py-1 font-medium text-gray-dark text-xxs"
+			class="absolute bottom-full uppercase w-full py-0 font-medium text-gray-dark text-xxs"
 		>
 			Search for
 		</p>

@@ -1,7 +1,7 @@
 <template>
 	<ul
 		v-if="playlists"
-		class="text-sm select-none text-gray-light playlists overflow-scroll"
+		class="text-sm select-none text-gray-light playlists overflow-auto"
 	>
 		<li class="all">
 			<div

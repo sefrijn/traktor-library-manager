@@ -232,6 +232,19 @@ input[type="radio"] + label {
 }
 
 #app {
+	/* 	::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+	::-webkit-scrollbar-track-piece {
+		background: $black-light;
+	}
+	::-webkit-scrollbar-thumb {
+		background: $traktor-active;
+		border-radius: 5px;
+		height: 30px;
+		box-shadow: inset 0 0 1.5px black;
+	} */
 	.active,
 	input[type="radio"]:checked + label {
 		@apply bg-active hover:bg-active-dark text-white;

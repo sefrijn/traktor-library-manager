@@ -1,25 +1,11 @@
 <template>
-	<div class="flex h-9 bg-black-medium px-3 items-center relative">
+	<div class="flex h-9 bg-black-medium pl-3 items-center relative">
 		<p
-			class="filter-label hidden absolute left-0 bottom-full uppercase w-full py-1 font-medium text-gray-dark text-xxs whitespace-nowrap overflow-hidden overflow-ellipsis"
+			class="filter-label absolute left-0 bottom-full uppercase w-full py-0 font-medium text-gray-dark text-xxs whitespace-nowrap overflow-hidden overflow-ellipsis"
+			v-if="color > 0"
 		>
 			filter by color
 		</p>
-
-		<div
-			v-if="color > 0"
-			@click="filter"
-			:color="0"
-			class="pt-1 absolute top-full left-0 clear-rating-filter mr-2 cursor-pointer text-gray hover:opacity-100 hover:text-active-orange flex items-center"
-		>
-			<svg-icon
-				class="pointer-events-none inline"
-				type="mdi"
-				:path="iconCancel"
-				size="13"
-			></svg-icon>
-			<span class="pointer-events-none uppercase text-xxs">Clear</span>
-		</div>
 
 		<div class="flex space-x-1">
 			<div
@@ -40,14 +26,22 @@
 				></div>
 			</div>
 		</div>
+		<button
+			@click="filter"
+			:color="0"
+			class="h-9 w-9 ml-1 block flex justify-center items-center cursor-pointer hover:bg-black-dark"
+			:class="{ 'pointer-events-none': color == 0 }"
+			v-tooltip="'Clear'"
+		>
+			<svg-icon
+				class="pointer-events-none"
+				:class="{ 'text-black-light': color == 0 }"
+				type="mdi"
+				:path="iconCancel"
+			></svg-icon>
+		</button>
 	</div>
 </template>
-
-<style>
-div:hover > .filter-label {
-	display: block;
-}
-</style>
 
 <script>
 import SvgIcon from "@jamescoyle/vue-icon";

@@ -1,18 +1,22 @@
 export class RatingRenderer {
     init(params) {
+        let val = parseInt(params.value);
+
         this.eGui = document.createElement("div");
         this.eGui.className = "rating flex";
+
         let stars_orange = "";
-        for (var i = 1; i <= params.value; i++) {
+        for (var i = 1; i <= val; i++) {
             stars_orange += this.star("text-active-orange", i);
         }
 
         let stars_gray = "";
-        for (var i = params.value + 1; i <= 5; i++) {
+        for (var i = val + 1; i <= 5; i++) {
             stars_gray += this.star("text-white opacity-20", i);
         }
-        this.eGui.addEventListener("click", this.saveCell.bind(event, params));
+
         this.eGui.innerHTML = stars_orange + stars_gray;
+        this.eGui.addEventListener("click", this.saveCell.bind(event, params));
     }
 
     getGui() {
@@ -37,7 +41,6 @@ export class RatingRenderer {
     }
 
     saveCell(params, e) {
-        console.log(e.path[0].getAttribute("star"));
         let newRating = e.path[0].getAttribute("star");
         params.setValue(newRating);
     }

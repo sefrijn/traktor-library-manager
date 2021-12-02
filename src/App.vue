@@ -2,7 +2,7 @@
   <div class="h-screen bg-black-dark text-white font-sans">
     <app-header
       ref="header"
-      style="height:82px;"
+      style="height:67px;"
       @save="save"
       @load="load"
     ></app-header>
@@ -15,13 +15,14 @@
         v-if="sidebar && pathToLibrary"
         class="max-w-sm flex flex-col justify-between"
         :style="{ width: `${asideWidth}%` }"
+        style="height: calc(100vh - 134px);"
       >
         <browser :playlists="playlists"></browser>
         <div
           class="border-t border-black-medium nowplaying text-sm font-medium text-center text-white bg-black-light"
         >
           <img v-if="image" :src="image" />
-          <span class="block uppercase text-xxs text-gray pt-2"
+          <span v-if="artist" class="block uppercase text-xxs text-gray pt-2"
             >now playing</span
           >
           <p v-if="artist" class="pb-3 px-1">{{ artist }} - {{ title }}</p>
@@ -39,9 +40,10 @@
       <section
         v-if="pathToLibrary"
         class="flex-grow relative"
-        style="height: calc(100vh - 149px);"
+        style="height: calc(100vh - 134px);"
       >
         <ag-grid-vue
+          @mouseenter="setScrollSource('grid')"
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
           :class="classesGrid"
@@ -64,6 +66,9 @@
         >
         </ag-grid-vue>
         <visual-browser
+          @scroll="onBodyScroll"
+          ref="visualbrowser"
+          @mouseenter="setScrollSource('visualbrowser')"
           :class="classesVisualBrowser"
           :tracks="visibleTracks"
           :filtered-songs="filteredSongs"
@@ -184,7 +189,10 @@ export default {
       };
     },
     scroll() {
-      return this.$store.state.scroll.ratio;
+      return this.$store.state.scrollRatio;
+    },
+    scrollSource() {
+      return this.$store.state.scrollSource;
     },
   },
   watch: {
@@ -203,15 +211,15 @@ export default {
     query(newtext, oldtext) {
       this.gridApi.setQuickFilter(newtext);
     },
-    scroll(newscroll, oldscroll) {
-      if (
-        this.$store.state.scroll.source == "visualbrowser" &&
-        this.$store.state.scroll.human
-      ) {
-        let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
-        this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newscroll * h;
-      }
-    },
+    // scroll(newscroll, oldscroll) {
+    // if (
+    //   this.$store.state.scroll.source == "visualbrowser" &&
+    //   this.$store.state.scroll.human
+    // ) {
+    //   let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
+    //   this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newscroll * h;
+    // }
+    // },
     filter(newval, oldval) {
       if (newval.rating <= 0 && newval.color <= 0)
         this.gridApi.setFilterModel(null);
@@ -274,24 +282,45 @@ export default {
     });
   },
   methods: {
+    setScrollSource(source) {
+      console.log(source);
+      this.$store.commit("setScrollSource", source);
+    },
     onBodyScroll: throttle(16, function(event) {
       // Throttle scroll to 60 FPS to optimise scrolling visual browser
-      if (
-        this.$store.state.scroll.source == "visualbrowser" &&
-        this.$store.state.scroll.human
-      ) {
-        this.$store.commit("setHumanScroll", false);
-        return;
+      if (this.scrollSource == "grid") {
+        // Calculate ratio
+        let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
+        let newScrollRatio =
+          this.gridApi.gridBodyCon.eBodyViewport.scrollTop / h;
+
+        // Apply ratio
+        h = this.$refs.visualbrowser.$refs.hugeWrapper.clientHeight;
+        this.$refs.visualbrowser.$refs.smallWrapper.scrollTop =
+          newScrollRatio * h;
+      } else {
+        let h = this.$refs.visualbrowser.$refs.hugeWrapper.clientHeight;
+        let newScrollRatio =
+          this.$refs.visualbrowser.$refs.smallWrapper.scrollTop / h;
+
+        // Apply ratio
+        h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
+        this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newScrollRatio * h;
       }
-      let newScroll = {};
-      let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
-
-      newScroll.ratio = this.gridApi.gridBodyCon.eBodyViewport.scrollTop / h;
-      newScroll.ratio = newScroll.ratio.toFixed(5);
-
-      newScroll.source = "list";
-      this.$store.commit("setHumanScroll", true);
-      this.$store.commit("setScroll", newScroll);
+      // if (
+      //   this.$store.state.scroll.source == "visualbrowser" &&
+      //   this.$store.state.scroll.human
+      // ) {
+      //   this.$store.commit("setHumanScroll", false);
+      //   return;
+      // }
+      // let newScroll = {};
+      // let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
+      // newScroll.ratio = this.gridApi.gridBodyCon.eBodyViewport.scrollTop / h;
+      // newScroll.ratio = newScroll.ratio.toFixed(5);
+      // newScroll.source = "list";
+      // this.$store.commit("setHumanScroll", true);
+      // this.$store.commit("setScroll", newScroll);
     }),
     load(event) {
       window.ipcRenderer.send("openLibrary", "trigger open file");
