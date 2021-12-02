@@ -356,7 +356,7 @@ export default {
       let self = this;
       setTimeout(function() {
         self.save(params);
-      }, 5);
+      }, 50);
     },
     save(params) {
       // > Save changes to Traktor XML

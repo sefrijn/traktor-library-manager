@@ -1,13 +1,15 @@
 import { IndexRenderer } from "./Renderer/IndexRenderer.js";
 import { CoverArtRenderer } from "./Renderer/CoverArtRenderer.js";
-import RatingRenderer from "./Renderer/RatingRenderer.vue";
-import ColorRenderer from "./Renderer/ColorRenderer.vue";
+import { RatingRenderer } from "./Renderer/RatingRenderer.js";
+import { ColorRenderer } from "./Renderer/ColorRenderer.js";
 import Genre from "./Editor/Genre.vue";
 import Tagging from "./Editor/Tagging.vue";
 
 let ag_components = {
   indexRenderer: IndexRenderer,
   coverArtRenderer: CoverArtRenderer,
+  ratingRenderer: RatingRenderer,
+  colorRenderer: ColorRenderer,
 };
 
 let column_defs = [
@@ -17,7 +19,6 @@ let column_defs = [
     editable: false,
     width: 58,
     sort: "desc",
-    // sort: "asc",
     cellRenderer: "indexRenderer",
   },
   {
@@ -44,20 +45,19 @@ let column_defs = [
     hide: false,
     editable: false,
     width: 84,
-    // cellRendererFramework: CoverArtRenderer,
     cellRenderer: "coverArtRenderer",
   },
   {
     headerName: "Intensity",
     field: "rating",
     width: 86,
-    cellRendererFramework: RatingRenderer,
+    cellRenderer: "ratingRenderer",
   },
   {
     headerName: "Color",
     field: "color_code",
     width: 102,
-    cellRendererFramework: ColorRenderer,
+    cellRenderer: "colorRenderer",
   },
   {
     headerName: "Artist",
