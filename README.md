@@ -4,7 +4,7 @@ Manage your Traktor Pro 3 library with ease! Build with love, with the help of V
 
 ## Todo
 
--   Scroll speed too slow
+-   [ ] Scroll speed too slow
 
 ## Project setup
 
