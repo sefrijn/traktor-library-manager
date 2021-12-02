@@ -1,5 +1,5 @@
 <template>
-	<aside class="w-full relative flex">
+	<aside class="w-full h-full relative flex">
 		<img
 			src="./../assets/welcome.png"
 			alt=""

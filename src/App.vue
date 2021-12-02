@@ -7,13 +7,13 @@
       @load="load"
     ></app-header>
 
-    <main class="flex" @mouseup="endDragging">
-      <welcome v-if="!pathToLibrary" style="height: calc(100vh - 149px);">
-      </welcome>
+    <main class="flex relative" @mouseup="endDragging">
+      <welcome v-if="!pathToLibrary"> </welcome>
+      <generate-cover-art></generate-cover-art>
+
       <aside
         v-if="sidebar && pathToLibrary"
         class="max-w-sm flex flex-col justify-between"
-        style="height: calc(100vh - 149px);"
         :style="{ width: `${asideWidth}%` }"
       >
         <browser :playlists="playlists"></browser>
@@ -27,6 +27,7 @@
           <p v-if="artist" class="pb-3 px-1">{{ artist }} - {{ title }}</p>
         </div>
       </aside>
+
       <div
         v-if="sidebar && pathToLibrary"
         class="divider w-2 flex justify-center items-center bg-black-medium hover:bg-black-light cursor-divider-h"
@@ -34,6 +35,7 @@
       >
         <img src="./assets/vsizegrip.png" alt="" />
       </div>
+
       <section
         v-if="pathToLibrary"
         class="flex-grow relative"
@@ -90,9 +92,9 @@ import AppFooter from "./components/AppFooter.vue";
 import Browser from "./components/Browser.vue";
 import VisualBrowser from "./components/VisualBrowser.vue";
 import Welcome from "./components/Welcome.vue";
+import GenerateCoverArt from "./components/GenerateCoverArt.vue";
 import { column_defs } from "./components/columnDefs.js";
 import tinykeys from "tinykeys";
-// var debounceLib = require("debounce");
 import { throttle } from "throttle-debounce";
 
 export default {
@@ -104,6 +106,7 @@ export default {
     VisualBrowser,
     Browser,
     Welcome,
+    GenerateCoverArt,
   },
   data() {
     return {
