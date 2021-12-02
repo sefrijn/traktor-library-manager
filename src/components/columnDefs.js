@@ -1,9 +1,14 @@
-import IndexRenderer from "./Renderer/IndexRenderer.vue";
-import CoverArtRenderer from "./Renderer/CoverArtRenderer.vue";
+import { IndexRenderer } from "./Renderer/IndexRenderer.js";
+import { CoverArtRenderer } from "./Renderer/CoverArtRenderer.js";
 import RatingRenderer from "./Renderer/RatingRenderer.vue";
 import ColorRenderer from "./Renderer/ColorRenderer.vue";
 import Genre from "./Editor/Genre.vue";
 import Tagging from "./Editor/Tagging.vue";
+
+let ag_components = {
+  indexRenderer: IndexRenderer,
+  coverArtRenderer: CoverArtRenderer,
+};
 
 let column_defs = [
   {
@@ -13,7 +18,7 @@ let column_defs = [
     width: 58,
     sort: "desc",
     // sort: "asc",
-    cellRendererFramework: IndexRenderer,
+    cellRenderer: "indexRenderer",
   },
   {
     headerName: "Track ID",
@@ -39,7 +44,8 @@ let column_defs = [
     hide: false,
     editable: false,
     width: 84,
-    cellRendererFramework: CoverArtRenderer,
+    // cellRendererFramework: CoverArtRenderer,
+    cellRenderer: "coverArtRenderer",
   },
   {
     headerName: "Intensity",
@@ -91,4 +97,4 @@ let column_defs = [
   { headerName: "Play Count", field: "play_count" },
   { headerName: "Cue Points", field: "cue_points", hide: true },
 ];
-export { column_defs };
+export { column_defs, ag_components };

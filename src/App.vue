@@ -45,7 +45,7 @@
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
           :class="classesGrid"
-          :rowBuffer="5"
+          :rowBuffer="10"
           :column-defs="columnDefs"
           :default-col-def="defaultColDef"
           :suppress-scroll-on-new-data="preventScroll"
@@ -93,7 +93,7 @@ import Browser from "./components/Browser.vue";
 import VisualBrowser from "./components/VisualBrowser.vue";
 import Welcome from "./components/Welcome.vue";
 import GenerateCoverArt from "./components/GenerateCoverArt.vue";
-import { column_defs } from "./components/columnDefs.js";
+import { column_defs, ag_components } from "./components/columnDefs.js";
 import tinykeys from "tinykeys";
 import { throttle } from "throttle-debounce";
 
@@ -234,7 +234,9 @@ export default {
     },
   },
   beforeMount() {
-    this.gridOptions = {};
+    this.gridOptions = {
+      components: ag_components,
+    };
     this.columnDefs = column_defs;
     this.rowClassRules = {
       "color-1": (params) => {

@@ -1,5 +1,8 @@
 <template>
-    <div class="rating flex">
+    <div
+        class="rating flex"
+        :class="{ 'pointer-events-none': !this.$store.state.savingEnabled }"
+    >
         <span
             v-for="star in rating"
             @click="saveCell"
@@ -32,7 +35,6 @@
 <script>
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiStar } from "@mdi/js";
-import { mdiStarOutline } from "@mdi/js";
 
 export default {
     components: {
@@ -41,7 +43,6 @@ export default {
     data() {
         return {
             iconStar: mdiStar,
-            iconStarOutline: mdiStarOutline,
             rating: "",
         };
     },
@@ -53,8 +54,7 @@ export default {
             // prevent scrolling and set value
             this.rating = parseInt(e.target.attributes.star.nodeValue);
             this.$store.dispatch("setPreventScroll", true).then(() => {
-                console.log(this.params);
-                // this.params.setValue(this.rating);
+                this.params.setValue(this.rating);
             });
         },
     },

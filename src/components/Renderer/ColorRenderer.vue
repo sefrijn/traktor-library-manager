@@ -3,6 +3,7 @@
         class="flex h-full space-x-1"
         @mouseleave="resetColor"
         @click="saveCell"
+        :class="{ 'pointer-events-none': !this.$store.state.savingEnabled }"
     >
         <div
             v-for="index in 7"
@@ -37,6 +38,7 @@ export default {
         saveCell() {
             // prevent scrolling and set value
             this.$store.dispatch("setPreventScroll", true).then(() => {
+                console.log("save? " + this.$store.state.savingEnabled);
                 this.params.setValue(this.color);
                 let rowNode = this.params.api.getRowNode(
                     this.params.data.index
