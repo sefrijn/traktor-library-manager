@@ -14,18 +14,18 @@
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import { client_secret, client_id } from "./config.js";
+import { client_secret, client_id } from "./config.js"; // Spotify
 
 const isDevelopment = process.env.NODE_ENV !== "production";
-const { dialog, ipcMain, desktopCapturer } = require("electron");
+const { dialog, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const xml2js = require("xml2js");
 const mm = require("music-metadata");
 const axios = require("axios");
 const qs = require("qs");
-const mime = require("mime-types");
 const sharp = require("sharp");
+const si = require("systeminformation");
 
 let parser = new xml2js.Parser();
 var builder = new xml2js.Builder({
@@ -34,6 +34,7 @@ var builder = new xml2js.Builder({
 let win = null;
 
 // > Electron Window Functions
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   {
@@ -67,17 +68,6 @@ async function createWindow() {
     win.loadURL("app://./index.html");
   }
 
-  desktopCapturer
-    .getSources({ types: ["window", "screen"] })
-    .then(async (sources) => {
-      for (const source of sources) {
-        if (source.name == "Traktor") {
-          console.log(
-            "WARNING - traktor is open, close it before you continue to avoid any library conflict"
-          );
-        }
-      }
-    });
   let token = await spotifyApi();
   console.log("Token: " + token);
 
@@ -204,6 +194,29 @@ ipcMain.on("buildXML", function(event, arg) {
     if (err) return console.log(err);
     console.log("Saved document");
     win.webContents.send("buildXML", "Succes saving XML");
+  });
+});
+
+ipcMain.on("traktorOpen", function(event, arg) {
+  si.processes()
+    .then((data) => {
+      let result = data.list.find((obj) => {
+        return obj.name === "Traktor";
+      });
+      if (result) {
+        win.webContents.send("traktorOpen", true);
+      } else {
+        win.webContents.send("traktorOpen", false);
+      }
+    })
+    .catch((error) => console.error(error));
+});
+
+ipcMain.on("saveWarning", function(event, arg) {
+  dialog.showMessageBoxSync({
+    title: "Saving disabled",
+    message:
+      "Traktor is opened. Your changes will not be saved to database. This is a safety feature to prevent conflicting changes.",
   });
 });
 

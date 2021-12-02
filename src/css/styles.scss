@@ -116,7 +116,7 @@ header .color-dot:hover {
 				background-color: lighten($red-dark, 5%);
 			}
 			&.ag-row-focus {
-				background-color: darken($red-bright, 15%);
+				background-color: lighten($red-dark, 15%);
 			}
 		}
 		&.color-2 {
@@ -128,7 +128,7 @@ header .color-dot:hover {
 				background-color: lighten($orange-dark, 5%);
 			}
 			&.ag-row-focus {
-				background-color: darken($orange-bright, 15%);
+				background-color: lighten($orange-dark, 15%);
 			}
 		}
 		&.color-3 {
@@ -140,7 +140,7 @@ header .color-dot:hover {
 				background-color: lighten($yellow-dark, 5%);
 			}
 			&.ag-row-focus {
-				background-color: darken($yellow-bright, 15%);
+				background-color: lighten($yellow-dark, 15%);
 			}
 		}
 		&.color-4 {
@@ -152,7 +152,7 @@ header .color-dot:hover {
 				background-color: lighten($green-dark, 5%);
 			}
 			&.ag-row-focus {
-				background-color: darken($green-bright, 15%);
+				background-color: lighten($green-dark, 15%);
 			}
 		}
 		&.color-5 {
@@ -164,7 +164,7 @@ header .color-dot:hover {
 				background-color: lighten($blue-dark, 5%);
 			}
 			&.ag-row-focus {
-				background-color: darken($blue-bright, 15%);
+				background-color: lighten($blue-dark, 15%);
 			}
 		}
 		&.color-6 {
@@ -176,7 +176,7 @@ header .color-dot:hover {
 				background-color: lighten($violet-dark, 5%);
 			}
 			&.ag-row-focus {
-				background-color: darken($violet-bright, 15%);
+				background-color: lighten($violet-dark, 15%);
 			}
 		}
 		&.color-7 {
@@ -188,7 +188,7 @@ header .color-dot:hover {
 				background-color: lighten($magenta-dark, 5%);
 			}
 			&.ag-row-focus {
-				background-color: darken($magenta-bright, 15%);
+				background-color: lighten($magenta-dark, 15%);
 			}
 		}
 	}

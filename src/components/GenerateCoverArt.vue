@@ -1,5 +1,5 @@
 <template>
-	<div class="absolute h-full w-full z-20">
+	<div class="hidden absolute h-full w-full z-20">
 		<img
 			src="./../assets/welcome.png"
 			alt=""

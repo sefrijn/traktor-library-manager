@@ -45,7 +45,7 @@
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
           :class="classesGrid"
-          :rowBuffer="10"
+          :rowBuffer="5"
           :column-defs="columnDefs"
           :default-col-def="defaultColDef"
           :suppress-scroll-on-new-data="preventScroll"
@@ -126,6 +126,7 @@ export default {
       rowClassRules: null, // styling of rows
       playlists: null,
       unsubscribe: null,
+      traktorOpen: null,
     };
   },
   computed: {
@@ -134,6 +135,9 @@ export default {
     },
     preventScroll() {
       return this.$store.state.preventScroll;
+    },
+    isSavingEnabled() {
+      return this.$store.state.savingEnabled;
     },
     collection() {
       return this.$store.state.collection;
@@ -184,6 +188,18 @@ export default {
     },
   },
   watch: {
+    isSavingEnabled(newval, oldval) {
+      let self = this;
+      this.columnDefs.forEach(function(colDef, index) {
+        if (newval && !colDef.hasOwnProperty("editable")) {
+          self.columnDefs[index].editable = true;
+        } else {
+          if (self.columnDefs[index].editable) {
+            delete self.columnDefs[index].editable;
+          }
+        }
+      });
+    },
     query(newtext, oldtext) {
       this.gridApi.setQuickFilter(newtext);
     },
@@ -343,8 +359,6 @@ export default {
     save(params) {
       // > Save changes to Traktor XML
       let self = this;
-      this.$store.commit("setSaving", true);
-      console.log("Save these changes:");
       console.log(params.data);
 
       this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
@@ -426,6 +440,16 @@ export default {
         localStorage.pathToLibrary,
       ]);
     },
+
+    pollTraktorOpen() {
+      window.ipcRenderer.send("traktorOpen", "");
+      this.traktorOpen = setInterval(() => {
+        window.ipcRenderer.send("traktorOpen", "");
+      }, 4000);
+    },
+  },
+  created() {
+    this.pollTraktorOpen();
   },
   mounted() {
     let self = this;
@@ -552,7 +576,8 @@ export default {
     });
   },
   beforeUnmount() {
-    console.log("remove watcher");
+    console.log("remove watcher and clear traktor check interval");
+    clearInterval(this.traktorOpen);
     this.unsubscribe();
   },
 };

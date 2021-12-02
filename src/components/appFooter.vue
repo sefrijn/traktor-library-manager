@@ -11,26 +11,41 @@
 
 		<div
 			v-if="pathToLibrary"
-			class="h-5 flex justify-center items-center space-x-6"
+			class="h-5 flex justify-center items-center space-x-6 text-right"
 		>
-			<div
-				v-if="isSaving"
-				class="flex justify-center items-center space-x-1"
-			>
-				<clip-loader
-					class="mt-0.5"
-					:loading="isSaving"
-					color="#f3980c"
-					size="13px"
-				></clip-loader>
-				<p class="animate-pulse">Autosaving Library</p>
+			<div>
+				<p class="uppercase">status</p>
+				<div v-if="isSaving" class="text-white relative flex space-x-2">
+					<clip-loader
+						class="h-2"
+						:loading="isSaving"
+						color="#f3980c"
+						size="13px"
+					></clip-loader>
+					<p class="animate-pulse">Autosaving Library</p>
+				</div>
+				<p v-if="!isSaving && isSavingEnabled" class="text-white">
+					Ready
+				</p>
+				<p v-if="!isSaving && !isSavingEnabled && !isStartingUp" class="text-white">
+					Saving disabled, close Traktor
+				</p>
+				<p v-if="!isSaving && !isSavingEnabled && isStartingUp" class="text-white relative flex space-x-2">
+					<clip-loader
+						class="h-2"
+						:loading="true"
+						color="#f3980c"
+						size="13px"
+					></clip-loader>
+					<p class="animate-pulse">Starting Up...</p>
+				</p>
 			</div>
 
-			<div class="text-right">
+			<div>
 				<p class="uppercase">active</p>
 				<p class="text-white">{{ filteredSongs }}</p>
 			</div>
-			<div class="text-right">
+			<div>
 				<p class="uppercase">library</p>
 				<p class="text-white">{{ totalSongs }}</p>
 			</div>
@@ -61,11 +76,29 @@ export default {
 		pathToLibrary() {
 			return this.$store.state.libraryPath;
 		},
-
 		isSaving() {
 			return this.$store.state.saving;
 		},
+		isSavingEnabled() {
+			return this.$store.state.savingEnabled;
+		},
+		isStartingUp(){
+			return this.$store.state.startingUp;
+		}
 	},
 	methods: {},
+	mounted() {
+		let self = this;
+		window.ipcRenderer.receive("traktorOpen", function(traktorOpen) {
+			// Initial check Traktor Open. Ready to save if Traktor is closed.
+			if(self.$store.state.startingUp) {
+				console.log("Ready to save");
+			    self.$store.commit("setStartingUp", false);
+			}
+
+			// If Traktor is open (= true), saving is NOT enabled (= false), so invert variable
+			self.$store.commit("setSavingEnabled", !traktorOpen);
+		});
+	},
 };
 </script>

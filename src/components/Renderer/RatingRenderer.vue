@@ -50,22 +50,13 @@ export default {
     },
     methods: {
         saveCell(e) {
-            console.log(e);
             // prevent scrolling and set value
             this.rating = parseInt(e.target.attributes.star.nodeValue);
             this.$store.dispatch("setPreventScroll", true).then(() => {
-                this.params.setValue(this.rating);
+                console.log(this.params);
+                // this.params.setValue(this.rating);
             });
-        },
-        setStar(e) {},
-        resetStar() {
-            this.rating = this.params.value;
         },
     },
 };
 </script>
-
-<style scoped>
-.rating > span > svg {
-}
-</style>

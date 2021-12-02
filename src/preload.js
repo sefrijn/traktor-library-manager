@@ -9,6 +9,8 @@ const validChannels = [
 	"coverArtSingle",
 	"coverArtCell",
 	"loadAudio",
+	"traktorOpen",
+	"saveWarning",
 ];
 
 // Expose protected methods that allow the renderer process to use

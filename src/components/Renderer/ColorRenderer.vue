@@ -8,7 +8,7 @@
             v-for="index in 7"
             @mouseenter="setColor"
             :color="index"
-            class="flex items-center justify-center cursor-pointer color-dot"
+            class="flex cursor-pointer items-center justify-center color-dot"
             :class="{ 'active-color': color == index }"
         >
             <div
@@ -38,6 +38,12 @@ export default {
             // prevent scrolling and set value
             this.$store.dispatch("setPreventScroll", true).then(() => {
                 this.params.setValue(this.color);
+                let rowNode = this.params.api.getRowNode(
+                    this.params.data.index
+                );
+                this.params.api.redrawRows({
+                    rowNodes: [rowNode],
+                });
             });
         },
         setColor(e) {

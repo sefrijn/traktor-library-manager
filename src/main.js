@@ -14,7 +14,9 @@ const store = createStore({
 			// Functional
 			loading: false, // is audio being loaded? show loader
 			saving: false, // is document being saved
+			savingEnabled: true,
 			libraryPath: null, // path to Library NML file
+			startingUp: true,
 
 			// Display
 			display: "split", // display setting [split,list,grid]
@@ -54,6 +56,12 @@ const store = createStore({
 		},
 		setSaving(state, saving) {
 			state.saving = saving;
+		},
+		setSavingEnabled(state, savingEnabled) {
+			state.savingEnabled = savingEnabled;
+		},
+		setStartingUp(state, status) {
+			state.startingUp = status;
 		},
 		setLibraryPath(state, path) {
 			state.libraryPath = path;
