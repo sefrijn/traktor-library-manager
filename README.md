@@ -4,7 +4,7 @@ Manage your Traktor Pro 3 library with ease! Build with love, with the help of V
 
 ## Todo
 
--   [ ] Convert Color renderer to normal Javascript to improve speed
+-   [ ] Progress Indicator during cover art generation
 
 ## Project setup
 

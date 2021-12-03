@@ -245,7 +245,9 @@ if (!fs.existsSync(cover_path_large)) {
 ipcMain.on("coverArtList", function(event, arg) {
   let files = arg[0];
   let images = {};
-  // console.log("started processing images: " + Date.now());
+  let total = parseInt(Object.keys(files).length);
+  let counter = 0;
+  console.log("started processing X images: " + Object.keys(files).length);
   let start = Date.now();
   (async () => {
     try {
@@ -288,6 +290,8 @@ ipcMain.on("coverArtList", function(event, arg) {
               files[index].file = null;
             }
           }
+          counter++;
+          win.webContents.send("coverArtProgress", counter / total);
         })
       );
       // console.log("finished: " + (Date.now() - start));

@@ -5,6 +5,7 @@ const validChannels = [
 	"openLibrary",
 	"parseXML",
 	"buildXML",
+	"coverArtProgress",
 	"coverArtList",
 	"coverArtSingle",
 	"coverArtCell",

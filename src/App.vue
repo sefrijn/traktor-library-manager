@@ -8,8 +8,12 @@
     ></app-header>
 
     <main class="flex relative" @mouseup="endDragging">
-      <welcome v-if="!pathToLibrary"> </welcome>
-      <generate-cover-art></generate-cover-art>
+      <welcome v-if="!pathToLibrary" style="height: calc(100vh - 134px);">
+      </welcome>
+      <generate-cover-art
+        v-if="pathToLibrary"
+        style="height: calc(100vh - 134px);"
+      ></generate-cover-art>
 
       <aside
         v-if="sidebar && pathToLibrary"
