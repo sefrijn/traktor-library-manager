@@ -29,7 +29,7 @@ export class RatingRenderer {
                     width="13"
                     height="13"
                     viewBox="0 0 24 24"
-                    class="pointer-events-none inline ${color}"
+                    class="fill-current pointer-events-none inline ${color}"
                     data-v-52a8d0d7=""
                     style="--sx:1; --sy:1; --r:0deg;"
                 >
