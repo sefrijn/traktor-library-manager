@@ -1,9 +1,11 @@
 import { createStore } from "vuex";
 import functional from "./functional.js";
+// import display from "./display.js";
 
 export default createStore({
 	modules: {
 		functional: functional,
+		// display: display,
 	},
 	state() {
 		return {
@@ -37,9 +39,30 @@ export default createStore({
 		};
 	},
 	mutations: {
+		// Display
+		setDisplay(state, display_type) {
+			state.display = display_type;
+			localStorage.display = display_type;
+		},
+		showSidebar(state, show) {
+			state.sidebar = show;
+		},
+		setScrollSource(state, source) {
+			state.scrollSource = source;
+		},
+		setScrollRatio(state, ratio) {
+			state.scrollRatio = ratio;
+		},
 		setPreventScroll(state, prevent) {
 			state.preventScroll = prevent;
 		},
+		setShowMarkers(state, value) {
+			state.showMarkers = value;
+		},
+		setActivePlaylist(state, playlist) {
+			state.activePlaylist = playlist;
+		},
+
 		addGenre(state, genre) {
 			state.genres.push(genre);
 			state.genres.sort();
@@ -56,12 +79,6 @@ export default createStore({
 			state.tags = [];
 		},
 
-		setActivePlaylist(state, playlist) {
-			state.activePlaylist = playlist;
-		},
-		setShowMarkers(state, value) {
-			state.showMarkers = value;
-		},
 		setCollection(state, data) {
 			state.collection = data;
 		},
@@ -72,23 +89,8 @@ export default createStore({
 			console.log("setRowData in Vuex Store");
 			state.rowData = data;
 		},
-		showSidebar(state, show) {
-			state.sidebar = show;
-		},
 		setTrackPlaying(state, track) {
 			state.trackPlaying = track;
-		},
-		setDisplay(state, display_type) {
-			state.display = display_type;
-			localStorage.display = display_type;
-		},
-
-		// Display
-		setScrollSource(state, source) {
-			state.scrollSource = source;
-		},
-		setScrollRatio(state, ratio) {
-			state.scrollRatio = ratio;
 		},
 
 		setQuery(state, text) {
