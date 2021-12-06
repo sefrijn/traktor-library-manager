@@ -7,13 +7,6 @@ export default createStore({
 	},
 	state() {
 		return {
-			// Functional
-			// loading: false, // is audio being loaded? show loader
-			// saving: false, // is document being saved
-			// savingEnabled: true,
-			// libraryPath: null, // path to Library NML file
-			// startingUp: true,
-
 			// Display
 			display: "split", // display setting [split,list,grid]
 			sidebar: true,
@@ -44,21 +37,6 @@ export default createStore({
 		};
 	},
 	mutations: {
-		// setLoading(state, loading) {
-		// 	state.loading = loading;
-		// },
-		// setSaving(state, saving) {
-		// 	state.saving = saving;
-		// },
-		// setSavingEnabled(state, savingEnabled) {
-		// 	state.savingEnabled = savingEnabled;
-		// },
-		// setStartingUp(state, status) {
-		// 	state.startingUp = status;
-		// },
-		// setLibraryPath(state, path) {
-		// 	state.libraryPath = path;
-		// },
 		setPreventScroll(state, prevent) {
 			state.preventScroll = prevent;
 		},

@@ -1,3 +1,5 @@
+import store from "../../store";
+
 export class RatingRenderer {
     init(params) {
         let val = parseInt(params.value);
@@ -41,7 +43,9 @@ export class RatingRenderer {
     }
 
     saveCell(params, e) {
-        let newRating = e.path[0].getAttribute("star");
-        params.setValue(newRating);
+        if (store.getters.savingEnabled) {
+            let newRating = e.path[0].getAttribute("star");
+            params.setValue(newRating);
+        }
     }
 }
