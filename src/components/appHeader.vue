@@ -68,7 +68,7 @@ export default {
 	},
 	computed: {
 		pathToLibrary() {
-			return this.$store.state.libraryPath;
+			return this.$store.getters.libraryPath;
 		},
 	},
 	methods: {

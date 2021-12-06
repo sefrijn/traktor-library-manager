@@ -28,7 +28,7 @@
 			<input
 				type="radio"
 				name="display"
-				value="grid"
+				value="visualbrowser"
 				id="viewgrid"
 				v-model="display"
 			/>
@@ -57,9 +57,6 @@ export default {
 		};
 	},
 	computed: {
-		loading() {
-			return this.$store.state.loading;
-		},
 		display: {
 			get() {
 				return this.$store.state.display;

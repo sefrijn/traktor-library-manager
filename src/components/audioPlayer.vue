@@ -148,7 +148,7 @@ export default {
 				: null;
 		},
 		loading() {
-			return this.$store.state.loading;
+			return this.$store.getters.loading;
 		},
 		sidebar() {
 			return this.$store.state.sidebar;
@@ -202,6 +202,7 @@ export default {
 		this.createWavesurfer();
 	},
 	mounted() {
+		console.log(this.$store.getters.loading);
 		let self = this;
 		this.createWavesurfer();
 

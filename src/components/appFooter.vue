@@ -74,16 +74,16 @@ export default {
 	},
 	computed: {
 		pathToLibrary() {
-			return this.$store.state.libraryPath;
+			return this.$store.getters.libraryPath;
 		},
 		isSaving() {
-			return this.$store.state.saving;
+			return this.$store.getters.saving;
 		},
 		isSavingEnabled() {
-			return this.$store.state.savingEnabled;
+			return this.$store.getters.savingEnabled;
 		},
 		isStartingUp(){
-			return this.$store.state.startingUp;
+			return this.$store.getters.startingUp;
 		}
 	},
 	methods: {},
@@ -91,7 +91,7 @@ export default {
 		let self = this;
 		window.ipcRenderer.receive("traktorOpen", function(traktorOpen) {
 			// Initial check Traktor Open. Ready to save if Traktor is closed.
-			if(self.$store.state.startingUp) {
+			if(self.$store.getters.startingUp) {
 				console.log("Ready to save");
 			    self.$store.commit("setStartingUp", false);
 			}

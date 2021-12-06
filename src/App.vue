@@ -45,9 +45,9 @@
         v-if="pathToLibrary"
         class="flex-grow relative"
         style="height: calc(100vh - 134px);"
+        @wheel="setScrollSource"
       >
         <ag-grid-vue
-          @mouseenter="setScrollSource('grid')"
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
           :class="classesGrid"
@@ -72,7 +72,6 @@
         <visual-browser
           @scroll="onBodyScroll"
           ref="visualbrowser"
-          @mouseenter="setScrollSource('visualbrowser')"
           :class="classesVisualBrowser"
           :tracks="visibleTracks"
           :filtered-songs="filteredSongs"
@@ -144,13 +143,13 @@ export default {
   },
   computed: {
     pathToLibrary() {
-      return this.$store.state.libraryPath;
+      return this.$store.getters.libraryPath;
     },
     preventScroll() {
       return this.$store.state.preventScroll;
     },
     isSavingEnabled() {
-      return this.$store.state.savingEnabled;
+      return this.$store.getters.savingEnabled;
     },
     collection() {
       return this.$store.state.collection;
@@ -186,12 +185,13 @@ export default {
       return {
         "h-full relative z-10": this.$store.state.display === "list",
         "h-1/2": this.$store.state.display === "split",
-        "h-full relative z-0": this.$store.state.display === "grid",
+        "h-full relative z-0": this.$store.state.display === "visualbrowser",
       };
     },
     classesVisualBrowser() {
       return {
-        "h-full absolute top-0 z-10": this.$store.state.display === "grid",
+        "h-full absolute top-0 z-10":
+          this.$store.state.display === "visualbrowser",
         "h-1/2": this.$store.state.display === "split",
         "h-full absolute top-0 z-0": this.$store.state.display === "list",
       };
@@ -290,45 +290,37 @@ export default {
     });
   },
   methods: {
-    setScrollSource(source) {
-      console.log(source);
-      this.$store.commit("setScrollSource", source);
+    setScrollSource(event) {
+      if (this.display === "split") {
+        if (event.clientY < (window.innerHeight - 134) / 2 + 67) {
+          this.$store.commit("setScrollSource", "list");
+        } else {
+          this.$store.commit("setScrollSource", "visualbrowser");
+        }
+      }
     },
     onBodyScroll: throttle(16, function(event) {
       // Throttle scroll to 60 FPS to optimise scrolling visual browser
-      if (this.scrollSource == "grid") {
+      if (this.scrollSource == "list") {
+        // Scrolled from tracklist
         // Calculate ratio
         let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
         let newScrollRatio =
           this.gridApi.gridBodyCon.eBodyViewport.scrollTop / h;
-
         // Apply ratio
         h = this.$refs.visualbrowser.$refs.hugeWrapper.clientHeight;
         this.$refs.visualbrowser.$refs.smallWrapper.scrollTop =
           newScrollRatio * h;
       } else {
+        // Scrolled from visual browser
+        // Calculate ratio
         let h = this.$refs.visualbrowser.$refs.hugeWrapper.clientHeight;
         let newScrollRatio =
           this.$refs.visualbrowser.$refs.smallWrapper.scrollTop / h;
-
         // Apply ratio
         h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
         this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newScrollRatio * h;
       }
-      // if (
-      //   this.$store.state.scroll.source == "visualbrowser" &&
-      //   this.$store.state.scroll.human
-      // ) {
-      //   this.$store.commit("setHumanScroll", false);
-      //   return;
-      // }
-      // let newScroll = {};
-      // let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
-      // newScroll.ratio = this.gridApi.gridBodyCon.eBodyViewport.scrollTop / h;
-      // newScroll.ratio = newScroll.ratio.toFixed(5);
-      // newScroll.source = "list";
-      // this.$store.commit("setHumanScroll", true);
-      // this.$store.commit("setScroll", newScroll);
     }),
     load(event) {
       window.ipcRenderer.send("openLibrary", "trigger open file");
