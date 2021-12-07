@@ -143,7 +143,7 @@ export default {
 		},
 		image() {
 			return this.$store.state.trackPlaying.image
-				? "local-resource://coverart/400/" +
+				? "local-resource://coverart/200/" +
 						this.$store.state.trackPlaying.image
 				: null;
 		},

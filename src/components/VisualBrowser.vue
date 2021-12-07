@@ -44,7 +44,7 @@
                         :artist="row.data.artist"
                         :title="row.data.title"
                         :textHeight="coverTextHeight"
-                        :src="'local-resource://coverart/400/' + row.data.image"
+                        :src="'local-resource://coverart/200/' + row.data.image"
                     >
                     </component>
                 </div>

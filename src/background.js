@@ -33,6 +33,8 @@ var builder = new xml2js.Builder({
 });
 let win = null;
 
+const debugLimitImages = 5000;
+
 // > Electron Window Functions
 
 // Scheme must be registered before the app is ready
@@ -221,6 +223,29 @@ ipcMain.on("saveWarning", function(event, arg) {
 });
 
 // >> LOAD ALL IMAGES
+// >> Generate all coverart files
+// Large
+const cover_size_large = 400;
+const cover_path_large = path.join(
+  app.getPath("userData"),
+  "coverart",
+  cover_size_large.toString()
+);
+if (!fs.existsSync(cover_path_large)) {
+  fs.mkdirSync(cover_path_large, { recursive: true });
+}
+
+// medium
+const cover_size_medium = 200;
+const cover_path_medium = path.join(
+  app.getPath("userData"),
+  "coverart",
+  cover_size_medium.toString()
+);
+if (!fs.existsSync(cover_path_medium)) {
+  fs.mkdirSync(cover_path_medium, { recursive: true });
+}
+
 const cover_size_small = 60;
 const cover_path_small = path.join(
   app.getPath("userData"),
@@ -231,17 +256,6 @@ if (!fs.existsSync(cover_path_small)) {
   fs.mkdirSync(cover_path_small, { recursive: true });
 }
 
-// >> Generate all coverart files
-// Large and small
-const cover_size_large = 400;
-const cover_path_large = path.join(
-  app.getPath("userData"),
-  "coverart",
-  cover_size_large.toString()
-);
-if (!fs.existsSync(cover_path_large)) {
-  fs.mkdirSync(cover_path_large, { recursive: true });
-}
 ipcMain.on("coverArtList", function(event, arg) {
   let files = arg[0];
   let images = {};
@@ -257,13 +271,19 @@ ipcMain.on("coverArtList", function(event, arg) {
             cover_path_small,
             path.parse(files[index].file).name + ".jpeg"
           );
+          let path_medium = path.join(
+            cover_path_medium,
+            path.parse(files[index].file).name + ".jpeg"
+          );
           let path_large = path.join(
             cover_path_large,
             path.parse(files[index].file).name + ".jpeg"
           );
           if (
-            index < 1500 &&
-            (!fs.existsSync(path_small) || !fs.existsSync(path_large))
+            index < debugLimitImages &&
+            (!fs.existsSync(path_small) ||
+              !fs.existsSync(path_medium) ||
+              !fs.existsSync(path_large))
           ) {
             const metadata = await mm.parseFile(
               files[index].path + files[index].file
@@ -278,6 +298,13 @@ ipcMain.on("coverArtList", function(event, arg) {
                   quality: 75,
                 })
                 .toFile(path_small);
+              // MEDIUM
+              sharp(picture.data)
+                .resize(cover_size_medium, cover_size_medium)
+                .jpeg({
+                  quality: 75,
+                })
+                .toFile(path_medium);
               // LARGE
               sharp(picture.data)
                 .resize(cover_size_large, cover_size_large)

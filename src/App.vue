@@ -36,7 +36,7 @@
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
           :class="classesGrid"
-          :rowBuffer="10"
+          :rowBuffer="5"
           :column-defs="columnDefs"
           :default-col-def="defaultColDef"
           :suppress-scroll-on-new-data="preventScroll"
@@ -247,7 +247,7 @@ export default {
     });
   },
   methods: {
-    setScrollSource: throttle(16, function(event) {
+    setScrollSource: throttle(20, function(event) {
       let splitHeight = (window.innerHeight - 134) / 2 + 67;
 
       if (this.display === "list" && this.scrollSource !== "list") {
@@ -274,7 +274,7 @@ export default {
       }
     }),
 
-    onBodyScroll: throttle(16, function(event) {
+    onBodyScroll: throttle(20, function(event) {
       // Throttle scroll to 60 FPS to optimise scrolling visual browser
       if (this.scrollSource == "list") {
         // Scrolled from tracklist

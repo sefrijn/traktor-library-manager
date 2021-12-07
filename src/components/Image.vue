@@ -2,7 +2,7 @@
 	<div class="relative image w-full" style="padding-bottom:100%;">
 		<img
 			v-if="exists"
-			class="absolute top-0 left-0 z-10"
+			class="absolute top-0 left-0 z-10 w-full h-auto"
 			:src="src"
 			alt=""
 		/>
@@ -37,11 +37,6 @@ export default {
 	computed: {
 		exists() {
 			return this.src.slice(-5) !== "/null" ? true : false;
-		},
-	},
-	methods: {
-		imageLoadError() {
-			console.log("error loading...");
 		},
 	},
 };
