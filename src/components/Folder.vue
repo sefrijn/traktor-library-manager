@@ -24,14 +24,20 @@
       class="pl-3"
       v-if="folder.SUBNODES[0].NODE && folder.SUBNODES[0].NODE.length && open"
     >
-      <folder v-for="child in folder.SUBNODES[0].NODE" :folder="child"></folder>
+      <folder
+        v-for="(child, index) in folder.SUBNODES[0].NODE"
+        :folder="child"
+        :depth="depth + 1"
+        :index="index"
+        :path="[...path, index]"
+      ></folder>
     </ul>
   </li>
   <li class="playlist" v-if="folder.$.TYPE == 'PLAYLIST'">
     <div
       class="flex py-1 px-2 space-x-2 cursor-pointer hover:bg-active-dark hover:text-white"
       :class="{
-        active: this.$store.getters.activePlaylist == folder.PLAYLIST[0].$.UUID,
+        active: activePlaylist == folder.PLAYLIST[0].$.UUID,
       }"
       @click="openPlaylist(folder.PLAYLIST[0])"
     >
@@ -57,6 +63,9 @@ export default {
   name: "folder",
   props: {
     folder: Object,
+    depth: Number,
+    index: Number,
+    path: Array,
   },
   components: {
     SvgIcon,
@@ -70,6 +79,11 @@ export default {
       open: false,
     };
   },
+  computed: {
+    activePlaylist() {
+      return this.$store.getters.activePlaylist;
+    },
+  },
   mounted() {
     if (this.folder.$.NAME == "$ROOT") {
       this.open = true;
@@ -82,6 +96,7 @@ export default {
     openPlaylist(list) {
       this.$store.commit("setFilter", { rating: 0, color: 0 });
       this.$store.commit("setActivePlaylist", list.$.UUID);
+      this.$store.commit("setActivePlaylistPath", this.path);
       console.log("open list " + list.$.UUID);
 
       let tracks = [];

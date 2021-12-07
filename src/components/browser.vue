@@ -18,7 +18,7 @@
 				<span>Track Collection</span>
 			</div>
 		</li>
-		<folder :folder="playlists"></folder>
+		<folder :folder="playlists" :depth="0" :index="0" :path="[0]"></folder>
 	</ul>
 </template>
 
@@ -31,14 +31,14 @@ export default {
 	props: {
 		playlists: Object,
 	},
+	components: {
+		Folder,
+		SvgIcon,
+	},
 	data() {
 		return {
 			iconCollection: mdiArchiveMusic,
 		};
-	},
-	components: {
-		Folder,
-		SvgIcon,
 	},
 	methods: {
 		openTrackCollection() {

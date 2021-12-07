@@ -44,7 +44,8 @@
           :row-class-rules="rowClassRules"
           :grid-options="gridOptions"
           :rowDragManaged="true"
-          :rowDragMultiRow="true"
+          :rowDragMultiRow="false"
+          :animateRows="true"
           :rowSelection="`multiple`"
           @grid-ready="onGridReady"
           @viewport-changed="onViewportChanged"
@@ -55,6 +56,7 @@
           @body-scroll="onBodyScroll"
           @grid-size-changed="onGridSizeChanged"
           @filter-changed="onFilterChanged"
+          @row-drag-end="onRowDragEnd"
         >
         </ag-grid-vue>
         <visual-browser
@@ -128,6 +130,12 @@ export default {
     };
   },
   computed: {
+    activePlaylist() {
+      return this.$store.getters.activePlaylist;
+    },
+    activePlaylistPath() {
+      return this.$store.getters.activePlaylistPath;
+    },
     pathToLibrary() {
       return this.$store.getters.libraryPath;
     },
@@ -298,6 +306,85 @@ export default {
         this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newScrollRatio * h;
       }
     }),
+
+    onRowDragEnd(event) {
+      this.$store.commit("setSaving", true);
+      let self = this;
+      let index = null;
+
+      // >>> Reset index only at Track Collection
+      if (!this.activePlaylist) {
+        index = 0;
+      }
+
+      // >>> Update rowData after drag
+      let itemsToUpdate = [];
+      let libraryUpdated = [];
+      this.gridApi.forEachNodeAfterFilterAndSort(function(rowNode) {
+        if (index !== null) {
+          libraryUpdated[index] =
+            self.library["NML"]["COLLECTION"][0]["ENTRY"][rowNode.data.index];
+          rowNode.data.index = index;
+          index++;
+        }
+        itemsToUpdate.push(rowNode.data);
+      });
+      this.$store.commit("setRowData", itemsToUpdate);
+
+      // >>> Store Track Collection in XML
+      if (index !== null) {
+        this.library["NML"]["COLLECTION"][0]["ENTRY"] = libraryUpdated;
+        let updatedLibrary = JSON.parse(JSON.stringify(this.library));
+        window.ipcRenderer.send("buildXML", [
+          updatedLibrary,
+          localStorage.pathToLibrary,
+        ]);
+      }
+      // >>> Playlist edit
+      if (index === null) {
+        // reference correct playlist up to 5 levels deep, known limitation of manipulating XML with JSON...
+        let l;
+        if (this.activePlaylistPath.length == 2) {
+          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
+            .PLAYLIST[0].ENTRY;
+        }
+        if (this.activePlaylistPath.length == 3) {
+          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
+            .SUBNODES[0].NODE[this.activePlaylistPath[2]].PLAYLIST[0].ENTRY;
+        }
+        if (this.activePlaylistPath.length == 4) {
+          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
+            .SUBNODES[0].NODE[this.activePlaylistPath[2]].SUBNODES[0].NODE[
+            this.activePlaylistPath[3]
+          ].PLAYLIST[0].ENTRY;
+        }
+        if (this.activePlaylistPath.length == 5) {
+          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
+            .SUBNODES[0].NODE[this.activePlaylistPath[2]].SUBNODES[0].NODE[
+            this.activePlaylistPath[3]
+          ].SUBNODES[0].NODE[this.activePlaylistPath[4]].PLAYLIST[0].ENTRY;
+        }
+        if (this.activePlaylistPath.length == 6) {
+          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
+            .SUBNODES[0].NODE[this.activePlaylistPath[2]].SUBNODES[0].NODE[
+            this.activePlaylistPath[3]
+          ].SUBNODES[0].NODE[this.activePlaylistPath[4]].SUBNODES[0].NODE[
+            this.activePlaylistPath[5]
+          ].PLAYLIST[0].ENTRY;
+        }
+        // Single element to swap
+        let el = l[parseInt(event.node.id)];
+        l.splice(parseInt(event.node.id), 1);
+        l.splice(event.overIndex, 0, el);
+
+        // library["NML"]["PLAYLISTS"][0]["NODE"][0] = libraryUpdated;
+        let updatedLibrary = JSON.parse(JSON.stringify(this.library));
+        window.ipcRenderer.send("buildXML", [
+          updatedLibrary,
+          localStorage.pathToLibrary,
+        ]);
+      }
+    },
     handleDragging(e) {
       const percentage = (e.pageX / window.innerWidth) * 100;
       if (percentage >= 10 && percentage <= 90) {
@@ -565,7 +652,9 @@ export default {
     });
 
     window.ipcRenderer.receive("parseXML", (message) => {
+      console.log("parseXML");
       self.library = message;
+      console.log(self.library);
 
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
       let paths = {};
