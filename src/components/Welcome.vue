@@ -1,5 +1,5 @@
 <template>
-	<aside class="w-full h-full relative flex">
+	<aside class="w-full h-full relative flex" v-if="!pathToLibrary">
 		<img
 			src="./../assets/welcome.png"
 			alt=""
@@ -69,6 +69,11 @@ import BtnOpenLibrary from "./BtnOpenLibrary.vue";
 export default {
 	components: {
 		BtnOpenLibrary,
+	},
+	computed: {
+		pathToLibrary() {
+			return this.$store.getters.libraryPath;
+		},
 	},
 };
 </script>

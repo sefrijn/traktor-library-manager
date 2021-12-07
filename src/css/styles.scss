@@ -101,6 +101,9 @@ $labelFontSize: 14px !default;
 	.ag-row-focus {
 		background-color: darken($traktor-active, 15%);
 	}
+	.ag-row-selected {
+		background-color: darken($traktor-active, 15%);
+	}
 
 	.ag-header {
 		// or write CSS selectors to make customisations beyond what the parameters support
@@ -115,7 +118,8 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($red-dark, 5%);
 			}
-			&.ag-row-focus {
+			&.ag-row-focus,
+			&.ag-row-selected {
 				background-color: lighten($red-dark, 15%);
 			}
 		}
@@ -127,7 +131,8 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($orange-dark, 5%);
 			}
-			&.ag-row-focus {
+			&.ag-row-focus,
+			&.ag-row-selected {
 				background-color: lighten($orange-dark, 15%);
 			}
 		}
@@ -139,7 +144,8 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($yellow-dark, 5%);
 			}
-			&.ag-row-focus {
+			&.ag-row-focus,
+			&.ag-row-selected {
 				background-color: lighten($yellow-dark, 15%);
 			}
 		}
@@ -151,7 +157,8 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($green-dark, 5%);
 			}
-			&.ag-row-focus {
+			&.ag-row-focus,
+			&.ag-row-selected {
 				background-color: lighten($green-dark, 15%);
 			}
 		}
@@ -163,7 +170,8 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($blue-dark, 5%);
 			}
-			&.ag-row-focus {
+			&.ag-row-focus,
+			&.ag-row-selected {
 				background-color: lighten($blue-dark, 15%);
 			}
 		}
@@ -175,7 +183,8 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($violet-dark, 5%);
 			}
-			&.ag-row-focus {
+			&.ag-row-focus,
+			&.ag-row-selected {
 				background-color: lighten($violet-dark, 15%);
 			}
 		}
@@ -187,11 +196,16 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($magenta-dark, 5%);
 			}
-			&.ag-row-focus {
+			&.ag-row-focus,
+			&.ag-row-selected {
 				background-color: lighten($magenta-dark, 15%);
 			}
 		}
 	}
+	/* 	div.ag-row.ag-row-selected[class*="color"] {
+		background-color: darken($traktor-active, 15%);
+	}
+ */
 }
 #app .ag-theme-alpine-dark {
 	.ag-cell-inline-editing {

@@ -50,6 +50,9 @@
 				<p class="text-white">{{ totalSongs }}</p>
 			</div>
 		</div>
+
+    	<div class="class-helper w-1/4 w-1/5 w-1/6 w-1/7 w-1/8 w-1/9 w-1/10 hover:bg-active hidden" ></div>
+
 	</footer>
 </template>
 

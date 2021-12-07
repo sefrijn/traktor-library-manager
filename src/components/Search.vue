@@ -60,7 +60,6 @@ export default {
 			this.$refs.input.focus();
 		},
 		searching(event) {
-			console.log(this.text);
 			this.$store.commit("setQuery", this.text);
 		},
 		clear() {

@@ -18,7 +18,6 @@ let column_defs = [
     field: "index",
     editable: false,
     width: 58,
-    sort: "desc",
     cellRenderer: "indexRenderer",
   },
   {
@@ -60,9 +59,10 @@ let column_defs = [
     cellRenderer: "colorRenderer",
   },
   {
+    rowDrag: true,
     headerName: "Artist",
     field: "artist",
-    width: 135,
+    width: 160,
   },
   {
     headerName: "Title",

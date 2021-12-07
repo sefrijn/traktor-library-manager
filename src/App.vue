@@ -1,19 +1,12 @@
 <template>
   <div class="h-screen bg-black-dark text-white font-sans">
-    <app-header
-      ref="header"
-      style="height:67px;"
-      @save="save"
-      @load="load"
-    ></app-header>
+    <app-header ref="header" style="height:67px;"></app-header>
 
     <main class="flex relative" @mouseup="endDragging">
-      <welcome v-if="!pathToLibrary" style="height: calc(100vh - 134px);">
-      </welcome>
-      <generate-cover-art
-        v-if="pathToLibrary"
-        style="height: calc(100vh - 134px);"
-      ></generate-cover-art>
+      <welcome style="height: calc(100vh - 134px);"> </welcome>
+
+      <generate-cover-art style="height: calc(100vh - 134px);">
+      </generate-cover-art>
 
       <aside
         v-if="sidebar && pathToLibrary"
@@ -22,15 +15,7 @@
         style="height: calc(100vh - 134px);"
       >
         <browser :playlists="playlists"></browser>
-        <div
-          class="border-t border-black-medium nowplaying text-sm font-medium text-center text-white bg-black-light"
-        >
-          <img v-if="image" :src="image" />
-          <span v-if="artist" class="block uppercase text-xxs text-gray pt-2"
-            >now playing</span
-          >
-          <p v-if="artist" class="pb-3 px-1">{{ artist }} - {{ title }}</p>
-        </div>
+        <now-playing></now-playing>
       </aside>
 
       <div
@@ -58,6 +43,9 @@
           :row-data="rowData"
           :row-class-rules="rowClassRules"
           :grid-options="gridOptions"
+          :rowDragManaged="true"
+          :rowDragMultiRow="true"
+          :rowSelection="`multiple`"
           @grid-ready="onGridReady"
           @viewport-changed="onViewportChanged"
           @cell-value-changed="onCellValueChanged"
@@ -87,10 +75,6 @@
       :total-songs="totalSongs"
     >
     </app-footer>
-
-    <div
-      class="class-helper w-1/4 w-1/5 w-1/6 w-1/7 w-1/8 w-1/9 w-1/10 hover:bg-active hidden"
-    ></div>
   </div>
 </template>
 
@@ -98,13 +82,13 @@
 window.ipcRenderer.removeAllListeners();
 
 import { AgGridVue } from "ag-grid-vue3";
-import { h, reactive, onMounted } from "vue";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
 import Browser from "./components/Browser.vue";
 import VisualBrowser from "./components/VisualBrowser.vue";
 import Welcome from "./components/Welcome.vue";
 import GenerateCoverArt from "./components/GenerateCoverArt.vue";
+import NowPlaying from "./components/NowPlaying.vue";
 import { column_defs, ag_components } from "./components/columnDefs.js";
 import tinykeys from "tinykeys";
 import { throttle } from "throttle-debounce";
@@ -119,26 +103,28 @@ export default {
     Browser,
     Welcome,
     GenerateCoverArt,
+    NowPlaying,
   },
   data() {
     return {
-      library: null, // NML Traktor collection XML converted to JSON (unfiltered for AG grid)
-      totalSongs: null, // All tracks in collection
-      filteredSongs: null, // Tracks within playlist, filter and search
-      columnDefs: null, // AG Grid column settings
-      gridApi: null, // AG Grid methods
-      gridOptions: null, // AG Grid general setings
+      library: null, // JS Object - NML Traktor collection XML converted to JSON
+      totalSongs: null, // INT - All tracks in collection
+      filteredSongs: null, // INT - Tracks within playlist, filter and search
+      columnDefs: null, // JS Object - AG Grid column settings
+      gridApi: null, // JS Object - AG Grid methods
+      gridOptions: null, // JS Object - AG Grid general setings
       defaultColDef: {
         editable: true,
         sortable: true,
         filter: true,
       },
       visibleTracks: {},
-      asideWidth: 20,
+      asideWidth: 20, // Number - percentage
       rowClassRules: null, // styling of rows
       playlists: null,
       unsubscribe: null,
-      traktorOpen: null,
+      traktorOpen: null, // Boolean
+      scrollSource: null,
     };
   },
   computed: {
@@ -166,41 +152,22 @@ export default {
     filter() {
       return this.$store.state.filter;
     },
-    artist() {
-      return this.$store.state.trackPlaying.artist;
-    },
-    title() {
-      return this.$store.state.trackPlaying.title;
-    },
-    image() {
-      return this.$store.state.trackPlaying.image
-        ? "local-resource://coverart/400/" +
-            this.$store.state.trackPlaying.image
-        : null;
-    },
     display() {
       return this.$store.getters.display;
     },
     classesGrid() {
       return {
-        "h-full relative z-10": this.$store.getters.display === "list",
-        "h-1/2": this.$store.getters.display === "split",
-        "h-full relative z-0": this.$store.getters.display === "visualbrowser",
+        "h-full relative z-10": this.display === "list",
+        "h-1/2": this.display === "split",
+        "h-full relative z-0": this.display === "visualbrowser",
       };
     },
     classesVisualBrowser() {
       return {
-        "h-full absolute top-0 z-10":
-          this.$store.getters.display === "visualbrowser",
-        "h-1/2": this.$store.getters.display === "split",
-        "h-full absolute top-0 z-0": this.$store.getters.display === "list",
+        "h-full absolute top-0 z-10": this.display === "visualbrowser",
+        "h-1/2": this.display === "split",
+        "h-full absolute top-0 z-0": this.display === "list",
       };
-    },
-    scroll() {
-      return this.$store.getters.scrollRatio;
-    },
-    scrollSource() {
-      return this.$store.getters.scrollSource;
     },
   },
   watch: {
@@ -281,23 +248,32 @@ export default {
   },
   methods: {
     setScrollSource: throttle(16, function(event) {
+      let splitHeight = (window.innerHeight - 134) / 2 + 67;
+
       if (this.display === "list" && this.scrollSource !== "list") {
-        this.$store.commit("setScrollSource", "list");
+        this.scrollSource = "list";
       }
+
       if (
         this.display === "visualbrowser" &&
         this.scrollSource !== "visualbrowser"
       ) {
-        this.$store.commit("setScrollSource", "visualbrowser");
+        this.scrollSource = "visualbrowser";
       }
+
       if (this.display === "split") {
-        if (event.clientY < (window.innerHeight - 134) / 2 + 67) {
-          this.$store.commit("setScrollSource", "list");
-        } else {
-          this.$store.commit("setScrollSource", "visualbrowser");
+        if (event.clientY < splitHeight && this.scrollSource !== "list") {
+          this.scrollSource = "list";
+        }
+        if (
+          event.clientY > splitHeight &&
+          this.scrollSource !== "visualbrowser"
+        ) {
+          this.scrollSource = "visualbrowser";
         }
       }
     }),
+
     onBodyScroll: throttle(16, function(event) {
       // Throttle scroll to 60 FPS to optimise scrolling visual browser
       if (this.scrollSource == "list") {
@@ -322,9 +298,6 @@ export default {
         this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newScrollRatio * h;
       }
     }),
-    load(event) {
-      window.ipcRenderer.send("openLibrary", "trigger open file");
-    },
     handleDragging(e) {
       const percentage = (e.pageX / window.innerWidth) * 100;
       if (percentage >= 10 && percentage <= 90) {
@@ -488,12 +461,13 @@ export default {
     if (localStorage.pathToLibrary) {
       this.$store.commit("setLibraryPath", localStorage.pathToLibrary);
       window.ipcRenderer.send("parseXML", [this.pathToLibrary]);
+      console.log("Load library from localStorage: " + this.pathToLibrary);
     }
 
     window.ipcRenderer.receive("openLibrary", function(message) {
       localStorage.pathToLibrary = message;
       self.$store.commit("setLibraryPath", localStorage.pathToLibrary);
-      console.log(message);
+      console.log("Selected library: " + message[0]);
       window.ipcRenderer.send("parseXML", message);
     });
 

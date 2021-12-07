@@ -197,17 +197,16 @@ export default {
 	},
 	beforeUnmount() {
 		// Destroy and reset wavesurfer for hot reload
+		console.log("destroy wavesurfer");
 		wavesurfer.empty();
 		wavesurfer.destroy();
 		this.createWavesurfer();
 	},
 	mounted() {
-		console.log(this.$store.getters.loading);
 		let self = this;
 		this.createWavesurfer();
 
 		window.ipcRenderer.receive("loadAudio", function(message) {
-			// self.$store.commit("setTrue");
 			self.emptyWavesurfer();
 			var blob = new window.Blob([message]);
 			wavesurfer.loadBlob(blob);
@@ -224,7 +223,6 @@ export default {
 		});
 		wavesurfer.on("ready", function() {
 			let cue_points = self.$store.state.trackPlaying.cue_points;
-			console.log("points: " + Object.keys(cue_points).length);
 			for (const [key, cue] of Object.entries(cue_points)) {
 				wavesurfer.addMarker({
 					time: cue["$"]["START"] / 1000,

@@ -1,5 +1,8 @@
 <template>
-	<div class="absolute h-full w-full z-20" v-if="percentage < 100">
+	<div
+		class="absolute h-full w-full z-20"
+		v-if="percentage < 100 && pathToLibrary"
+	>
 		<img
 			src="./../assets/welcome.png"
 			alt=""
@@ -8,7 +11,13 @@
 		<div
 			class="z-10 relative h-full w-full z-20 flex flex-col items-center justify-center space-y-6"
 		>
-			<h2 class="text-2xl">Generating Cover Art</h2>
+			<img
+				class="w-auto mr-1 -mt-5"
+				style="height:120px;"
+				src="./../assets/logo-bw@2x.png"
+				alt=""
+			/>
+			<h2 class="text-2xl">Loading Cover Art</h2>
 			<div class="loadbar w-1/3 h-3 bg-active">
 				<div
 					class="progress h-3 bg-black"
@@ -26,12 +35,17 @@ export default {
 			percentage: 0,
 		};
 	},
+	computed: {
+		pathToLibrary() {
+			return this.$store.getters.libraryPath;
+		},
+	},
 	mounted() {
 		let self = this;
 		window.ipcRenderer.receive("coverArtProgress", (message) => {
 			self.percentage = message * 100;
 			if (self.percentage == 100) {
-				console.log("done generating cover art");
+				console.log("Loaded cover art");
 			}
 		});
 	},

@@ -39,7 +39,6 @@
 <script>
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiArchiveSearch } from "@mdi/js";
-import { mdiContentSave } from "@mdi/js";
 import { mdiNumeric1Box } from "@mdi/js";
 import Search from "./Search.vue";
 import FilterRating from "./FilterRating.vue";
