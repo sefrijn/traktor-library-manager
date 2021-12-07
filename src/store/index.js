@@ -1,23 +1,14 @@
 import { createStore } from "vuex";
 import functional from "./functional.js";
-// import display from "./display.js";
+import display from "./display.js";
 
 export default createStore({
 	modules: {
 		functional: functional,
-		// display: display,
+		display: display,
 	},
 	state() {
 		return {
-			// Display
-			display: "split", // display setting [split,list,grid]
-			sidebar: true,
-			scrollSource: "",
-			scrollRatio: 0.0,
-			preventScroll: false, // prevent during editing rowdata
-			activePlaylist: null, // selected playlist, null means all tracks
-			showMarkers: false,
-
 			// Filters
 			query: "",
 			filter: {
@@ -39,30 +30,6 @@ export default createStore({
 		};
 	},
 	mutations: {
-		// Display
-		setDisplay(state, display_type) {
-			state.display = display_type;
-			localStorage.display = display_type;
-		},
-		showSidebar(state, show) {
-			state.sidebar = show;
-		},
-		setScrollSource(state, source) {
-			state.scrollSource = source;
-		},
-		setScrollRatio(state, ratio) {
-			state.scrollRatio = ratio;
-		},
-		setPreventScroll(state, prevent) {
-			state.preventScroll = prevent;
-		},
-		setShowMarkers(state, value) {
-			state.showMarkers = value;
-		},
-		setActivePlaylist(state, playlist) {
-			state.activePlaylist = playlist;
-		},
-
 		addGenre(state, genre) {
 			state.genres.push(genre);
 			state.genres.sort();

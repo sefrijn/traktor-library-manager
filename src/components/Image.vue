@@ -34,19 +34,10 @@
 export default {
 	name: "Image",
 	props: ["artist", "title", "src", "textHeight"],
-	data() {
-		return {
-			// exists: false,
-		};
-	},
 	computed: {
 		exists() {
 			return this.src.slice(-5) !== "/null" ? true : false;
 		},
-	},
-	beforeMount() {
-		// console.log(this.src.indexOf("null") > -1);
-		// if (this.src.indexOf("null") < 0) this.exists = true;
 	},
 	methods: {
 		imageLoadError() {

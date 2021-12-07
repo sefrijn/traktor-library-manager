@@ -27,7 +27,7 @@ export default {
 	computed: {
 		sidebar: {
 			get() {
-				return this.$store.state.sidebar;
+				return this.$store.getters.sidebar;
 			},
 			set(value) {
 				this.$store.commit("showSidebar", value);

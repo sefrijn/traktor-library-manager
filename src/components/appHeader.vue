@@ -20,7 +20,7 @@
 				v-tooltip="'Show Cuepoints'"
 				class="flex justify-center items-center h-9 w-9"
 				@click="toggleMarkers"
-				:class="{ active: $store.state.showMarkers }"
+				:class="{ active: $store.getters.showMarkers }"
 			>
 				<svg-icon
 					type="mdi"
@@ -75,7 +75,7 @@ export default {
 		toggleMarkers() {
 			this.$store.commit(
 				"setShowMarkers",
-				!this.$store.state.showMarkers
+				!this.$store.getters.showMarkers
 			);
 		},
 	},

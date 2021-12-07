@@ -146,7 +146,7 @@ export default {
       return this.$store.getters.libraryPath;
     },
     preventScroll() {
-      return this.$store.state.preventScroll;
+      return this.$store.getters.preventScroll;
     },
     isSavingEnabled() {
       return this.$store.getters.savingEnabled;
@@ -158,7 +158,7 @@ export default {
       return this.$store.state.rowData;
     },
     sidebar() {
-      return this.$store.state.sidebar;
+      return this.$store.getters.sidebar;
     },
     query() {
       return this.$store.state.query;
@@ -179,28 +179,28 @@ export default {
         : null;
     },
     display() {
-      return this.$store.state.display;
+      return this.$store.getters.display;
     },
     classesGrid() {
       return {
-        "h-full relative z-10": this.$store.state.display === "list",
-        "h-1/2": this.$store.state.display === "split",
-        "h-full relative z-0": this.$store.state.display === "visualbrowser",
+        "h-full relative z-10": this.$store.getters.display === "list",
+        "h-1/2": this.$store.getters.display === "split",
+        "h-full relative z-0": this.$store.getters.display === "visualbrowser",
       };
     },
     classesVisualBrowser() {
       return {
         "h-full absolute top-0 z-10":
-          this.$store.state.display === "visualbrowser",
-        "h-1/2": this.$store.state.display === "split",
-        "h-full absolute top-0 z-0": this.$store.state.display === "list",
+          this.$store.getters.display === "visualbrowser",
+        "h-1/2": this.$store.getters.display === "split",
+        "h-full absolute top-0 z-0": this.$store.getters.display === "list",
       };
     },
     scroll() {
-      return this.$store.state.scrollRatio;
+      return this.$store.getters.scrollRatio;
     },
     scrollSource() {
-      return this.$store.state.scrollSource;
+      return this.$store.getters.scrollSource;
     },
   },
   watch: {
@@ -219,15 +219,6 @@ export default {
     query(newtext, oldtext) {
       this.gridApi.setQuickFilter(newtext);
     },
-    // scroll(newscroll, oldscroll) {
-    // if (
-    //   this.$store.state.scroll.source == "visualbrowser" &&
-    //   this.$store.state.scroll.human
-    // ) {
-    //   let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;
-    //   this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newscroll * h;
-    // }
-    // },
     filter(newval, oldval) {
       if (newval.rating <= 0 && newval.color <= 0)
         this.gridApi.setFilterModel(null);
@@ -285,12 +276,20 @@ export default {
     this.unsubscribe = tinykeys(window, {
       "$mod+F": () => {
         this.$refs.header.$refs.search.$refs.input.focus();
-        // this.search();
       },
     });
   },
   methods: {
-    setScrollSource(event) {
+    setScrollSource: throttle(16, function(event) {
+      if (this.display === "list" && this.scrollSource !== "list") {
+        this.$store.commit("setScrollSource", "list");
+      }
+      if (
+        this.display === "visualbrowser" &&
+        this.scrollSource !== "visualbrowser"
+      ) {
+        this.$store.commit("setScrollSource", "visualbrowser");
+      }
       if (this.display === "split") {
         if (event.clientY < (window.innerHeight - 134) / 2 + 67) {
           this.$store.commit("setScrollSource", "list");
@@ -298,7 +297,7 @@ export default {
           this.$store.commit("setScrollSource", "visualbrowser");
         }
       }
-    },
+    }),
     onBodyScroll: throttle(16, function(event) {
       // Throttle scroll to 60 FPS to optimise scrolling visual browser
       if (this.scrollSource == "list") {
@@ -311,7 +310,8 @@ export default {
         h = this.$refs.visualbrowser.$refs.hugeWrapper.clientHeight;
         this.$refs.visualbrowser.$refs.smallWrapper.scrollTop =
           newScrollRatio * h;
-      } else {
+      }
+      if (this.scrollSource == "visualbrowser") {
         // Scrolled from visual browser
         // Calculate ratio
         let h = this.$refs.visualbrowser.$refs.hugeWrapper.clientHeight;

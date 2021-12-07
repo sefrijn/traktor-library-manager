@@ -133,7 +133,7 @@ export default {
 	},
 	computed: {
 		showMarkers() {
-			return this.$store.state.showMarkers;
+			return this.$store.getters.showMarkers;
 		},
 		artist() {
 			return this.$store.state.trackPlaying.artist;
@@ -151,7 +151,7 @@ export default {
 			return this.$store.getters.loading;
 		},
 		sidebar() {
-			return this.$store.state.sidebar;
+			return this.$store.getters.sidebar;
 		},
 	},
 	methods: {

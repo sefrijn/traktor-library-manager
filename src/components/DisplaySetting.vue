@@ -59,7 +59,7 @@ export default {
 	computed: {
 		display: {
 			get() {
-				return this.$store.state.display;
+				return this.$store.getters.display;
 			},
 			set(value) {
 				this.$store.commit("setDisplay", value);

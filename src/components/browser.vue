@@ -6,7 +6,7 @@
 		<li class="all">
 			<div
 				class="flex py-1 px-2 space-x-2 cursor-pointer hover:bg-active-dark hover:text-white"
-				:class="{ active: this.$store.state.activePlaylist == null }"
+				:class="{ active: this.$store.getters.activePlaylist == null }"
 				@click="openTrackCollection"
 			>
 				<svg-icon

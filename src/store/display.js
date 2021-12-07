@@ -8,23 +8,29 @@ export default {
 		activePlaylist: null, // selected playlist, null means all tracks
 		showMarkers: false,
 	}),
-	// getters: {
-	// 	loading(state) {
-	// 		return state.loading;
-	// 	},
-	// 	saving(state) {
-	// 		return state.saving;
-	// 	},
-	// 	savingEnabled(state) {
-	// 		return state.savingEnabled;
-	// 	},
-	// 	libraryPath(state) {
-	// 		return state.libraryPath;
-	// 	},
-	// 	startingUp(state) {
-	// 		return state.startingUp;
-	// 	},
-	// },
+	getters: {
+		display(state) {
+			return state.display;
+		},
+		sidebar(state) {
+			return state.sidebar;
+		},
+		scrollSource(state) {
+			return state.scrollSource;
+		},
+		scrollRatio(state) {
+			return state.scrollRatio;
+		},
+		preventScroll(state) {
+			return state.preventScroll;
+		},
+		activePlaylist(state) {
+			return state.activePlaylist;
+		},
+		showMarkers(state) {
+			return state.showMarkers;
+		},
+	},
 	mutations: {
 		setDisplay(state, display_type) {
 			state.display = display_type;
@@ -39,11 +45,14 @@ export default {
 		setScrollRatio(state, ratio) {
 			state.scrollRatio = ratio;
 		},
-		setShowMarkers(state, value) {
-			state.showMarkers = value;
+		setPreventScroll(state, prevent) {
+			state.preventScroll = prevent;
 		},
 		setActivePlaylist(state, playlist) {
 			state.activePlaylist = playlist;
+		},
+		setShowMarkers(state, value) {
+			state.showMarkers = value;
 		},
 	},
 };

@@ -31,7 +31,7 @@
     <div
       class="flex py-1 px-2 space-x-2 cursor-pointer hover:bg-active-dark hover:text-white"
       :class="{
-        active: this.$store.state.activePlaylist == folder.PLAYLIST[0].$.UUID,
+        active: this.$store.getters.activePlaylist == folder.PLAYLIST[0].$.UUID,
       }"
       @click="openPlaylist(folder.PLAYLIST[0])"
     >
