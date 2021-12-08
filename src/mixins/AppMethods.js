@@ -169,12 +169,18 @@ export default {
       }
     },
     onCellContextMenu(params) {
-      this.contextMenu.x = params.event.clientX;
-      this.contextMenu.y = params.event.clientY;
-      this.contextMenu.show = true;
+      let val = {};
+      val.x = params.event.clientX;
+      val.y = params.event.clientY;
+      val.show = true;
+      this.$store.commit("setContextMenu", val);
     },
     hideContextMenu() {
-      if (this.contextMenu.show) this.contextMenu.show = false;
+      let val = this.contextMenu;
+      if (val.show) {
+        val.show = false;
+        this.$store.commit("setContextMenu", val);
+      }
     },
     onCellEditingStarted(params) {
       this.$store.commit("setPreventScroll", true);

@@ -27,6 +27,7 @@ module.exports = {
       },
       boxShadow: {
         black: "0 0 3px 1px rgba(0, 0, 0, 0.25)",
+        "black-lg": "0 0 6px 3px rgba(0, 0, 0, 0.25)",
       },
       fontSize: {
         xxs: ".6rem",

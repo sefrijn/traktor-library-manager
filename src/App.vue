@@ -35,7 +35,7 @@
         style="height: calc(100vh - 134px);"
         @wheel="setScrollSource"
       >
-        <context-menu :context-menu="contextMenu"> </context-menu>
+        <context-menu></context-menu>
         <ag-grid-vue
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
@@ -137,7 +137,7 @@ export default {
       unsubscribe: null,
       traktorOpen: null, // Boolean
       scrollSource: null,
-      contextMenu: { x: 0, y: 0, show: false },
+      // contextMenu: { x: 0, y: 0, show: false },
     };
   },
   computed: {
@@ -173,6 +173,9 @@ export default {
     },
     display() {
       return this.$store.getters.display;
+    },
+    contextMenu() {
+      return this.$store.getters.contextMenu;
     },
     classesGrid() {
       return {

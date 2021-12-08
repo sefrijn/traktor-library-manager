@@ -6,6 +6,7 @@ export default {
 		activePlaylist: null, // selected playlist, null means all tracks
 		activePlaylistPath: [],
 		showMarkers: false,
+		contextMenu: { x: 0, y: 0, show: false },
 	}),
 	getters: {
 		display(state) {
@@ -25,6 +26,9 @@ export default {
 		},
 		showMarkers(state) {
 			return state.showMarkers;
+		},
+		contextMenu(state) {
+			return state.contextMenu;
 		},
 	},
 	mutations: {
@@ -46,6 +50,9 @@ export default {
 		},
 		setShowMarkers(state, value) {
 			state.showMarkers = value;
+		},
+		setContextMenu(state, value) {
+			state.contextMenu = value;
 		},
 	},
 };
