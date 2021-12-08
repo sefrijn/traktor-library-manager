@@ -1,13 +1,15 @@
 <template>
 	<div
-		:class="{ 'block fixed': contextMenu.show, hidden: !contextMenu.show }"
-		class="context-menu z-30 bg-black-light border border-black-dark px-2 py-2"
+		v-if="contextMenu.show"
+		class="block fixed z-30 bg-black-light border border-black-dark"
 		:style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y}px` }"
 	>
 		<ul class="text-sm">
-			<li>Delete from Playlist</li>
-			<li>Copy</li>
-			<li>Paste</li>
+			<li class="px-2 py-0.5 hover:bg-active cursor-pointer">
+				Delete from Playlist
+			</li>
+			<li class="px-2 py-0.5 hover:bg-active cursor-pointer">Copy</li>
+			<li class="px-2 py-0.5 hover:bg-active cursor-pointer">Paste</li>
 		</ul>
 	</div>
 </template>
