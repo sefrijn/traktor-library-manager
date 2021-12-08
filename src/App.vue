@@ -1,5 +1,8 @@
 <template>
-  <div class="h-screen bg-black-dark text-white font-sans">
+  <div
+    class="h-screen bg-black-dark text-white font-sans"
+    @click="hideContextMenu"
+  >
     <app-header ref="header" style="height:67px;"></app-header>
 
     <main class="flex relative" @mouseup="endDragging">
@@ -32,6 +35,7 @@
         style="height: calc(100vh - 134px);"
         @wheel="setScrollSource"
       >
+        <context-menu :context-menu="contextMenu"> </context-menu>
         <ag-grid-vue
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
@@ -53,6 +57,7 @@
           @cell-editing-started="onCellEditingStarted"
           @cell-editing-stopped="onCellEditingStopped"
           @cell-clicked="onCellClicked"
+          @cell-context-menu="onCellContextMenu"
           @body-scroll="onBodyScroll"
           @grid-size-changed="onGridSizeChanged"
           @filter-changed="onFilterChanged"
@@ -91,6 +96,7 @@ import VisualBrowser from "./components/VisualBrowser.vue";
 import Welcome from "./components/Welcome.vue";
 import GenerateCoverArt from "./components/GenerateCoverArt.vue";
 import NowPlaying from "./components/NowPlaying.vue";
+import ContextMenu from "./components/ContextMenu.vue";
 
 // Split App.vue into separate files
 import appBeforeMount from "./mixins/AppBeforeMount.js";
@@ -108,6 +114,7 @@ export default {
     Welcome,
     GenerateCoverArt,
     NowPlaying,
+    ContextMenu,
   },
   mixins: [appBeforeMount, appMounted, appMethods],
   data() {
@@ -130,6 +137,7 @@ export default {
       unsubscribe: null,
       traktorOpen: null, // Boolean
       scrollSource: null,
+      contextMenu: { x: 0, y: 0, show: false },
     };
   },
   computed: {

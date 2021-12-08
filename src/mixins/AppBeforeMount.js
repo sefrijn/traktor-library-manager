@@ -41,6 +41,9 @@ export default {
       "$mod+F": () => {
         this.$refs.header.$refs.search.$refs.input.focus();
       },
+      Escape: () => {
+        this.contextMenu.show = false;
+      },
     });
   },
 };

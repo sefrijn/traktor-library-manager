@@ -98,13 +98,13 @@ $labelFontSize: 14px !default;
 		background-color: $traktor-active-dark;
 		border: none !important;
 	}
-	.ag-row-focus {
+	[aria-selected="true"] {
 		background-color: darken($traktor-active, 15%);
 	}
-	.ag-row-selected {
+	/* 	.ag-row-selected {
 		background-color: darken($traktor-active, 15%);
 	}
-
+ */
 	.ag-header {
 		// or write CSS selectors to make customisations beyond what the parameters support
 		text-style: italic;
@@ -118,8 +118,7 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($red-dark, 5%);
 			}
-			&.ag-row-focus,
-			&.ag-row-selected {
+			&[aria-selected="true"] {
 				background-color: lighten($red-dark, 15%);
 			}
 		}
@@ -131,8 +130,7 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($orange-dark, 5%);
 			}
-			&.ag-row-focus,
-			&.ag-row-selected {
+			&[aria-selected="true"] {
 				background-color: lighten($orange-dark, 15%);
 			}
 		}
@@ -144,8 +142,7 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($yellow-dark, 5%);
 			}
-			&.ag-row-focus,
-			&.ag-row-selected {
+			&[aria-selected="true"] {
 				background-color: lighten($yellow-dark, 15%);
 			}
 		}
@@ -157,8 +154,7 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($green-dark, 5%);
 			}
-			&.ag-row-focus,
-			&.ag-row-selected {
+			&[aria-selected="true"] {
 				background-color: lighten($green-dark, 15%);
 			}
 		}
@@ -170,8 +166,7 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($blue-dark, 5%);
 			}
-			&.ag-row-focus,
-			&.ag-row-selected {
+			&[aria-selected="true"] {
 				background-color: lighten($blue-dark, 15%);
 			}
 		}
@@ -183,8 +178,7 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($violet-dark, 5%);
 			}
-			&.ag-row-focus,
-			&.ag-row-selected {
+			&[aria-selected="true"] {
 				background-color: lighten($violet-dark, 15%);
 			}
 		}
@@ -196,8 +190,7 @@ $labelFontSize: 14px !default;
 			&.ag-row-hover {
 				background-color: lighten($magenta-dark, 5%);
 			}
-			&.ag-row-focus,
-			&.ag-row-selected {
+			&[aria-selected="true"] {
 				background-color: lighten($magenta-dark, 15%);
 			}
 		}

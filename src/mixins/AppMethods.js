@@ -168,6 +168,14 @@ export default {
         this.playTrack(params.data);
       }
     },
+    onCellContextMenu(params) {
+      this.contextMenu.x = params.event.clientX;
+      this.contextMenu.y = params.event.clientY;
+      this.contextMenu.show = true;
+    },
+    hideContextMenu() {
+      if (this.contextMenu.show) this.contextMenu.show = false;
+    },
     onCellEditingStarted(params) {
       this.$store.commit("setPreventScroll", true);
     },
