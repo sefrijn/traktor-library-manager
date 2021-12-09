@@ -15,9 +15,10 @@ let ag_components = {
 let column_defs = [
   {
     headerName: "#",
+    rowDrag: true,
     field: "index",
     editable: false,
-    width: 58,
+    width: 84,
     cellRenderer: "indexRenderer",
   },
   {
@@ -59,10 +60,9 @@ let column_defs = [
     cellRenderer: "colorRenderer",
   },
   {
-    rowDrag: true,
     headerName: "Artist",
     field: "artist",
-    width: 160,
+    width: 140,
   },
   {
     headerName: "Title",

@@ -2,10 +2,12 @@ export class IndexRenderer {
   init(params) {
     this.eGui = document.createElement("div");
     this.eGui.className =
-      "index-wrapper h-full w-full flex justify-center items-center bg-transparent hover:bg-active";
+      "index-wrapper relative h-full w-full bg-transparent hover:bg-active";
     this.eGui.innerHTML = `
         <span class="index">${params.value}</span>
+        <div class="icon-wrapper cursor-pointer flex items-center justify-center" style="height:34px;width:34px;">
         <div class="icon"></div>
+        </div>
        `;
   }
 

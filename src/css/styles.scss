@@ -269,19 +269,28 @@ input[type="radio"] + label {
 	[contenteditable] {
 		@apply outline-none ring-0 ring-offset-0 border-none border-0;
 	}
+	.ag-drag-handle.ag-row-drag:hover::after {
+		@apply block absolute bg-black-light text-white z-10 shadow-black px-2 py-1 leading-normal left-7 text-xxs pointer-events-none;
+		content: "Drag";
+	}
+	.ag-drag-handle.ag-row-drag + span {
+		flex-grow: 1;
+	}
 	.index-wrapper {
-		.icon {
+		.icon-wrapper {
 			display: none;
+		}
+		.icon {
 			width: 0;
 			height: 0;
+			margin-left: 2px;
 			border-top: 7px solid transparent;
 			border-bottom: 7px solid transparent;
-
 			border-left: 11px solid white;
 		}
 		&:hover {
-			.icon {
-				display: block;
+			.icon-wrapper {
+				display: flex;
 			}
 			.index {
 				display: none;
