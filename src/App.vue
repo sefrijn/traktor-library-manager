@@ -40,7 +40,7 @@
           ref="trackList"
           class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
           :class="classesGrid"
-          :rowBuffer="5"
+          :rowBuffer="10"
           :column-defs="columnDefs"
           :default-col-def="defaultColDef"
           :suppress-scroll-on-new-data="preventScroll"
@@ -130,7 +130,7 @@ export default {
         sortable: true,
         filter: true,
       },
-      visibleTracks: {},
+      visibleTracks: [],
       asideWidth: 20, // Number - percentage
       rowClassRules: null, // styling of rows
       playlists: null,
@@ -191,6 +191,9 @@ export default {
         "h-full absolute top-0 z-0": this.display === "list",
       };
     },
+    coverSize() {
+      return this.$store.getters.coverSize;
+    },
   },
   watch: {
     isSavingEnabled(newval, oldval) {
@@ -226,6 +229,18 @@ export default {
           };
         }
         this.gridApi.setFilterModel(filter);
+      }
+    },
+    coverSize(newCoverSize, oldCoverSize) {
+      let self = this;
+      if (newCoverSize != oldCoverSize) {
+        console.log(
+          "update scroll position of visual browser: " + newCoverSize
+        );
+        this.scrollSource = "coverSize";
+        setTimeout(function() {
+          self.onBodyScroll();
+        }, 20);
       }
     },
   },

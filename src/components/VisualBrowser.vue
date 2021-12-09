@@ -55,7 +55,7 @@
         >
             <span class="text-xs tracking-wider mr-5 text-gray-dark">Size</span>
             <vue-slider
-                v-model="coverSize"
+                v-model="coverSizeLocal"
                 width="250px"
                 :min="4"
                 :max="8"
@@ -77,7 +77,7 @@ import VueSlider from "vue-slider-component";
 
 export default {
     props: {
-        tracks: Object,
+        tracks: Array,
         class: String,
         filteredSongs: Number,
     },
@@ -85,11 +85,14 @@ export default {
         return {
             images: {},
             image: "Image",
-            coverSize: 6,
+            coverSizeLocal: null,
             coverTextHeight: 48,
         };
     },
     computed: {
+        coverSize() {
+            return this.$store.getters.coverSize;
+        },
         trackPlayingIndex() {
             return this.$store.state.trackPlaying.index;
         },
@@ -98,24 +101,18 @@ export default {
         },
     },
     watch: {
-        // TODO - MOVE TO APP.VUE
-        // coverSize(newCoverSize, oldCoverSize) {
-        //     console.log(this.filteredSongs);
-        //     let h =
-        //         (this.$refs.hugeWrapper.clientWidth / newCoverSize +
-        //             this.coverTextHeight) *
-        //         Math.ceil(this.filteredSongs / newCoverSize);
-        //     let newscroll = {};
-        //     newscroll.ratio = this.$store.state.scroll.ratio;
-        //     newscroll.source = "visualbrowser";
-        //     this.$store.commit("setHumanScroll", true);
-        //     this.$store.commit("setScroll", newscroll);
-        //     this.$refs.smallWrapper.scrollTop = newscroll.ratio * h;
-        // },
+        coverSizeLocal(newCoverSize, oldCoverSize) {
+            if (newCoverSize != oldCoverSize) {
+                this.$store.commit("setCoverSize", newCoverSize);
+            }
+        },
     },
     components: {
         Image,
         VueSlider,
+    },
+    beforeMount() {
+        this.coverSizeLocal = this.coverSize;
     },
     methods: {
         active(index) {

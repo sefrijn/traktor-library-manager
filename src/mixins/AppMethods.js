@@ -27,7 +27,7 @@ export default {
     }),
     onBodyScroll: throttle(20, function(event) {
       // Throttle scroll to 60 FPS to optimise scrolling visual browser
-      if (this.scrollSource == "list") {
+      if (this.scrollSource == "list" || this.scrollSource == "coverSize") {
         // Scrolled from tracklist
         // Calculate ratio
         let h = this.gridApi.gridBodyCon.eBodyViewport.children[1].clientHeight;

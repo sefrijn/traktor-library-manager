@@ -9,6 +9,7 @@ export default {
 		contextMenu: { x: 0, y: 0, show: false },
 		status: null,
 		clipboardMessage: false,
+		coverSize: 6,
 	}),
 	getters: {
 		display(state) {
@@ -37,6 +38,9 @@ export default {
 		},
 		clipboardMessage(state) {
 			return state.clipboardMessage;
+		},
+		coverSize(state) {
+			return state.coverSize;
 		},
 	},
 	mutations: {
@@ -67,6 +71,10 @@ export default {
 		},
 		setClipboardMessage(state, show) {
 			state.clipboardMessage = show;
+		},
+		setCoverSize(state, size) {
+			console.log("commit function");
+			state.coverSize = size;
 		},
 	},
 };
