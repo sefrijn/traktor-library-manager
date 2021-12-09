@@ -234,6 +234,7 @@ $labelFontSize: 14px !default;
 /* Buttons */
 button,
 header button.flex,
+footer button.flex,
 input[type="radio"] + label {
 	@apply bg-black-medium hover:bg-active-dark text-gray-light hover:text-white;
 }

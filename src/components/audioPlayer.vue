@@ -60,6 +60,18 @@
 			{{ artist }} - {{ title }}
 		</p>
 	</div>
+	<button class="flex justify-center items-center h-9 w-9">
+		<svg-icon type="mdi" :path="iconMute" size="18"></svg-icon>
+	</button>
+
+	<button
+		v-tooltip="'Show Cuepoints'"
+		class="flex justify-center items-center h-9 w-9"
+		@click="toggleMarkers"
+		:class="{ active: $store.getters.showMarkers }"
+	>
+		<svg-icon type="mdi" :path="iconToggleMarkers" size="18"></svg-icon>
+	</button>
 </template>
 
 <style lang="scss">
@@ -109,6 +121,9 @@
 <script>
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiPlay } from "@mdi/js";
+import { mdiVolumeHigh } from "@mdi/js";
+import { mdiVolumeOff } from "@mdi/js";
+import { mdiNumeric1Box } from "@mdi/js";
 import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
 import WaveSurfer from "wavesurfer.js";
 import MarkersPlugin from "wavesurfer.js/dist/plugin/wavesurfer.markers.min.js";
@@ -121,6 +136,9 @@ export default {
 	},
 	data() {
 		return {
+			iconMute: mdiVolumeOff,
+			iconUnmute: mdiVolumeHigh,
+			iconToggleMarkers: mdiNumeric1Box,
 			isPlaying: false,
 			iconPlayPause: mdiPlay,
 			color: "#343434",
@@ -155,6 +173,12 @@ export default {
 		},
 	},
 	methods: {
+		toggleMarkers() {
+			this.$store.commit(
+				"setShowMarkers",
+				!this.$store.getters.showMarkers
+			);
+		},
 		togglePlayback() {
 			wavesurfer.playPause();
 			this.isPlaying = wavesurfer.isPlaying();

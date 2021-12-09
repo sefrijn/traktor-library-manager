@@ -64,9 +64,6 @@ export default {
 		AudioPlayer,
 	},
 	props: ["totalSongs", "filteredSongs"],
-	data() {
-		return {};
-	},
 	computed: {
 		status() {
 			return this.$store.getters.status;
