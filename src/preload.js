@@ -12,6 +12,7 @@ const validChannels = [
 	"loadAudio",
 	"traktorOpen",
 	"saveWarning",
+	"toClipboard",
 ];
 
 // Expose protected methods that allow the renderer process to use

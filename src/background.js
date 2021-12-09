@@ -11,7 +11,7 @@
  */
 
 // > Imports & Variables
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, clipboard } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import { client_secret, client_id } from "./config.js"; // Spotify
@@ -220,6 +220,11 @@ ipcMain.on("saveWarning", function(event, arg) {
     message:
       "Traktor is opened. Your changes will not be saved to database. This is a safety feature to prevent conflicting changes.",
   });
+});
+
+ipcMain.on("toClipboard", function(event, arg) {
+  console.log("copy to clipboard: " + arg);
+  clipboard.writeText(arg);
 });
 
 // >> LOAD ALL IMAGES

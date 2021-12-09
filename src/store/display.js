@@ -7,6 +7,8 @@ export default {
 		activePlaylistPath: [],
 		showMarkers: false,
 		contextMenu: { x: 0, y: 0, show: false },
+		status: null,
+		clipboardMessage: false,
 	}),
 	getters: {
 		display(state) {
@@ -29,6 +31,12 @@ export default {
 		},
 		contextMenu(state) {
 			return state.contextMenu;
+		},
+		status(state) {
+			return state.status;
+		},
+		clipboardMessage(state) {
+			return state.clipboardMessage;
 		},
 	},
 	mutations: {
@@ -53,6 +61,12 @@ export default {
 		},
 		setContextMenu(state, value) {
 			state.contextMenu = value;
+		},
+		setStatus(state, text) {
+			state.status = text;
+		},
+		setClipboardMessage(state, show) {
+			state.clipboardMessage = show;
 		},
 	},
 };

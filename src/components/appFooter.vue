@@ -15,32 +15,23 @@
 		>
 			<div>
 				<p class="uppercase">status</p>
-				<div v-if="isSaving" class="text-white relative flex space-x-2">
+				<div class="text-white relative flex space-x-2">
 					<clip-loader
 						class="h-2"
-						:loading="isSaving"
+						:loading="isSaving || isStartingUp"
 						color="#f3980c"
 						size="13px"
 					></clip-loader>
-					<p class="animate-pulse">Autosaving Library</p>
+					<p
+						:class="{
+							'animate-pulse-fast':
+								isSaving || isStartingUp || clipboardMessage,
+						}"
+					>
+						{{ status }}
+					</p>
 				</div>
-				<p v-if="!isSaving && isSavingEnabled" class="text-white">
-					Ready
-				</p>
-				<p v-if="!isSaving && !isSavingEnabled && !isStartingUp" class="text-white">
-					Saving disabled, close Traktor
-				</p>
-				<p v-if="!isSaving && !isSavingEnabled && isStartingUp" class="text-white relative flex space-x-2">
-					<clip-loader
-						class="h-2"
-						:loading="true"
-						color="#f3980c"
-						size="13px"
-					></clip-loader>
-					<p class="animate-pulse">Starting Up...</p>
-				</p>
 			</div>
-
 			<div>
 				<p class="uppercase">active</p>
 				<p class="text-white">{{ filteredSongs }}</p>
@@ -51,8 +42,9 @@
 			</div>
 		</div>
 
-    	<div class="class-helper w-1/4 w-1/5 w-1/6 w-1/7 w-1/8 w-1/9 w-1/10 hover:bg-active hidden" ></div>
-
+		<div
+			class="class-helper w-1/4 w-1/5 w-1/6 w-1/7 w-1/8 w-1/9 w-1/10 hover:bg-active hidden"
+		></div>
 	</footer>
 </template>
 
@@ -76,6 +68,9 @@ export default {
 		return {};
 	},
 	computed: {
+		status() {
+			return this.$store.getters.status;
+		},
 		pathToLibrary() {
 			return this.$store.getters.libraryPath;
 		},
@@ -85,18 +80,56 @@ export default {
 		isSavingEnabled() {
 			return this.$store.getters.savingEnabled;
 		},
-		isStartingUp(){
+		isStartingUp() {
 			return this.$store.getters.startingUp;
-		}
+		},
+		clipboardMessage() {
+			return this.$store.getters.clipboardMessage;
+		},
 	},
-	methods: {},
+	watch: {
+		isSaving(newval, oldval) {
+			this.updateStatus();
+		},
+		isSavingEnabled(newval, oldval) {
+			this.updateStatus();
+		},
+		isStartingUp(newval, oldval) {
+			this.updateStatus();
+		},
+		clipboardMessage(newval, oldval) {
+			this.updateStatus();
+		},
+	},
+	methods: {
+		updateStatus() {
+			if (!this.isSaving && this.isSavingEnabled) {
+				this.$store.commit("setStatus", "Ready");
+			}
+			if (!this.isSaving && !this.isSavingEnabled && !this.isStartingUp) {
+				this.$store.commit(
+					"setStatus",
+					"Saving disabled, close Traktor"
+				);
+			}
+			if (!this.isSaving && !this.isSavingEnabled && this.isStartingUp) {
+				this.$store.commit("setStatus", "Starting Up...");
+			}
+			if (!this.isSaving && this.clipboardMessage) {
+				this.$store.commit("setStatus", "Track copied to clipboard!");
+			}
+			if (this.isSaving) {
+				this.$store.commit("setStatus", "Autosaving Library");
+			}
+		},
+	},
 	mounted() {
 		let self = this;
 		window.ipcRenderer.receive("traktorOpen", function(traktorOpen) {
 			// Initial check Traktor Open. Ready to save if Traktor is closed.
-			if(self.$store.getters.startingUp) {
+			if (self.$store.getters.startingUp) {
 				console.log("Ready to save");
-			    self.$store.commit("setStartingUp", false);
+				self.$store.commit("setStartingUp", false);
 			}
 
 			// If Traktor is open (= true), saving is NOT enabled (= false), so invert variable

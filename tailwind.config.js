@@ -33,6 +33,9 @@ module.exports = {
         xxs: ".6rem",
       },
       cursor: { "divider-h": "col-resize" },
+      animation: {
+        "pulse-fast": "pulse 0.55s linear infinite",
+      },
     },
   },
   variants: {
