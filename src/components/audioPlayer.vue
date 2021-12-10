@@ -1,8 +1,8 @@
 <template>
-	<div class="flex items-center relative border border-black bg-black-medium">
+	<div class="flex items-center relative bg-black-dark shadow-black-lg">
 		<button
 			@click="togglePlayback"
-			class="h-14 w-14 flex justify-center items-center border-r border-black"
+			class="h-14 w-14 flex justify-center items-center"
 			:class="{ active: isPlaying }"
 		>
 			<svg-icon type="mdi" :path="iconPlayPause" size="38"></svg-icon>
@@ -54,14 +54,31 @@
 	<div v-if="!sidebar" class="font-medium text-gray-dark">
 		<p class="uppercase">now playing</p>
 		<p
-			class="text-white text-xs whitespace-nowrap overflow-hidden overflow-ellipsis"
-			style="max-width:calc(100vw - 900px)"
+			class="text-gray-very-light text-xs whitespace-nowrap overflow-hidden overflow-ellipsis"
+			style="max-width:230px"
 		>
-			{{ artist }} - {{ title }}
+			{{ artist }}
+		</p>
+		<p
+			class="text-white text-xs whitespace-nowrap overflow-hidden overflow-ellipsis"
+			style="max-width:230px"
+		>
+			{{ title }}
 		</p>
 	</div>
-	<button class="flex justify-center items-center h-9 w-9">
-		<svg-icon type="mdi" :path="iconMute" size="18"></svg-icon>
+	<button
+		v-tooltip="'Toggle Audio'"
+		class="flex justify-center items-center h-9 w-9"
+		:class="{ active: muted }"
+		@click="setmute"
+	>
+		<svg-icon v-if="muted" type="mdi" :path="iconMute" size="18"></svg-icon>
+		<svg-icon
+			v-if="!muted"
+			type="mdi"
+			:path="iconUnmute"
+			size="18"
+		></svg-icon>
 	</button>
 
 	<button
@@ -147,6 +164,7 @@ export default {
 			duration: null,
 			progress: null,
 			showCues: false,
+			muted: true,
 		};
 	},
 	computed: {
@@ -173,6 +191,10 @@ export default {
 		},
 	},
 	methods: {
+		setmute() {
+			this.muted = !this.muted;
+			wavesurfer.setMute(this.muted);
+		},
 		toggleMarkers() {
 			this.$store.commit(
 				"setShowMarkers",

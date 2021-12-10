@@ -1,5 +1,7 @@
 <template>
-	<header class="bg-black-light flex justify-between items-center px-2">
+	<header
+		class="bg-black-light flex justify-between items-center px-2 border-b border-black"
+	>
 		<logo></logo>
 
 		<div
@@ -16,19 +18,6 @@
 
 			<btn-open-library></btn-open-library>
 
-			<button
-				v-tooltip="'Show Cuepoints'"
-				class="flex justify-center items-center h-9 w-9"
-				@click="toggleMarkers"
-				:class="{ active: $store.getters.showMarkers }"
-			>
-				<svg-icon
-					type="mdi"
-					:path="iconToggleMarkers"
-					size="18"
-				></svg-icon>
-			</button>
-
 			<toggle-sidebar></toggle-sidebar>
 
 			<display-setting></display-setting>
@@ -39,7 +28,6 @@
 <script>
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiArchiveSearch } from "@mdi/js";
-import { mdiNumeric1Box } from "@mdi/js";
 import Search from "./Search.vue";
 import FilterRating from "./FilterRating.vue";
 import FilterColor from "./FilterColor.vue";
@@ -62,7 +50,6 @@ export default {
 	data() {
 		return {
 			iconOpenLib: mdiArchiveSearch,
-			iconToggleMarkers: mdiNumeric1Box,
 		};
 	},
 	computed: {
@@ -70,13 +57,6 @@ export default {
 			return this.$store.getters.libraryPath;
 		},
 	},
-	methods: {
-		toggleMarkers() {
-			this.$store.commit(
-				"setShowMarkers",
-				!this.$store.getters.showMarkers
-			);
-		},
-	},
+	methods: {},
 };
 </script>

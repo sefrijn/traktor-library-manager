@@ -13,7 +13,7 @@
 
       <aside
         v-if="sidebar && pathToLibrary"
-        class="max-w-sm flex flex-col justify-between"
+        class="max-w-sm flex flex-col justify-between border-r border-black"
         :style="{ width: `${asideWidth}%` }"
         style="height: calc(100vh - 134px);"
       >
@@ -31,14 +31,14 @@
 
       <section
         v-if="pathToLibrary"
-        class="flex-grow relative"
+        class="flex-grow relative border-l border-black"
         style="height: calc(100vh - 134px);"
         @wheel="setScrollSource"
       >
         <context-menu></context-menu>
         <ag-grid-vue
           ref="trackList"
-          class="ag-theme-alpine-dark w-full border-t border-l border-black-dark"
+          class="ag-theme-alpine-dark w-full"
           :class="classesGrid"
           :rowBuffer="10"
           :column-defs="columnDefs"
