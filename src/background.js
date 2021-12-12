@@ -4,8 +4,8 @@
  *
  * Imports & Variables
  * Electron Window Functions
- * Spotify Test
  * IPC functions
+ * Spotify get genres
  * - LOAD ALL IMAGES
  * - Generate all coverart files
  */
@@ -32,6 +32,7 @@ var builder = new xml2js.Builder({
   xmldec: { version: "1.0", encoding: "UTF-8", standalone: false },
 });
 let win = null;
+let token = null;
 
 const debugLimitImages = 5000;
 
@@ -70,27 +71,8 @@ async function createWindow() {
     win.loadURL("app://./index.html");
   }
 
-  let token = await spotifyApi();
+  token = await spotifyApi();
   console.log("Token: " + token);
-
-  // > Spotify Test
-  // await axios
-  //   .get(
-  //     "https://api.spotify.com/v1/search?q=Islandman+Drums+Colca&type=track",
-  //     {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   )
-  //   .then(function(response) {
-  //     console.log(response.data.tracks.items[0]);
-  //   })
-  //   .catch(function(error) {
-  //     console.log(error);
-  //   });
 }
 
 async function spotifyApi() {
@@ -220,6 +202,30 @@ ipcMain.on("saveWarning", function(event, arg) {
     message:
       "Traktor is opened. Your changes will not be saved to database. This is a safety feature to prevent conflicting changes.",
   });
+});
+
+ipcMain.on("spotifyGenres", async function(event, arg) {
+  let artist = arg[0];
+  let title = arg[1];
+  // > Spotify get genres
+  // let query = artist.replace(/ /g, "+") + "+" + title.replace(/ /g, "+");
+  let query = artist.replace(/ /g, "+");
+  await axios
+    .get("https://api.spotify.com/v1/search?q=" + query + "&type=artist", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then(function(response) {
+      let result = response.data.artists.items[0];
+      console.log(result);
+      win.webContents.send("spotifyGenres", result);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
 });
 
 ipcMain.on("toClipboard", function(event, arg) {

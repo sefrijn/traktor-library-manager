@@ -1,6 +1,5 @@
 export default {
   mounted() {
-    console.log("external mounted");
     if (localStorage.pathToLibrary) {
       this.$store.commit("setLibraryPath", localStorage.pathToLibrary);
       window.ipcRenderer.send("parseXML", [this.pathToLibrary]);
@@ -110,7 +109,6 @@ export default {
     });
 
     window.ipcRenderer.receive("parseXML", (message) => {
-      console.log("parseXML");
       self.library = message;
       console.log(self.library);
 

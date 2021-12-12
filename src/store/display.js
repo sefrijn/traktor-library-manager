@@ -73,7 +73,6 @@ export default {
 			state.clipboardMessage = show;
 		},
 		setCoverSize(state, size) {
-			console.log("commit function");
 			state.coverSize = size;
 		},
 	},

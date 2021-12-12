@@ -172,7 +172,7 @@ export default {
         this.$store.commit("setClipboardMessage", true);
         setTimeout(function() {
           self.$store.commit("setClipboardMessage", false);
-        }, 1600);
+        }, 1400);
       }
       if (params.colDef.field == "index") {
         this.playTrack(params.data);

@@ -89,6 +89,13 @@
 	>
 		<svg-icon type="mdi" :path="iconToggleMarkers" size="18"></svg-icon>
 	</button>
+
+	<button
+		v-tooltip="'Show Artist Information'"
+		class="flex justify-center items-center h-9 w-9"
+	>
+		<svg-icon type="mdi" :path="iconInfo" size="18"></svg-icon>
+	</button>
 </template>
 
 <style lang="scss">
@@ -141,6 +148,7 @@ import { mdiPlay } from "@mdi/js";
 import { mdiVolumeHigh } from "@mdi/js";
 import { mdiVolumeOff } from "@mdi/js";
 import { mdiNumeric1Box } from "@mdi/js";
+import { mdiInformationVariant } from "@mdi/js";
 import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
 import WaveSurfer from "wavesurfer.js";
 import MarkersPlugin from "wavesurfer.js/dist/plugin/wavesurfer.markers.min.js";
@@ -156,6 +164,7 @@ export default {
 			iconMute: mdiVolumeOff,
 			iconUnmute: mdiVolumeHigh,
 			iconToggleMarkers: mdiNumeric1Box,
+			iconInfo: mdiInformationVariant,
 			isPlaying: false,
 			iconPlayPause: mdiPlay,
 			color: "#343434",
@@ -164,7 +173,7 @@ export default {
 			duration: null,
 			progress: null,
 			showCues: false,
-			muted: true,
+			muted: false,
 		};
 	},
 	computed: {

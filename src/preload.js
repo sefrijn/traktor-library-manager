@@ -13,6 +13,7 @@ const validChannels = [
 	"traktorOpen",
 	"saveWarning",
 	"toClipboard",
+	"spotifyGenres",
 ];
 
 // Expose protected methods that allow the renderer process to use
@@ -30,6 +31,9 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
 			// Deliberately strip event as it includes `sender`
 			ipcRenderer.on(channel, (event, ...args) => func(...args));
 		}
+	},
+	removeListener: (channel) => {
+		ipcRenderer.removeAllListeners(channel);
 	},
 	removeAllListeners: () => {
 		ipcRenderer.removeAllListeners();

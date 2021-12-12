@@ -23,13 +23,12 @@
 						size="13px"
 					></clip-loader>
 					<p
+						class="flex"
 						:class="{
-							'animate-pulse-fast':
-								isSaving || isStartingUp || clipboardMessage,
+							'animate-pulse-fast': isSaving || isStartingUp,
 						}"
-					>
-						{{ status }}
-					</p>
+						v-html="status"
+					></p>
 				</div>
 			</div>
 			<div>
@@ -113,7 +112,12 @@ export default {
 				this.$store.commit("setStatus", "Starting Up...");
 			}
 			if (!this.isSaving && this.clipboardMessage) {
-				this.$store.commit("setStatus", "Track copied to clipboard!");
+				this.$store.commit(
+					"setStatus",
+					`<svg class="animate-pulse-fast" style="margin-right:4px;margin-top:2px;width:11px;height:11px" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" />
+<span>Ready</span>`
+				);
 			}
 			if (this.isSaving) {
 				this.$store.commit("setStatus", "Autosaving Library");

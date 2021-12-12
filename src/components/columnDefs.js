@@ -72,7 +72,7 @@ let column_defs = [
   {
     headerName: "Genre",
     field: "genre",
-    width: 135,
+    width: 155,
     cellEditorFramework: Genre,
   },
   {
