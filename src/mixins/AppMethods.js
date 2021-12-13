@@ -2,6 +2,7 @@ import { throttle } from "throttle-debounce";
 
 export default {
   methods: {
+    // > Scroll
     setScrollSource: throttle(20, function(event) {
       let splitHeight = (window.innerHeight - 134) / 2 + 67;
       if (this.display === "list" && this.scrollSource !== "list") {
@@ -49,11 +50,14 @@ export default {
         this.gridApi.gridBodyCon.eBodyViewport.scrollTop = newScrollRatio * h;
       }
     }),
+
+    // > Drag
     onRowDragEnd(event) {
       this.$store.commit("setSaving", true);
       let self = this;
       let index = null;
       // >>> Reset index only at Track Collection
+      // If variable is null, set index to 0, in order to rebuild new index
       if (!this.activePlaylist) {
         index = 0;
       }
@@ -61,24 +65,28 @@ export default {
       let itemsToUpdate = [];
       let libraryUpdated = [];
       this.gridApi.forEachNodeAfterFilterAndSort(function(rowNode) {
+        // Set new index if at Track Collection
         if (index !== null) {
           libraryUpdated[index] =
             self.library["NML"]["COLLECTION"][0]["ENTRY"][rowNode.data.index];
           rowNode.data.index = index;
           index++;
         }
+        // If at playlist, only update position in Row Data
         itemsToUpdate.push(rowNode.data);
       });
       this.$store.commit("setRowData", itemsToUpdate);
+
       // >>> Store Track Collection in XML
       if (index !== null) {
         this.library["NML"]["COLLECTION"][0]["ENTRY"] = libraryUpdated;
-        let updatedLibrary = JSON.parse(JSON.stringify(this.library));
-        window.ipcRenderer.send("buildXML", [
-          updatedLibrary,
-          localStorage.pathToLibrary,
-        ]);
+        // let updatedLibrary = JSON.parse(JSON.stringify(this.library));
+        // window.ipcRenderer.send("buildXML", [
+        //   updatedLibrary,
+        //   localStorage.pathToLibrary,
+        // ]);
       }
+
       // >>> Playlist edit
       if (index === null) {
         // reference correct playlist up to 5 levels deep, known limitation of manipulating XML with JSON...
@@ -115,13 +123,21 @@ export default {
         let el = l[parseInt(event.node.id)];
         l.splice(parseInt(event.node.id), 1);
         l.splice(event.overIndex, 0, el);
-        let updatedLibrary = JSON.parse(JSON.stringify(this.library));
-        window.ipcRenderer.send("buildXML", [
-          updatedLibrary,
-          localStorage.pathToLibrary,
-        ]);
+        // let updatedLibrary = JSON.parse(JSON.stringify(this.library));
+        // window.ipcRenderer.send("buildXML", [
+        //   updatedLibrary,
+        //   localStorage.pathToLibrary,
+        // ]);
       }
+
+      //  >>> Save changes
+      let updatedLibrary = JSON.parse(JSON.stringify(this.library));
+      window.ipcRenderer.send("buildXML", [
+        updatedLibrary,
+        localStorage.pathToLibrary,
+      ]);
     },
+    // > Resize sidebar
     handleDragging(e) {
       const percentage = (e.pageX / window.innerWidth) * 100;
       if (percentage >= 10 && percentage <= 90) {
@@ -134,6 +150,8 @@ export default {
     endDragging() {
       document.removeEventListener("mousemove", this.handleDragging);
     },
+
+    // > Tracklist updates
     onGridReady(params) {
       // console.log("set visibleTracks - onGridReady");
       this.gridApi = params.api;
@@ -155,14 +173,8 @@ export default {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
     },
-    playTrack(track) {
-      if (track.index != this.$store.state.trackPlaying.index) {
-        this.$store.commit("setTrackPlaying", track);
-        this.$store.commit("setLoading", true);
-        this.$store.commit("setSpotifyArtist", true);
-        window.ipcRenderer.send("loadAudio", track.path + track.filename);
-      }
-    },
+
+    // > Clipboard on Cell Clicked
     onCellClicked(params) {
       if (params.data.index != this.$store.state.trackPlaying.index) {
         let clipboardVal = params.data.artist + " - " + params.data.title;
@@ -178,6 +190,17 @@ export default {
         this.playTrack(params.data);
       }
     },
+    // > Play a track
+    playTrack(track) {
+      if (track.index != this.$store.state.trackPlaying.index) {
+        this.$store.commit("setTrackPlaying", track);
+        this.$store.commit("setLoading", true);
+        this.$store.commit("setSpotifyArtist", true);
+        window.ipcRenderer.send("loadAudio", track.path + track.filename);
+      }
+    },
+
+    // > Context menu
     onCellContextMenu(params) {
       let val = {};
       val.x = params.event.clientX;
@@ -192,6 +215,8 @@ export default {
         this.$store.commit("setContextMenu", val);
       }
     },
+
+    // > During Editing, stop scroll
     onCellEditingStarted(params) {
       this.$store.commit("setPreventScroll", true);
     },
@@ -200,6 +225,8 @@ export default {
         this.$store.commit("setPreventScroll", false);
       }
     },
+
+    // > Save changes
     onCellValueChanged(params) {
       this.$store.commit("setSaving", true);
       console.log("You'v edited a cell");
@@ -209,7 +236,13 @@ export default {
       }, 50);
     },
     save(params) {
-      // > Save changes to Traktor XML
+      // Save changes to Traktor XML
+      // let i = params.data.index;
+      // this.$store.commit("setLibraryValue", { path:
+      //   "NML.COLLECTION.0.ENTRY." + i + ".INFO.0.$.GENRE",
+      //   value: params.data.genre,
+      // });
+
       let self = this;
       console.log(params.data);
       this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
@@ -233,7 +266,7 @@ export default {
       this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index]["$"][
         "TITLE"
       ] = params.data.title;
-      // >> Update Genres
+      // Update Genres
       if (params.column.colId == "genre") {
         console.log("rebuild genre autocomplete");
         self.$store.commit("clearAllGenres");
@@ -287,6 +320,8 @@ export default {
         localStorage.pathToLibrary,
       ]);
     },
+
+    // > Poll Traktor is running
     pollTraktorOpen() {
       window.ipcRenderer.send("traktorOpen", "");
       this.traktorOpen = setInterval(() => {

@@ -113,7 +113,16 @@ export default {
         self.library["NML"]["PLAYLISTS"][0]["NODE"][0]
       );
       // foreach()
-      console.log(self.playlists.SUBNODES[0].NODE);
+      // console.log("-- AUTOPLAYLIST --");
+      // let autoPlaylistIndex;
+      // for (const playlist in self.playlists.SUBNODES[0].NODE) {
+      //   let name = self.playlists.SUBNODES[0].NODE[playlist]["$"]["NAME"];
+      //   if (name == "Library Manager") autoPlaylistIndex = parseInt(playlist);
+      // }
+      // let path = `SUBNODES.0.NODE.${autoPlaylistIndex}`;
+      // self.$store.commit("removePlaylistFolder", path);
+      // console.log(self.playlists.SUBNODES[0].NODE[autoPlaylistIndex]);
+
       // this.playlists = self.library["NML"]["PLAYLISTS"][0]["NODE"][0];
 
       self.totalSongs = Object.keys(collectionFiltered).length;
@@ -121,6 +130,7 @@ export default {
 
     window.ipcRenderer.receive("parseXML", (message) => {
       self.library = message;
+      // self.$store.commit("setLibrary", message);
       console.log(self.library);
 
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];
