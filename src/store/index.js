@@ -31,6 +31,19 @@ function setObjValue(path, value, obj) {
 	schema[pList[len - 1]] = value;
 }
 
+function getObjValue(path, obj) {
+	var schema = obj; // a moving reference to internal objects within obj
+	var pList = path.split(".");
+	var len = pList.length;
+	for (var i = 0; i < len - 1; i++) {
+		var elem = pList[i];
+		if (!schema[elem]) schema[elem] = {};
+		schema = schema[elem];
+	}
+
+	return schema[pList[len - 1]];
+}
+
 export default createStore({
 	modules: {
 		functional: functional,
@@ -52,7 +65,7 @@ export default createStore({
 			tags: [],
 
 			// Tracks
-			library: null, // full JS Object - converted from NML XML
+			library: null, // JS Object - Converted from NML Traktor Library XML
 			collection: null, // full rowData - rebuild with only relevant columns
 			playlists: null, // Reference of converted library XML to JS object
 			rowData: null, // filtered rowData
@@ -60,6 +73,11 @@ export default createStore({
 			trackPlaying: {},
 			// trackSelected: {},
 		};
+	},
+	getters: {
+		library: (state) => (path) => {
+			return getObjValue(path, state.library);
+		},
 	},
 	mutations: {
 		setLibraryValue(state, data) {

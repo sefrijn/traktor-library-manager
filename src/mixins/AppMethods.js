@@ -1,4 +1,7 @@
 import { throttle } from "throttle-debounce";
+const cloneDeep = require("lodash.clonedeep");
+let nmlCollection = "NML.COLLECTION.0.ENTRY";
+let nmlPlaylist = "NML.PLAYLISTS.0.NODE.0";
 
 export default {
   methods: {
@@ -56,6 +59,7 @@ export default {
       this.$store.commit("setSaving", true);
       let self = this;
       let index = null;
+
       // >>> Reset index only at Track Collection
       // If variable is null, set index to 0, in order to rebuild new index
       if (!this.activePlaylist) {
@@ -64,11 +68,12 @@ export default {
       // >>> Update rowData after drag
       let itemsToUpdate = [];
       let libraryUpdated = [];
-      this.gridApi.forEachNodeAfterFilterAndSort(function(rowNode) {
+      this.gridApi.forEachNodeAfterFilterAndSort((rowNode) => {
         // Set new index if at Track Collection
-        if (index !== null) {
-          libraryUpdated[index] =
-            self.library["NML"]["COLLECTION"][0]["ENTRY"][rowNode.data.index];
+        if (!this.activePlaylist) {
+          libraryUpdated[index] = this.$store.getters.library(
+            `${nmlCollection}.${rowNode.data.index}`
+          );
           rowNode.data.index = index;
           index++;
         }
@@ -78,62 +83,38 @@ export default {
       this.$store.commit("setRowData", itemsToUpdate);
 
       // >>> Store Track Collection in XML
-      if (index !== null) {
-        this.library["NML"]["COLLECTION"][0]["ENTRY"] = libraryUpdated;
-        // let updatedLibrary = JSON.parse(JSON.stringify(this.library));
-        // window.ipcRenderer.send("buildXML", [
-        //   updatedLibrary,
-        //   localStorage.pathToLibrary,
-        // ]);
+      if (!this.activePlaylist) {
+        this.$store.commit("setLibraryValue", {
+          path: nmlCollection,
+          value: libraryUpdated,
+        });
       }
 
       // >>> Playlist edit
-      if (index === null) {
-        // reference correct playlist up to 5 levels deep, known limitation of manipulating XML with JSON...
-        let l;
-        if (this.activePlaylistPath.length == 2) {
-          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
-            .PLAYLIST[0].ENTRY;
+      if (this.activePlaylist) {
+        let path = nmlPlaylist;
+        for (let depth = 1; depth < this.activePlaylistPath.length; depth++) {
+          path += `.SUBNODES.0.NODE.${this.activePlaylistPath[depth]}`;
         }
-        if (this.activePlaylistPath.length == 3) {
-          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
-            .SUBNODES[0].NODE[this.activePlaylistPath[2]].PLAYLIST[0].ENTRY;
-        }
-        if (this.activePlaylistPath.length == 4) {
-          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
-            .SUBNODES[0].NODE[this.activePlaylistPath[2]].SUBNODES[0].NODE[
-            this.activePlaylistPath[3]
-          ].PLAYLIST[0].ENTRY;
-        }
-        if (this.activePlaylistPath.length == 5) {
-          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
-            .SUBNODES[0].NODE[this.activePlaylistPath[2]].SUBNODES[0].NODE[
-            this.activePlaylistPath[3]
-          ].SUBNODES[0].NODE[this.activePlaylistPath[4]].PLAYLIST[0].ENTRY;
-        }
-        if (this.activePlaylistPath.length == 6) {
-          l = this.playlists.SUBNODES[0].NODE[this.activePlaylistPath[1]]
-            .SUBNODES[0].NODE[this.activePlaylistPath[2]].SUBNODES[0].NODE[
-            this.activePlaylistPath[3]
-          ].SUBNODES[0].NODE[this.activePlaylistPath[4]].SUBNODES[0].NODE[
-            this.activePlaylistPath[5]
-          ].PLAYLIST[0].ENTRY;
-        }
+        path += ".PLAYLIST.0.ENTRY";
+        let playlistEntries = this.$store.getters.library(path);
+
         // Single element to swap
-        let el = l[parseInt(event.node.id)];
-        l.splice(parseInt(event.node.id), 1);
-        l.splice(event.overIndex, 0, el);
-        // let updatedLibrary = JSON.parse(JSON.stringify(this.library));
-        // window.ipcRenderer.send("buildXML", [
-        //   updatedLibrary,
-        //   localStorage.pathToLibrary,
-        // ]);
+        let el = playlistEntries[parseInt(event.node.id)];
+        playlistEntries.splice(parseInt(event.node.id), 1);
+        playlistEntries.splice(event.overIndex, 0, el);
+
+        // Update Vuex Library js object
+        this.$store.commit("setLibraryValue", {
+          path: path,
+          value: playlistEntries,
+        });
       }
 
       //  >>> Save changes
-      let updatedLibrary = JSON.parse(JSON.stringify(this.library));
+      let libraryObj = cloneDeep(this.library);
       window.ipcRenderer.send("buildXML", [
-        updatedLibrary,
+        libraryObj,
         localStorage.pathToLibrary,
       ]);
     },
@@ -237,58 +218,66 @@ export default {
     },
     save(params) {
       // Save changes to Traktor XML
-      let i = params.data.index;
+      let i = "." + params.data.index;
+
+      // Intensity
       this.$store.commit("setLibraryValue", {
-        path: "NML.COLLECTION.0.ENTRY." + i + ".INFO.0.$.GENRE",
+        path: nmlCollection + i + ".INFO.0.$.RANKING",
+        value: params.data.rating * 51,
+      });
+      // Color
+      this.$store.commit("setLibraryValue", {
+        path: nmlCollection + i + ".INFO.0.$.COLOR",
+        value: params.data.color_code,
+      });
+      // Artist
+      this.$store.commit("setLibraryValue", {
+        path: nmlCollection + i + ".$.ARTIST",
+        value: params.data.artist,
+      });
+      // Title
+      this.$store.commit("setLibraryValue", {
+        path: nmlCollection + i + ".$.TITLE",
+        value: params.data.title,
+      });
+      // Genre
+      this.$store.commit("setLibraryValue", {
+        path: nmlCollection + i + ".INFO.0.$.GENRE",
         value: params.data.genre,
       });
+      // Comment 1
+      this.$store.commit("setLibraryValue", {
+        path: nmlCollection + i + ".INFO.0.$.COMMENT",
+        value: params.data.comment_1,
+      });
+      // Comment 2
+      this.$store.commit("setLibraryValue", {
+        path: nmlCollection + i + ".INFO.0.$.RATING",
+        value: params.data.comment_2,
+      });
 
-      let self = this;
-      console.log(params.data);
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
-        "INFO"
-      ][0]["$"]["COLOR"] = params.data.color_code;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
-        "INFO"
-      ][0]["$"]["RANKING"] = params.data.rating * 51;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
-        "INFO"
-      ][0]["$"]["GENRE"] = params.data.genre;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
-        "INFO"
-      ][0]["$"]["COMMENT"] = params.data.comment_1;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index][
-        "INFO"
-      ][0]["$"]["RATING"] = params.data.comment_2;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index]["$"][
-        "ARTIST"
-      ] = params.data.artist;
-      this.library["NML"]["COLLECTION"][0]["ENTRY"][params.data.index]["$"][
-        "TITLE"
-      ] = params.data.title;
-      // Update Genres
+      // Update Genre list
       if (params.column.colId == "genre") {
-        console.log("rebuild genre autocomplete");
-        self.$store.commit("clearAllGenres");
-        let collection = this.library["NML"]["COLLECTION"][0]["ENTRY"];
-        collection.forEach(function(track, index) {
+        this.$store.commit("clearAllGenres");
+        let collection = this.$store.getters.library(nmlCollection);
+        collection.forEach((track, index) => {
           let genre = track["INFO"][0]["$"]["GENRE"];
           if (
-            self.$store.state.genres.indexOf(genre) < 0 &&
+            this.$store.state.genres.indexOf(genre) < 0 &&
             genre != undefined &&
             genre != ""
           )
-            self.$store.commit("addGenre", genre);
+            this.$store.commit("addGenre", genre);
         });
       }
+      // Update Tag list
       if (
         params.column.colId == "comment_1" ||
         params.column.colId == "comment_2"
       ) {
-        console.log("rebuild tags autocomplete");
-        self.$store.commit("clearTags");
-        let collection = this.library["NML"]["COLLECTION"][0]["ENTRY"];
-        collection.forEach(function(track, index) {
+        this.$store.commit("clearTags");
+        let collection = this.$store.getters.library(nmlCollection);
+        collection.forEach((track, index) => {
           let tags1 = track["INFO"][0]["$"]["COMMENT"];
           if (tags1 != undefined && tags1 != "") {
             tags1 = tags1.split(/[;,]+/).map((item) => item.trim());
@@ -303,20 +292,21 @@ export default {
           }
           let tags = [...tags1, ...tags2];
           if (tags.length > 0) {
-            tags.forEach(function(tag, index) {
+            tags.forEach((tag, index) => {
               if (
-                self.$store.state.tags.indexOf(tag) < 0 &&
+                this.$store.state.tags.indexOf(tag) < 0 &&
                 tag != undefined &&
                 tag != ""
               )
-                self.$store.commit("addTag", tag);
+                this.$store.commit("addTag", tag);
             });
           }
         });
       }
-      let updatedLibrary = JSON.parse(JSON.stringify(this.library));
+
+      let libraryObj = cloneDeep(this.library);
       window.ipcRenderer.send("buildXML", [
-        updatedLibrary,
+        libraryObj,
         localStorage.pathToLibrary,
       ]);
     },

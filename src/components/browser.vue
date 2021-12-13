@@ -28,9 +28,6 @@ import { mdiArchiveMusic } from "@mdi/js";
 import Folder from "./Folder.vue";
 
 export default {
-	props: {
-		playlists: Object,
-	},
 	components: {
 		Folder,
 		SvgIcon,
@@ -39,6 +36,11 @@ export default {
 		return {
 			iconCollection: mdiArchiveMusic,
 		};
+	},
+	computed: {
+		playlists() {
+			return this.$store.state.playlists;
+		},
 	},
 	methods: {
 		openTrackCollection() {

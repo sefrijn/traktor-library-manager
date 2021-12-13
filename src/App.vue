@@ -17,7 +17,7 @@
         :style="{ width: `${asideWidth}%` }"
         style="height: calc(100vh - 134px);"
       >
-        <browser :playlists="playlists"></browser>
+        <browser></browser>
         <now-playing></now-playing>
       </aside>
 
@@ -120,7 +120,6 @@ export default {
   mixins: [fancyTimeFormat, appBeforeMount, appMounted, appMethods],
   data() {
     return {
-      library: null, // JS Object - NML Traktor collection XML converted to JSON
       totalSongs: null, // INT - All tracks in collection
       filteredSongs: null, // INT - Tracks within playlist, filter and search
       columnDefs: null, // JS Object - AG Grid column settings
@@ -134,14 +133,15 @@ export default {
       visibleTracks: [],
       asideWidth: 20, // Number - percentage
       rowClassRules: null, // styling of rows
-      // playlists: null,
       unsubscribe: null,
       traktorOpen: null, // Boolean
       scrollSource: null,
-      // contextMenu: { x: 0, y: 0, show: false },
     };
   },
   computed: {
+    library() {
+      return this.$store.state.library;
+    },
     playlists() {
       return this.$store.state.playlists;
     },

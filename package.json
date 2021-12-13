@@ -24,6 +24,7 @@
     "ag-grid-vue3": "^26.2.0",
     "autoprefixer": "^9",
     "axios": "^0.24.0",
+    "lodash.clonedeep": "^4.5.0",
     "music-metadata": "^7.11.4",
     "postcss": "^7",
     "qs": "^6.10.1",
