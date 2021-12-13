@@ -90,6 +90,7 @@ export default {
               ? ""
               : Math.round(track["TEMPO"][0]["$"]["BPM"] * 100) / 100,
           ["import_date"]: track["INFO"][0]["$"]["IMPORT_DATE"],
+          ["play_count"]: track["INFO"][0]["$"]["PLAYCOUNT"],
           ["path"]: track["LOCATION"][0]["$"]["DIR"].replace(/:/g, ""),
           ["image"]:
             message[index].file == null
@@ -102,12 +103,18 @@ export default {
         // >>> Find tracks by Filename
         filenameToIndex[filename] = index;
       });
-      this.$store.commit("setCollection", collectionFiltered);
-      this.$store.commit("setRowData", collectionFiltered);
-      this.$store.commit("setFilenameToIndex", filenameToIndex);
+      self.$store.commit("setCollection", collectionFiltered);
+      self.$store.commit("setRowData", collectionFiltered);
+      self.$store.commit("setFilenameToIndex", filenameToIndex);
 
       // >> Create playlist data
-      this.playlists = self.library["NML"]["PLAYLISTS"][0]["NODE"][0];
+      self.$store.commit(
+        "setPlaylistData",
+        self.library["NML"]["PLAYLISTS"][0]["NODE"][0]
+      );
+      // foreach()
+      console.log(self.playlists.SUBNODES[0].NODE);
+      // this.playlists = self.library["NML"]["PLAYLISTS"][0]["NODE"][0];
 
       self.totalSongs = Object.keys(collectionFiltered).length;
     });

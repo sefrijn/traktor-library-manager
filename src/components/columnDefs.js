@@ -97,10 +97,16 @@ let column_defs = [
     headerName: "Key",
     field: "musical_key",
     editable: false,
+    width: 102,
   },
-  { headerName: "BPM", field: "bpm", editable: false },
-  { headerName: "Import Date", field: "import_date" },
-  { headerName: "Play Count", field: "play_count" },
+  { headerName: "BPM", field: "bpm", editable: false, width: 102 },
+  { headerName: "Import Date", field: "import_date", width: 102 },
+  {
+    headerName: "Play Count",
+    field: "play_count",
+    editable: false,
+    width: 102,
+  },
   { headerName: "Cue Points", field: "cue_points", hide: true },
 ];
 export { column_defs, ag_components };

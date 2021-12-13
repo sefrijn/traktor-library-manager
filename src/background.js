@@ -5,10 +5,9 @@
  * Imports & Variables
  * Electron Window Functions
  * IPC functions
- * Spotify get genres
- * Spotify get Artist URL
- * - LOAD ALL IMAGES
- * - Generate all coverart files
+ * - Spotify Genres
+ * - Spotify Artist URL
+ * - Generate Cover Art
  */
 
 // > Imports & Variables
@@ -73,7 +72,6 @@ async function createWindow() {
   }
 
   token = await spotifyApi();
-  console.log("Token: " + token);
 }
 
 async function spotifyApi() {
@@ -208,8 +206,7 @@ ipcMain.on("saveWarning", function(event, arg) {
 ipcMain.on("spotifyGenres", async function(event, arg) {
   let artist = arg[0];
   let title = arg[1];
-  // > Spotify get genres
-  // let query = artist.replace(/ /g, "+") + "+" + title.replace(/ /g, "+");
+  // >> Spotify Genres
   let query = artist.replace(/ /g, "+");
   await axios
     .get("https://api.spotify.com/v1/search?q=" + query + "&type=artist", {
@@ -221,7 +218,6 @@ ipcMain.on("spotifyGenres", async function(event, arg) {
     })
     .then(function(response) {
       let result = response.data.artists.items[0];
-      console.log(result);
       win.webContents.send("spotifyGenres", result);
     })
     .catch(function(error) {
@@ -230,7 +226,7 @@ ipcMain.on("spotifyGenres", async function(event, arg) {
 });
 
 ipcMain.on("spotifyArtist", async function(event, artist) {
-  // > Spotify get Artist URL
+  // >> Spotify Artist URL
   let query = artist.replace(/ /g, "+");
   await axios
     .get("https://api.spotify.com/v1/search?q=" + query + "&type=artist", {
@@ -262,8 +258,7 @@ ipcMain.on("toClipboard", function(event, arg) {
   clipboard.writeText(arg);
 });
 
-// >> LOAD ALL IMAGES
-// >> Generate all coverart files
+// >> Generate Cover Art
 // Large
 const cover_size_large = 400;
 const cover_path_large = path.join(
@@ -286,6 +281,7 @@ if (!fs.existsSync(cover_path_medium)) {
   fs.mkdirSync(cover_path_medium, { recursive: true });
 }
 
+// Small
 const cover_size_small = 60;
 const cover_path_small = path.join(
   app.getPath("userData"),
@@ -301,7 +297,7 @@ ipcMain.on("coverArtList", function(event, arg) {
   let images = {};
   let total = parseInt(Object.keys(files).length);
   let counter = 0;
-  console.log("started processing X images: " + Object.keys(files).length);
+  console.log("started processing images: " + Object.keys(files).length);
   let start = Date.now();
   (async () => {
     try {
@@ -361,7 +357,6 @@ ipcMain.on("coverArtList", function(event, arg) {
           win.webContents.send("coverArtProgress", counter / total);
         })
       );
-      // console.log("finished: " + (Date.now() - start));
       win.webContents.send("coverArtList", files);
     } catch (error) {
       console.error(error.message);

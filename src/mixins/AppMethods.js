@@ -115,7 +115,6 @@ export default {
         let el = l[parseInt(event.node.id)];
         l.splice(parseInt(event.node.id), 1);
         l.splice(event.overIndex, 0, el);
-        // library["NML"]["PLAYLISTS"][0]["NODE"][0] = libraryUpdated;
         let updatedLibrary = JSON.parse(JSON.stringify(this.library));
         window.ipcRenderer.send("buildXML", [
           updatedLibrary,

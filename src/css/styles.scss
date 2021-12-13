@@ -81,9 +81,9 @@ $labelFontSize: 14px !default;
 			background-color: $black-dark,
 			odd-row-background-color: $black-medium,
 			row-hover-color: lighten($black-light, 4%),
-			cell-horizontal-padding: 12px,
 			font-size: 12px !important,
 			grid-size: 4.9px,
+			cell-horizontal-padding: 7px,
 			header-height: 20px,
 			font-family: (
 				"Mulish",
@@ -100,14 +100,6 @@ $labelFontSize: 14px !default;
 	}
 	[aria-selected="true"] {
 		background-color: darken($traktor-active, 15%);
-	}
-	/* 	.ag-row-selected {
-		background-color: darken($traktor-active, 15%);
-	}
- */
-	.ag-header {
-		// or write CSS selectors to make customisations beyond what the parameters support
-		text-style: italic;
 	}
 	.ag-row {
 		&.color-1 {
@@ -240,19 +232,6 @@ input[type="radio"] + label {
 }
 
 #app {
-	/* 	::-webkit-scrollbar {
-		width: 10px;
-		height: 10px;
-	}
-	::-webkit-scrollbar-track-piece {
-		background: $black-light;
-	}
-	::-webkit-scrollbar-thumb {
-		background: $traktor-active;
-		border-radius: 5px;
-		height: 30px;
-		box-shadow: inset 0 0 1.5px black;
-	} */
 	.active,
 	input[type="radio"]:checked + label {
 		@apply bg-active hover:bg-active-dark text-white;

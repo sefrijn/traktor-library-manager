@@ -134,7 +134,7 @@ export default {
       visibleTracks: [],
       asideWidth: 20, // Number - percentage
       rowClassRules: null, // styling of rows
-      playlists: null,
+      // playlists: null,
       unsubscribe: null,
       traktorOpen: null, // Boolean
       scrollSource: null,
@@ -142,6 +142,9 @@ export default {
     };
   },
   computed: {
+    playlists() {
+      return this.$store.state.playlists;
+    },
     activePlaylist() {
       return this.$store.getters.activePlaylist;
     },

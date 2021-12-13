@@ -42,7 +42,6 @@ module.exports = {
     extend: {
       backgroundColor: ["checked"],
       textColor: ["checked"],
-      ringColor: ["hover", "active"],
     },
   },
   plugins: [require("@tailwindcss/forms")],

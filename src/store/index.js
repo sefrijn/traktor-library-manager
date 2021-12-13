@@ -18,7 +18,7 @@ export default createStore({
 
 			// Tracks
 			collection: null,
-			playlists: {},
+			playlists: null,
 			rowData: null,
 			filenameToIndex: null,
 			trackPlaying: {},
@@ -66,9 +66,12 @@ export default createStore({
 		setFilter(state, value) {
 			state.filter = value;
 		},
-		addPlaylist(state, playlist) {
-			state.playslists["playlist.name"] = playlist.entries;
+		setPlaylistData(state, data) {
+			state.playlists = data;
 		},
+		// addPlaylist(state, playlist) {
+		// 	state.playlists[playlist.name] = playlist.entries;
+		// },
 	},
 	actions: {
 		setPreventScroll({ commit }, prevent) {
