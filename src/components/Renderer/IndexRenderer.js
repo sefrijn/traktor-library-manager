@@ -5,7 +5,7 @@ export class IndexRenderer {
       "index-wrapper relative h-full w-full bg-transparent hover:bg-active";
     this.eGui.innerHTML = `
         <span class="index">${params.value}</span>
-        <div class="icon-wrapper cursor-pointer flex items-center justify-center" style="height:34px;width:34px;">
+        <div class="icon-wrapper cursor-pointer flex items-center justify-center" style="height:34px;min-width:34px;">
         <div class="icon"></div>
         </div>
        `;

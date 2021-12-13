@@ -160,6 +160,7 @@ export default {
       if (track.index != this.$store.state.trackPlaying.index) {
         this.$store.commit("setTrackPlaying", track);
         this.$store.commit("setLoading", true);
+        this.$store.commit("setSpotifyArtist", true);
         window.ipcRenderer.send("loadAudio", track.path + track.filename);
       }
     },

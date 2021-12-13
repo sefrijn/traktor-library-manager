@@ -102,6 +102,7 @@ import ContextMenu from "./components/ContextMenu.vue";
 import appBeforeMount from "./mixins/AppBeforeMount.js";
 import appMounted from "./mixins/AppMounted.js";
 import appMethods from "./mixins/AppMethods.js";
+import fancyTimeFormat from "./mixins/FancyTimeFormat.js";
 
 export default {
   name: "App",
@@ -116,7 +117,7 @@ export default {
     NowPlaying,
     ContextMenu,
   },
-  mixins: [appBeforeMount, appMounted, appMethods],
+  mixins: [fancyTimeFormat, appBeforeMount, appMounted, appMethods],
   data() {
     return {
       library: null, // JS Object - NML Traktor collection XML converted to JSON

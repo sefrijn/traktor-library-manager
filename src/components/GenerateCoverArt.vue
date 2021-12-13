@@ -17,7 +17,7 @@
 				src="./../assets/logo-bw@2x.png"
 				alt=""
 			/>
-			<h2 class="text-2xl">Loading Cover Art</h2>
+			<h2 class="text-2xl">Loading Data</h2>
 			<div class="loadbar w-1/3 h-3 bg-active">
 				<div
 					class="progress h-3 bg-black"

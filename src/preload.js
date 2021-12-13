@@ -14,6 +14,7 @@ const validChannels = [
 	"saveWarning",
 	"toClipboard",
 	"spotifyGenres",
+	"spotifyArtist",
 ];
 
 // Expose protected methods that allow the renderer process to use

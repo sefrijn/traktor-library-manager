@@ -10,6 +10,7 @@ export default {
 		status: null,
 		clipboardMessage: false,
 		coverSize: 6,
+		spotifyArtist: false,
 	}),
 	getters: {
 		display(state) {
@@ -41,6 +42,9 @@ export default {
 		},
 		coverSize(state) {
 			return state.coverSize;
+		},
+		spotifyArtist(state) {
+			return state.spotifyArtist;
 		},
 	},
 	mutations: {
@@ -74,6 +78,9 @@ export default {
 		},
 		setCoverSize(state, size) {
 			state.coverSize = size;
+		},
+		setSpotifyArtist(state, enabled) {
+			state.spotifyArtist = enabled;
 		},
 	},
 };

@@ -6,12 +6,13 @@
  * Electron Window Functions
  * IPC functions
  * Spotify get genres
+ * Spotify get Artist URL
  * - LOAD ALL IMAGES
  * - Generate all coverart files
  */
 
 // > Imports & Variables
-import { app, protocol, BrowserWindow, clipboard } from "electron";
+import { app, protocol, BrowserWindow, clipboard, shell } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import { client_secret, client_id } from "./config.js"; // Spotify
@@ -225,6 +226,34 @@ ipcMain.on("spotifyGenres", async function(event, arg) {
     })
     .catch(function(error) {
       console.log(error);
+    });
+});
+
+ipcMain.on("spotifyArtist", async function(event, artist) {
+  // > Spotify get Artist URL
+  let query = artist.replace(/ /g, "+");
+  await axios
+    .get("https://api.spotify.com/v1/search?q=" + query + "&type=artist", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then(function(response) {
+      let result = response.data.artists.items[0];
+      if (result && result.external_urls && result.external_urls.spotify) {
+        let url = result.external_urls.spotify;
+        console.log("Open artist URL: " + url);
+        shell.openExternal(url);
+      } else {
+        console.log("No artist URL");
+        win.webContents.send("spotifyArtist", false);
+      }
+    })
+    .catch(function(error) {
+      console.log(error);
+      win.webContents.send("spotifyArtist", false);
     });
 });
 

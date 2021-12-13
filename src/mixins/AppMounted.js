@@ -70,6 +70,10 @@ export default {
           ["index"]: index,
           ["artist"]: track["$"]["ARTIST"],
           ["title"]: track["$"]["TITLE"],
+          ["length"]: self.fancyTimeFormat(
+            track["INFO"][0]["$"]["PLAYTIME"],
+            true
+          ),
           ["genre"]: genre,
           ["comment_1"]: track["INFO"][0]["$"]["COMMENT"],
           ["comment_2"]: track["INFO"][0]["$"]["RATING"],

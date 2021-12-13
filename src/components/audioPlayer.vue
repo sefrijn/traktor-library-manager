@@ -26,11 +26,9 @@
 			</div>
 		</div>
 		<div
-			v-if="progress"
-			class="px-2 uppercase font-medium font-mono text-gray-dark text-xs"
+			class="w-11 px-2 uppercase font-medium font-mono text-gray-dark text-xs flex flex-col items-center"
 		>
-			<span>{{ duration }}</span
-			><br />
+			<span>{{ duration }}</span>
 			<span class="text-white">{{ progress }}</span>
 		</div>
 		<img
@@ -91,8 +89,12 @@
 	</button>
 
 	<button
-		v-tooltip="'Show Artist Information'"
+		@click="spotifyArtist"
+		v-tooltip="'Open Artist in Spotify'"
 		class="flex justify-center items-center h-9 w-9"
+		:class="{
+			'opacity-20 pointer-events-none': !$store.getters.spotifyArtist,
+		}"
 	>
 		<svg-icon type="mdi" :path="iconInfo" size="18"></svg-icon>
 	</button>
@@ -102,10 +104,6 @@
 @import "../css/colors";
 #waveform > wave {
 	overflow: visible !important;
-}
-#waveform:hover > wave > wave {
-	border-right-color: $traktor-active !important;
-	// @apply border-active;
 }
 .wavesurfer-marker svg {
 	height: 15px !important;
@@ -148,10 +146,12 @@ import { mdiPlay } from "@mdi/js";
 import { mdiVolumeHigh } from "@mdi/js";
 import { mdiVolumeOff } from "@mdi/js";
 import { mdiNumeric1Box } from "@mdi/js";
-import { mdiInformationVariant } from "@mdi/js";
+import { mdiSpotify } from "@mdi/js";
 import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
 import WaveSurfer from "wavesurfer.js";
 import MarkersPlugin from "wavesurfer.js/dist/plugin/wavesurfer.markers.min.js";
+import fancyTimeFormat from "./../mixins/FancyTimeFormat.js";
+
 let wavesurfer;
 
 export default {
@@ -159,19 +159,20 @@ export default {
 		SvgIcon,
 		ScaleLoader,
 	},
+	mixins: [fancyTimeFormat],
 	data() {
 		return {
 			iconMute: mdiVolumeOff,
 			iconUnmute: mdiVolumeHigh,
 			iconToggleMarkers: mdiNumeric1Box,
-			iconInfo: mdiInformationVariant,
+			iconInfo: mdiSpotify,
 			isPlaying: false,
 			iconPlayPause: mdiPlay,
 			color: "#343434",
 			height: "18px", // scale loader
 			width: "5px", // scale loader
-			duration: null,
-			progress: null,
+			duration: "0:00",
+			progress: "0:00",
 			showCues: false,
 			muted: false,
 		};
@@ -200,6 +201,9 @@ export default {
 		},
 	},
 	methods: {
+		spotifyArtist() {
+			window.ipcRenderer.send("spotifyArtist", this.artist);
+		},
 		setmute() {
 			this.muted = !this.muted;
 			wavesurfer.setMute(this.muted);
@@ -226,28 +230,10 @@ export default {
 				progressColor: "#65051D",
 				cursorColor: "#ddd",
 				cursorWidth: 2,
-				// barWidth: 2,
 				height: 56,
 				mediaControls: true,
 				plugins: [MarkersPlugin.create()],
 			});
-		},
-		fancyTimeFormat(duration) {
-			// Hours, minutes and seconds
-			var hrs = ~~(duration / 3600);
-			var mins = ~~((duration % 3600) / 60);
-			var secs = ~~duration % 60;
-
-			// Output like "1:01" or "4:03:59" or "123:03:59"
-			var ret = "";
-
-			if (hrs > 0) {
-				ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
-			}
-
-			ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-			ret += "" + secs;
-			return ret;
 		},
 	},
 	beforeUnmount() {
@@ -267,6 +253,11 @@ export default {
 			wavesurfer.loadBlob(blob);
 			console.log("load audio file");
 		});
+
+		window.ipcRenderer.receive("spotifyArtist", function(message) {
+			self.$store.commit("setSpotifyArtist", message);
+		});
+
 		wavesurfer.on("audioprocess", function() {
 			self.progress = self.fancyTimeFormat(
 				wavesurfer.backend.getCurrentTime()

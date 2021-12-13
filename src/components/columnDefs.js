@@ -70,6 +70,12 @@ let column_defs = [
     width: 135,
   },
   {
+    headerName: "T",
+    field: "length",
+    width: 62,
+    editable: false,
+  },
+  {
     headerName: "Genre",
     field: "genre",
     width: 155,
