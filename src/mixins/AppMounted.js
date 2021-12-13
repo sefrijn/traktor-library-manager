@@ -130,7 +130,7 @@ export default {
 
     window.ipcRenderer.receive("parseXML", (message) => {
       self.library = message;
-      // self.$store.commit("setLibrary", message);
+      self.$store.commit("setLibrary", message);
       console.log(self.library);
 
       let collection = self.library["NML"]["COLLECTION"][0]["ENTRY"];

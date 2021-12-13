@@ -237,11 +237,11 @@ export default {
     },
     save(params) {
       // Save changes to Traktor XML
-      // let i = params.data.index;
-      // this.$store.commit("setLibraryValue", { path:
-      //   "NML.COLLECTION.0.ENTRY." + i + ".INFO.0.$.GENRE",
-      //   value: params.data.genre,
-      // });
+      let i = params.data.index;
+      this.$store.commit("setLibraryValue", {
+        path: "NML.COLLECTION.0.ENTRY." + i + ".INFO.0.$.GENRE",
+        value: params.data.genre,
+      });
 
       let self = this;
       console.log(params.data);

@@ -18,18 +18,18 @@ function removeFromObject(obj, prop) {
 	return prop;
 }
 
-// function setObjValue(path, value, obj) {
-// 	var schema = obj; // a moving reference to internal objects within obj
-// 	var pList = path.split(".");
-// 	var len = pList.length;
-// 	for (var i = 0; i < len - 1; i++) {
-// 		var elem = pList[i];
-// 		if (!schema[elem]) schema[elem] = {};
-// 		schema = schema[elem];
-// 	}
+function setObjValue(path, value, obj) {
+	var schema = obj; // a moving reference to internal objects within obj
+	var pList = path.split(".");
+	var len = pList.length;
+	for (var i = 0; i < len - 1; i++) {
+		var elem = pList[i];
+		if (!schema[elem]) schema[elem] = {};
+		schema = schema[elem];
+	}
 
-// 	schema[pList[len - 1]] = value;
-// }
+	schema[pList[len - 1]] = value;
+}
 
 export default createStore({
 	modules: {
@@ -52,7 +52,7 @@ export default createStore({
 			tags: [],
 
 			// Tracks
-			// library: null, // full JS Object - converted from NML XML
+			library: null, // full JS Object - converted from NML XML
 			collection: null, // full rowData - rebuild with only relevant columns
 			playlists: null, // Reference of converted library XML to JS object
 			rowData: null, // filtered rowData
@@ -62,9 +62,9 @@ export default createStore({
 		};
 	},
 	mutations: {
-		// setLibraryValue(state, data) {
-		// 	setObjValue(data.path, data.value, state.library);
-		// },
+		setLibraryValue(state, data) {
+			setObjValue(data.path, data.value, state.library);
+		},
 		// Filter
 		setQuery(state, text) {
 			state.query = text;
