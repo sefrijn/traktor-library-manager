@@ -41,11 +41,10 @@ export default {
 		},
 	},
 	mounted() {
-		let self = this;
 		window.ipcRenderer.receive("coverArtProgress", (message) => {
-			self.percentage = message * 100;
-			if (self.percentage == 100) {
-				console.log("Loaded cover art");
+			this.percentage = message * 100;
+			if (this.percentage == 100) {
+				console.log("Loaded All Cover Art");
 			}
 		});
 	},

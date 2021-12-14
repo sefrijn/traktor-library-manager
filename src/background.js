@@ -292,8 +292,7 @@ if (!fs.existsSync(cover_path_small)) {
   fs.mkdirSync(cover_path_small, { recursive: true });
 }
 
-ipcMain.on("coverArtList", function(event, arg) {
-  let files = arg[0];
+ipcMain.on("coverArtList", function(event, files) {
   let images = {};
   let total = parseInt(Object.keys(files).length);
   let counter = 0;

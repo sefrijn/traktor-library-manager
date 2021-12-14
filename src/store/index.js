@@ -2,21 +2,21 @@ import { createStore } from "vuex";
 import functional from "./functional.js";
 import display from "./display.js";
 
-function removeFromObject(obj, prop) {
-	if (typeof obj === "undefined") {
-		return false;
-	}
+// function removeFromObject(obj, prop) {
+// 	if (typeof obj === "undefined") {
+// 		return false;
+// 	}
 
-	var _index = prop.indexOf(".");
-	if (_index > -1) {
-		return removeFromObject(
-			obj[prop.substring(0, _index)],
-			prop.substr(_index + 1)
-		);
-	}
-	// delete obj[prop];
-	return prop;
-}
+// 	var _index = prop.indexOf(".");
+// 	if (_index > -1) {
+// 		return removeFromObject(
+// 			obj[prop.substring(0, _index)],
+// 			prop.substr(_index + 1)
+// 		);
+// 	}
+// 	// delete obj[prop];
+// 	return prop;
+// }
 
 function setObjValue(path, value, obj) {
 	var schema = obj; // a moving reference to internal objects within obj
@@ -51,8 +51,6 @@ export default createStore({
 	},
 	state() {
 		return {
-			debug: {},
-
 			// Filters
 			query: "",
 			filter: {
@@ -66,12 +64,12 @@ export default createStore({
 
 			// Tracks
 			library: null, // JS Object - Converted from NML Traktor Library XML
-			collection: null, // full rowData - rebuild with only relevant columns
 			playlists: null, // Reference of converted library XML to JS object
-			rowData: null, // filtered rowData
-			filenameToIndex: null,
-			trackPlaying: {},
-			// trackSelected: {},
+
+			collection: null, // full rowData - rebuild JS object with relevant columns
+			rowData: null, // filtered rowData - rebuild and filtered with only visible rows
+			filenameToIndex: null, // map filename to rowData index
+			trackPlaying: {}, // Currently loaded and playing track
 		};
 	},
 	getters: {
@@ -118,7 +116,6 @@ export default createStore({
 			state.playlists = data;
 		},
 		setRowData(state, data) {
-			console.log("setRowData in Vuex Store");
 			state.rowData = data;
 		},
 		setFilenameToIndex(state, data) {

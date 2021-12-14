@@ -14,23 +14,22 @@ export default {
 		},
 	},
 	created() {
-		let self = this;
 		window.ipcRenderer.send("spotifyGenres", [
 			this.params.data.artist,
 			this.params.data.title,
 		]);
 
-		window.ipcRenderer.receive("spotifyGenres", function(message) {
-			console.log(message);
-			if (message) {
-				if (message.genres.length > 0) {
-					self.spotifyGenres = message.genres.map(function(genre) {
-						return self.capitalize(genre);
+		window.ipcRenderer.receive("spotifyGenres", (artist) => {
+			console.log(artist);
+			if (artist) {
+				if (artist.genres.length > 0) {
+					this.spotifyGenres = artist.genres.map((genre) => {
+						return this.capitalize(genre);
 					});
 					return;
 				}
 			}
-			self.apiDone = true;
+			this.apiDone = true;
 		});
 	},
 	beforeUnmount() {

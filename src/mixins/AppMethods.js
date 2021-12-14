@@ -1,7 +1,6 @@
 import { throttle } from "throttle-debounce";
+import { nmlCollection, nmlPlaylist } from "./../config/paths.js";
 const cloneDeep = require("lodash.clonedeep");
-let nmlCollection = "NML.COLLECTION.0.ENTRY";
-let nmlPlaylist = "NML.PLAYLISTS.0.NODE.0";
 
 export default {
   methods: {
@@ -57,7 +56,6 @@ export default {
     // > Drag
     onRowDragEnd(event) {
       this.$store.commit("setSaving", true);
-      let self = this;
       let index = null;
 
       // >>> Reset index only at Track Collection
@@ -161,10 +159,9 @@ export default {
         let clipboardVal = params.data.artist + " - " + params.data.title;
         console.log("copy to clipboard: " + clipboardVal);
         window.ipcRenderer.send("toClipboard", clipboardVal);
-        let self = this;
         this.$store.commit("setClipboardMessage", true);
-        setTimeout(function() {
-          self.$store.commit("setClipboardMessage", false);
+        setTimeout(() => {
+          this.$store.commit("setClipboardMessage", false);
         }, 1400);
       }
       if (params.colDef.field == "index") {
@@ -211,9 +208,8 @@ export default {
     onCellValueChanged(params) {
       this.$store.commit("setSaving", true);
       console.log("You'v edited a cell");
-      let self = this;
-      setTimeout(function() {
-        self.save(params);
+      setTimeout(() => {
+        this.save(params);
       }, 50);
     },
     save(params) {

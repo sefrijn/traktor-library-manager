@@ -1,9 +1,9 @@
-import { IndexRenderer } from "./Renderer/IndexRenderer.js";
-import { CoverArtRenderer } from "./Renderer/CoverArtRenderer.js";
-import { RatingRenderer } from "./Renderer/RatingRenderer.js";
-import { ColorRenderer } from "./Renderer/ColorRenderer.js";
-import Genre from "./Editor/Genre.vue";
-import Tagging from "./Editor/Tagging.vue";
+import { IndexRenderer } from "./../components/Renderer/IndexRenderer.js";
+import { CoverArtRenderer } from "./../components/Renderer/CoverArtRenderer.js";
+import { RatingRenderer } from "./../components/Renderer/RatingRenderer.js";
+import { ColorRenderer } from "./../components/Renderer/ColorRenderer.js";
+import Genre from "./../components/Editor/Genre.vue";
+import Tagging from "./../components/Editor/Tagging.vue";
 
 let ag_components = {
   indexRenderer: IndexRenderer,

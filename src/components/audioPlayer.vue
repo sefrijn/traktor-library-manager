@@ -244,31 +244,30 @@ export default {
 		this.createWavesurfer();
 	},
 	mounted() {
-		let self = this;
 		this.createWavesurfer();
 
-		window.ipcRenderer.receive("loadAudio", function(message) {
-			self.emptyWavesurfer();
+		window.ipcRenderer.receive("loadAudio", (message) => {
+			this.emptyWavesurfer();
 			var blob = new window.Blob([message]);
 			wavesurfer.loadBlob(blob);
 			console.log("load audio file");
 		});
 
-		window.ipcRenderer.receive("spotifyArtist", function(message) {
-			self.$store.commit("setSpotifyArtist", message);
+		window.ipcRenderer.receive("spotifyArtist", (message) => {
+			this.$store.commit("setSpotifyArtist", message);
 		});
 
-		wavesurfer.on("audioprocess", function() {
-			self.progress = self.fancyTimeFormat(
+		wavesurfer.on("audioprocess", () => {
+			this.progress = this.fancyTimeFormat(
 				wavesurfer.backend.getCurrentTime()
 			);
 		});
-		wavesurfer.on("finish", function() {
-			self.isPlaying = wavesurfer.isPlaying();
+		wavesurfer.on("finish", () => {
+			this.isPlaying = wavesurfer.isPlaying();
 			wavesurfer.stop();
 		});
-		wavesurfer.on("ready", function() {
-			let cue_points = self.$store.state.trackPlaying.cue_points;
+		wavesurfer.on("ready", () => {
+			let cue_points = this.$store.state.trackPlaying.cue_points;
 			for (const [key, cue] of Object.entries(cue_points)) {
 				wavesurfer.addMarker({
 					time: cue["$"]["START"] / 1000,
@@ -277,13 +276,13 @@ export default {
 					position: "top",
 				});
 			}
-			self.duration = self.fancyTimeFormat(
+			this.duration = this.fancyTimeFormat(
 				wavesurfer.backend.getDuration()
 			);
-			self.progress = self.fancyTimeFormat(0);
-			self.$store.commit("setLoading", false);
+			this.progress = this.fancyTimeFormat(0);
+			this.$store.commit("setLoading", false);
 			wavesurfer.play();
-			self.isPlaying = true;
+			this.isPlaying = true;
 		});
 	},
 };

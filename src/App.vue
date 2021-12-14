@@ -11,6 +11,8 @@
       <generate-cover-art style="height: calc(100vh - 134px);">
       </generate-cover-art>
 
+      <div class="browsertree-new w-1/6">Test</div>
+
       <aside
         v-if="sidebar && pathToLibrary"
         class="max-w-sm flex flex-col justify-between border-r border-black"
@@ -201,13 +203,12 @@ export default {
   },
   watch: {
     isSavingEnabled(newval, oldval) {
-      let self = this;
-      this.columnDefs.forEach(function(colDef, index) {
+      this.columnDefs.forEach((colDef, index) => {
         if (newval && !colDef.hasOwnProperty("editable")) {
-          self.columnDefs[index].editable = true;
+          this.columnDefs[index].editable = true;
         } else {
-          if (self.columnDefs[index].editable) {
-            delete self.columnDefs[index].editable;
+          if (this.columnDefs[index].editable) {
+            delete this.columnDefs[index].editable;
           }
         }
       });
@@ -236,14 +237,13 @@ export default {
       }
     },
     coverSize(newCoverSize, oldCoverSize) {
-      let self = this;
       if (newCoverSize != oldCoverSize) {
         console.log(
           "update scroll position of visual browser: " + newCoverSize
         );
         this.scrollSource = "coverSize";
-        setTimeout(function() {
-          self.onBodyScroll();
+        setTimeout(() => {
+          this.onBodyScroll();
         }, 20);
       }
     },

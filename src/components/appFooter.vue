@@ -125,16 +125,14 @@ export default {
 		},
 	},
 	mounted() {
-		let self = this;
-		window.ipcRenderer.receive("traktorOpen", function(traktorOpen) {
+		window.ipcRenderer.receive("traktorOpen", (traktorOpen) => {
 			// Initial check Traktor Open. Ready to save if Traktor is closed.
-			if (self.$store.getters.startingUp) {
-				console.log("Ready to save");
-				self.$store.commit("setStartingUp", false);
+			if (this.$store.getters.startingUp) {
+				this.$store.commit("setStartingUp", false);
 			}
 
 			// If Traktor is open (= true), saving is NOT enabled (= false), so invert variable
-			self.$store.commit("setSavingEnabled", !traktorOpen);
+			this.$store.commit("setSavingEnabled", !traktorOpen);
 		});
 	},
 };

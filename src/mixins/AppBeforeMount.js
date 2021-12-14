@@ -1,4 +1,4 @@
-import { column_defs, ag_components } from "./../components/columnDefs.js";
+import { column_defs, ag_components } from "./../config/columnDefs.js";
 import tinykeys from "tinykeys";
 
 export default {
