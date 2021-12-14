@@ -26,6 +26,7 @@
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiArchiveMusic } from "@mdi/js";
 import Folder from "./Folder.vue";
+import { nmlPlaylist } from "./../config/paths.js";
 
 export default {
 	components: {
@@ -39,7 +40,12 @@ export default {
 	},
 	computed: {
 		playlists() {
-			return this.$store.state.playlists;
+			// Only IF library is set, get correct item
+			return this.$store.state.library
+				? this.$store.getters.library(nmlPlaylist)
+				: null;
+
+			// return this.$store.state.playlists;
 		},
 	},
 	methods: {

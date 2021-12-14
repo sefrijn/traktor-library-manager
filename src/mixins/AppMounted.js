@@ -109,9 +109,23 @@ export default {
       this.$store.commit("setFilenameToIndex", filenameToIndex);
 
       // >> Create playlist data
+      // let id = 0;
+      // this.flatData = [
+      //   {
+      //     text: "Playlists",
+      //     id: id,
+      //   },
+      // ];
+      // let pl = cloneDeep(
+      //   this.$store.getters.library(nmlPlaylist + ".SUBNODES.0.NODE")
+      // );
+      // console.log(pl);
+      // pl.forEach((item) => {
+      //   console.log(item);
+      // });
       this.$store.commit(
-        "setPlaylistData",
-        this.$store.getters.library(nmlPlaylist)
+        "setPlaylistData"
+        // this.$store.getters.library(nmlPlaylist)
       );
       // foreach()
       // console.log("-- AUTOPLAYLIST --");
