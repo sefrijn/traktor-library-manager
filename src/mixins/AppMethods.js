@@ -90,7 +90,7 @@ export default {
 
       // >>> Playlist edit
       if (this.activePlaylist) {
-        let path = nmlPlaylist;
+        let path = nmlPlaylist + ".0";
         for (let depth = 1; depth < this.activePlaylistPath.length; depth++) {
           path += `.SUBNODES.0.NODE.${this.activePlaylistPath[depth]}`;
         }

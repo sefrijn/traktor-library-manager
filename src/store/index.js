@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import functional from "./functional.js";
 import display from "./display.js";
 import { nmlPlaylist } from "./../config/paths.js";
+const cloneDeep = require("lodash.clonedeep");
 
 // function removeFromObject(obj, prop) {
 // 	if (typeof obj === "undefined") {
@@ -45,33 +46,56 @@ function getObjValue(path, obj) {
 	return schema[pList[len - 1]];
 }
 
-function getItems(path, lib, pl, pathIndex) {
-	let obj = getObjValue(path, lib);
-	let subfolderPath = ".SUBNODES.0.NODE";
-	let name = ".$.NAME";
-	if (obj) {
-		// console.log(obj);
-		obj.forEach((item, index) => {
-			let value = {
-				text: obj[index].$.NAME,
-				children: [],
-				// getItems(path + "." + index + subfolderPath, lib);
+// pathLibrary and playlistsItemPath change in recursive function
+// Mapping path in Library to path in Playlists (used for browser tree)
+// playlists and library stay the same
+function getItems(pathLibrary, playlistsItemPath, library, playlists) {
+	let nodesArray = getObjValue(pathLibrary, library);
+	let subnodesArrayPath = ".SUBNODES.0.NODE";
+	if (nodesArray) {
+		nodesArray.forEach((node, index) => {
+			let nodePath = pathLibrary + "." + index;
+			let nodeData = {
+				text: node.$.NAME,
+				path: nodePath,
 			};
-			setObjValue(pathIndex + ".children." + index, value, pl);
-			if (obj[index].SUBNODES) {
+			if (node.SUBNODES) {
+				nodeData.children = [];
+				nodeData.type = "FOLDER";
+				nodeData.droppable = true;
+			}
+			if (node.PLAYLIST) {
+				let uuid = node.PLAYLIST[0]["$"]["UUID"];
+				nodeData.uuid = uuid;
+				nodeData.type = "PLAYLIST";
+				nodeData.droppable = false;
+			}
+			if (node.SMARTLIST) {
+				let uuid = node.SMARTLIST[0]["$"]["UUID"];
+				nodeData.uuid = uuid;
+				nodeData.type = "SMARTLIST";
+				nodeData.droppable = false;
+			}
+			if (playlistsItemPath === "") {
+				nodeData.draggable = false;
+				nodeData.folded = false;
+			} else {
+				nodeData.draggable = true;
+				nodeData.folded = true;
+			}
+			setObjValue(playlistsItemPath + index, nodeData, playlists);
+
+			// If there are children, repeat this function and complete paths
+			if (nodesArray[index].SUBNODES) {
 				getItems(
-					path + "." + index + subfolderPath,
-					lib,
-					pl,
-					pathIndex + ".children." + index
+					nodePath + subnodesArrayPath,
+					playlistsItemPath + index + ".children.",
+					library,
+					playlists
 				);
 			}
 		});
-	} else {
-		// console.log("does not exist");
-		// console.log(getItems(path + subfolderPath, lib));
 	}
-	// console.log(pl);
 }
 
 export default createStore({
@@ -148,38 +172,30 @@ export default createStore({
 			state.collection = data;
 		},
 		setPlaylistData(state) {
-			// let id = 0;
-			// let plArray = [];
-			// first item
-			state.playlists = [
-				{
-					text: "Playlists",
-					children: [],
-				},
-			];
+			// Set root item manually
+			state.playlists = [];
+			// state.playlists = [
+			// 	{
+			// 		text: "Playlists",
+			// 		children: [],
+			// 	},
+			// ];
 
 			getItems(
-				nmlPlaylist + ".SUBNODES.0.NODE",
+				nmlPlaylist,
+				// nmlPlaylist + ".SUBNODES.0.NODE",
+				"",
 				state.library,
-				state.playlists,
-				0
+				state.playlists
 			);
 
-			// let pl = getObjValue(
-			// 	nmlPlaylist + ".SUBNODES.0.NODE",
-			// 	state.library
+			console.log(cloneDeep(state.playlists));
+			// console.log(
+			// 	getObjValue(
+			// 		"NML.PLAYLISTS.0.NODE.0.SUBNODES.0.NODE.5",
+			// 		state.library
+			// 	)
 			// );
-			// console.log(pl);
-			// let pid = 0;
-			// pl.forEach((item) => {
-			// 	id++;
-			// 	plArray[0].children.push({
-			// 		text: item.$.NAME,
-			// 	});
-			// 	// console.log(item);
-			// });
-			// state.playlists = plArray;
-			console.log(state.playlists);
 		},
 		setRowData(state, data) {
 			state.rowData = data;

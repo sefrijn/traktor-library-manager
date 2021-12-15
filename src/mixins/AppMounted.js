@@ -109,36 +109,7 @@ export default {
       this.$store.commit("setFilenameToIndex", filenameToIndex);
 
       // >> Create playlist data
-      // let id = 0;
-      // this.flatData = [
-      //   {
-      //     text: "Playlists",
-      //     id: id,
-      //   },
-      // ];
-      // let pl = cloneDeep(
-      //   this.$store.getters.library(nmlPlaylist + ".SUBNODES.0.NODE")
-      // );
-      // console.log(pl);
-      // pl.forEach((item) => {
-      //   console.log(item);
-      // });
-      this.$store.commit(
-        "setPlaylistData"
-        // this.$store.getters.library(nmlPlaylist)
-      );
-      // foreach()
-      // console.log("-- AUTOPLAYLIST --");
-      // let autoPlaylistIndex;
-      // for (const playlist in self.playlists.SUBNODES[0].NODE) {
-      //   let name = self.playlists.SUBNODES[0].NODE[playlist]["$"]["NAME"];
-      //   if (name == "Library Manager") autoPlaylistIndex = parseInt(playlist);
-      // }
-      // let path = `SUBNODES.0.NODE.${autoPlaylistIndex}`;
-      // self.$store.commit("removePlaylistFolder", path);
-      // console.log(self.playlists.SUBNODES[0].NODE[autoPlaylistIndex]);
-
-      // this.playlists = self.library["NML"]["PLAYLISTS"][0]["NODE"][0];
+      this.$store.commit("setPlaylistData");
 
       this.totalSongs = Object.keys(collectionFiltered).length;
     });

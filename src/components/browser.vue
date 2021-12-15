@@ -42,7 +42,7 @@ export default {
 		playlists() {
 			// Only IF library is set, get correct item
 			return this.$store.state.library
-				? this.$store.getters.library(nmlPlaylist)
+				? this.$store.getters.library(nmlPlaylist + ".0")
 				: null;
 
 			// return this.$store.state.playlists;

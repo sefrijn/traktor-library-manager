@@ -11,8 +11,6 @@
       <generate-cover-art style="height: calc(100vh - 134px);">
       </generate-cover-art>
 
-      <browser-new></browser-new>
-
       <aside
         v-if="sidebar && pathToLibrary"
         class="max-w-sm flex flex-col justify-between border-r border-black"
@@ -94,7 +92,6 @@ import { AgGridVue } from "ag-grid-vue3";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
 import Browser from "./components/Browser.vue";
-import BrowserNew from "./components/BrowserNew.vue";
 import VisualBrowser from "./components/VisualBrowser.vue";
 import Welcome from "./components/Welcome.vue";
 import GenerateCoverArt from "./components/GenerateCoverArt.vue";
@@ -119,7 +116,6 @@ export default {
     GenerateCoverArt,
     NowPlaying,
     ContextMenu,
-    BrowserNew,
   },
   mixins: [fancyTimeFormat, appBeforeMount, appMounted, appMethods],
   data() {
