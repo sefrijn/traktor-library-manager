@@ -48,6 +48,12 @@
         size="18"
       ></svg-icon>
       <span>{{ folder.$.NAME }}</span>
+      <button class="opacity-10 hover:opacity-100">
+        <svg-icon type="mdi" :path="iconDelete" size="18"></svg-icon>
+      </button>
+      <button class="opacity-10 hover:opacity-100" @click="">
+        <svg-icon type="mdi" :path="iconEdit" size="18"></svg-icon>
+      </button>
     </div>
   </li>
 </template>
@@ -58,6 +64,9 @@ import { mdiFolderOutline } from "@mdi/js";
 import { mdiFolderOpenOutline } from "@mdi/js";
 import { mdiPlaylistMusic } from "@mdi/js";
 import { mdiPlaylistPlus } from "@mdi/js";
+import { mdiDeleteOutline } from "@mdi/js";
+import { mdiPencilOutline } from "@mdi/js";
+import { mdiContentDuplicate } from "@mdi/js";
 
 export default {
   name: "folder",
@@ -76,6 +85,9 @@ export default {
       iconFolderOpen: mdiFolderOpenOutline,
       iconPlaylist: mdiPlaylistMusic,
       iconPreparation: mdiPlaylistPlus,
+      iconDuplicate: mdiContentDuplicate,
+      iconEdit: mdiPencilOutline,
+      iconDelete: mdiDeleteOutline,
       open: false,
     };
   },

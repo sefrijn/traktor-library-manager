@@ -10,6 +10,10 @@
 
       <generate-cover-art style="height: calc(100vh - 134px);">
       </generate-cover-art>
+      <new-browser
+        class="w-1/6"
+        style="height: calc(100vh - 134px);"
+      ></new-browser>
 
       <aside
         v-if="sidebar && pathToLibrary"
@@ -92,6 +96,7 @@ import { AgGridVue } from "ag-grid-vue3";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
 import Browser from "./components/Browser.vue";
+import NewBrowser from "./components/NewBrowser.vue";
 import VisualBrowser from "./components/VisualBrowser.vue";
 import Welcome from "./components/Welcome.vue";
 import GenerateCoverArt from "./components/GenerateCoverArt.vue";
@@ -112,6 +117,7 @@ export default {
     AppFooter,
     VisualBrowser,
     Browser,
+    NewBrowser,
     Welcome,
     GenerateCoverArt,
     NowPlaying,
@@ -136,14 +142,6 @@ export default {
       unsubscribe: null,
       traktorOpen: null, // Boolean
       scrollSource: null,
-      // flatData: null,
-      // flatData: [
-      //   { text: "node1", id: 1 },
-      //   { text: "node2", id: 2 },
-      //   { text: "node1-1", id: 3, pid: 1 },
-      //   { text: "node1-2", id: 3, pid: 1 },
-      //   { text: "node1-3", id: 3, pid: 1 },
-      // ],
     };
   },
   computed: {

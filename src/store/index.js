@@ -4,22 +4,6 @@ import display from "./display.js";
 import { nmlPlaylist } from "./../config/paths.js";
 const cloneDeep = require("lodash.clonedeep");
 
-// function removeFromObject(obj, prop) {
-// 	if (typeof obj === "undefined") {
-// 		return false;
-// 	}
-
-// 	var _index = prop.indexOf(".");
-// 	if (_index > -1) {
-// 		return removeFromObject(
-// 			obj[prop.substring(0, _index)],
-// 			prop.substr(_index + 1)
-// 		);
-// 	}
-// 	// delete obj[prop];
-// 	return prop;
-// }
-
 function setObjValue(path, value, obj) {
 	var schema = obj; // a moving reference to internal objects within obj
 	var pList = path.split(".");
@@ -49,6 +33,7 @@ function getObjValue(path, obj) {
 // pathLibrary and playlistsItemPath change in recursive function
 // Mapping path in Library to path in Playlists (used for browser tree)
 // playlists and library stay the same
+let id = 0;
 function getItems(pathLibrary, playlistsItemPath, library, playlists) {
 	let nodesArray = getObjValue(pathLibrary, library);
 	let subnodesArrayPath = ".SUBNODES.0.NODE";
@@ -56,11 +41,13 @@ function getItems(pathLibrary, playlistsItemPath, library, playlists) {
 		nodesArray.forEach((node, index) => {
 			let nodePath = pathLibrary + "." + index;
 			let nodeData = {
-				text: node.$.NAME,
+				label: node.$.NAME,
 				path: nodePath,
+				id: id,
 			};
+			id++;
 			if (node.SUBNODES) {
-				nodeData.children = [];
+				nodeData.nodes = [];
 				nodeData.type = "FOLDER";
 				nodeData.droppable = true;
 			}
@@ -89,7 +76,7 @@ function getItems(pathLibrary, playlistsItemPath, library, playlists) {
 			if (nodesArray[index].SUBNODES) {
 				getItems(
 					nodePath + subnodesArrayPath,
-					playlistsItemPath + index + ".children.",
+					playlistsItemPath + index + ".nodes.",
 					library,
 					playlists
 				);
@@ -172,24 +159,12 @@ export default createStore({
 			state.collection = data;
 		},
 		setPlaylistData(state) {
-			// Set root item manually
 			state.playlists = [];
-			// state.playlists = [
-			// 	{
-			// 		text: "Playlists",
-			// 		children: [],
-			// 	},
-			// ];
 
-			getItems(
-				nmlPlaylist,
-				// nmlPlaylist + ".SUBNODES.0.NODE",
-				"",
-				state.library,
-				state.playlists
-			);
+			getItems(nmlPlaylist, "", state.library, state.playlists);
 
 			console.log(cloneDeep(state.playlists));
+			// Test print specific value from playlist object
 			// console.log(
 			// 	getObjValue(
 			// 		"NML.PLAYLISTS.0.NODE.0.SUBNODES.0.NODE.5",
