@@ -145,6 +145,9 @@ export default {
     };
   },
   computed: {
+    playlists() {
+      return this.$store.state.playlists;
+    },
     library() {
       return this.$store.state.library;
     },

@@ -20,6 +20,7 @@
     "@he-tree/vue3": "^1.2.4",
     "@jamescoyle/vue-icon": "^0.1.2",
     "@mdi/js": "^6.4.95",
+    "@syncfusion/ej2-vue-navigations": "^19.3.57",
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "ag-grid-community": "^26.2.0",
     "ag-grid-vue3": "^26.2.0",
