@@ -3,6 +3,7 @@ import functional from "./functional.js";
 import display from "./display.js";
 import { nmlPlaylist } from "./../config/paths.js";
 const cloneDeep = require("lodash.clonedeep");
+const slugify = require("slugify");
 
 function removeObjValue(path, obj) {
 	var schema = obj; // a moving reference to internal objects within obj
@@ -43,50 +44,52 @@ function getObjValue(path, obj) {
 	return schema[pList[len - 1]];
 }
 
+function makeid(length) {
+	var result = "";
+	var characters =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	var charactersLength = characters.length;
+	for (var i = 0; i < length; i++) {
+		result += characters.charAt(
+			Math.floor(Math.random() * charactersLength)
+		);
+	}
+	return result;
+}
+
 // pathLibrary and playlistsItemPath change in recursive function
 // Mapping path in Library to path in Playlists (used for browser tree)
 // playlists and library stay the same
-let id = 0;
+
 function getItems(pathLibrary, playlistsItemPath, library, playlists) {
 	let nodesArray = getObjValue(pathLibrary, library);
 	let subnodesArrayPath = ".SUBNODES.0.NODE";
 	if (nodesArray) {
 		nodesArray.forEach((node, index) => {
 			let nodePath = pathLibrary + "." + index;
-			let nodeData = {
-				text: node.$.NAME,
-				// path: nodePath,
-				id: "" + id,
-			};
-			id++;
+			let nodeData = {};
 			if (node.SUBNODES) {
+				nodeData.text = " " + node.$.NAME;
+				let id = makeid(5);
 				nodeData.child = [];
-				// nodeData.type = "FOLDER";
-				// nodeData.droppable = true;
+				nodeData.id = slugify(`${node.$.NAME} folder ${id}`);
 			}
 			if (node.PLAYLIST) {
+				nodeData.text = node.$.NAME;
 				let uuid = node.PLAYLIST[0]["$"]["UUID"];
-				// nodeData.uuid = uuid;
-				// nodeData.type = "PLAYLIST";
-				// nodeData.droppable = false;
+				nodeData.id = uuid + "-playlist";
 			}
 			if (node.SMARTLIST) {
+				nodeData.text = node.$.NAME;
 				let uuid = node.SMARTLIST[0]["$"]["UUID"];
-				// nodeData.uuid = uuid;
-				// nodeData.type = "SMARTLIST";
-				// nodeData.droppable = false;
+				nodeData.id = uuid + "-smartlist";
 			}
+			// Root element expanded
 			if (playlistsItemPath === "") {
 				nodeData.expanded = true;
-				// nodeData.draggable = false;
-				// nodeData.folded = false;
 			} else {
-				// nodeData.draggable = true;
-				// nodeData.folded = true;
 			}
-			// setTimeout(() => {
 			setObjValue(playlistsItemPath + index, nodeData, playlists);
-			// }, 500);
 
 			// If there are children, repeat this function and complete paths
 			if (nodesArray[index].SUBNODES) {
@@ -124,6 +127,12 @@ export default createStore({
 
 			// Rebuild data (new JS structure)
 			playlists: [], // Rebuild playlist for Browser Tree
+			fieldsTreeView: {
+				dataSource: null,
+				id: "id",
+				text: "text",
+				ready: false,
+			},
 
 			collection: null, // full rowData - rebuild JS object with relevant columns
 			rowData: null, // filtered rowData - rebuild and filtered with only visible rows
@@ -178,6 +187,8 @@ export default createStore({
 		setPlaylistData(state) {
 			// state.playlists = [];
 			getItems(nmlPlaylist, "", state.library, state.playlists);
+			state.fieldsTreeView.dataSource = state.playlists;
+			state.fieldsTreeView.ready = true;
 
 			console.log(state.playlists);
 			// Test print specific value from playlist object
