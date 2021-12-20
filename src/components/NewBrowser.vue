@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col justify-between">
-    <div class="overflow-auto">
+  <div class="flex flex-col justify-between w-full">
+    <div class="overflow-auto w-full">
       <div
         class="text-sm flex space-x-1 py-1 px-2 cursor-pointer hover:bg-active-dark hover:text-white"
         :class="{ active: this.$store.getters.activePlaylist == null }"
@@ -38,7 +38,7 @@
     </div>
     <div class="controls flex-shrink-0 p-2 flex space-x-2">
       <button
-        class="flex justify-center items-center h-9 w-9 bg-black-medium"
+        class="flex justify-center items-center h-9 w-9 bg-black-light"
         v-tooltip="'New playlist'"
       >
         <svg-icon
@@ -49,7 +49,7 @@
         ></svg-icon>
       </button>
       <button
-        class="flex justify-center items-center h-9 w-9 bg-black-medium"
+        class="flex justify-center items-center h-9 w-9 bg-black-light"
         v-tooltip="'New Folder'"
       >
         <svg-icon
@@ -196,6 +196,9 @@ export default {
     @apply pl-1;
   }
   .e-list-item {
+    .e-fullrow {
+      height: 28px;
+    }
     // Hover & Active
     &.e-hover > .e-fullrow {
       @apply bg-black-light border-black-light;
@@ -251,7 +254,12 @@ export default {
         @apply fill-current bg-white block mr-1;
       }
       .e-list-text {
+        min-height: 24px;
+        line-height: 24px;
         @apply flex items-center font-sans;
+        .e-input-group input {
+          @apply bg-active shadow-lg;
+        }
       }
     }
 

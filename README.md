@@ -1,14 +1,15 @@
 # Traktor Library Manager
 
-Manage your Traktor Pro 3 library with ease! Build with love, with the help of Vue, Tailwind and Electron, and many more packages
+Manage your Traktor Pro 3 library with ease! Build with love by [DJ Sefrijn](https://mixcloud.com/sefrijn) from studio [How About Yes](https://howaboutyes.com).
+Uses Vue, Tailwind, Electron, AG Grid and many more wonderful packages.
 
-## Todo
+# [Download Mac](https://howaboutyes.com/traktor/mac)
 
--   [ ] Progress Indicator during cover art generation
+# [Download Windows](https://howaboutyes.com/traktor/win)
 
-## Project setup
+## Developer setup
 
-To enable Spotify Integration, create a `src/config.js` file containing:
+To enable Spotify Integration during development, create a `src/config.js` file containing:
 
 ```
 const client_id = ""; // Your client id
@@ -19,3 +20,12 @@ export { client_secret, client_id };
 
 The client ID & secret you get from creating a Spotify app:
 https://developer.spotify.com/dashboard
+
+After that you can run `yarn electron:serve` to start the watch server.
+
+## Current status
+
+-   [ ] Add playlist
+-   [ ] Add folder
+-   [ ] Add track to playlist
+-   [ ] Preparation list
