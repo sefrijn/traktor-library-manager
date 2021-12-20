@@ -78,6 +78,12 @@ function getItems(pathLibrary, playlistsItemPath, library, playlists) {
 				nodeData.text = node.$.NAME;
 				let uuid = node.PLAYLIST[0]["$"]["UUID"];
 				nodeData.id = uuid + "-playlist";
+				if (
+					node.$.NAME === "Preparation" &&
+					pathLibrary === "NML.PLAYLISTS.0.NODE.0.SUBNODES.0.NODE"
+				) {
+					nodeData.htmlAttributes = { class: "preparation" };
+				}
 			}
 			if (node.SMARTLIST) {
 				nodeData.text = node.$.NAME;
@@ -183,6 +189,14 @@ export default createStore({
 		// Rebuild data
 		setCollection(state, data) {
 			state.collection = data;
+		},
+		setTreeViewData(state, data) {
+			state.fieldsTreeView = {
+				dataSource: data,
+				id: state.fieldsTreeView.id,
+				text: state.fieldsTreeView.text,
+				ready: state.fieldsTreeView.ready,
+			};
 		},
 		setPlaylistData(state) {
 			// state.playlists = [];

@@ -10,19 +10,16 @@
 
       <generate-cover-art style="height: calc(100vh - 134px);">
       </generate-cover-art>
-      <new-browser
-        class="w-1/6"
-        style="height: calc(100vh - 134px);"
-      ></new-browser>
 
       <aside
         v-if="sidebar && pathToLibrary"
-        class="max-w-sm flex flex-col justify-between border-r border-black"
+        class="max-w-sm flex flex-col justify-between items-start border-r border-black overflow-hidden"
         :style="{ width: `${asideWidth}%` }"
         style="height: calc(100vh - 134px);"
       >
-        <browser></browser>
-        <now-playing></now-playing>
+        <new-browser style="min-height:0;" class="flex-grow"></new-browser>
+        <browser v-if="false"></browser>
+        <now-playing class="flex-shrink-0"></now-playing>
       </aside>
 
       <div
