@@ -3,9 +3,9 @@
 Manage your Traktor Pro 3 library with ease! Build with love by [DJ Sefrijn](https://mixcloud.com/sefrijn) from studio [How About Yes](https://howaboutyes.com).
 Uses Vue, Tailwind, Electron, AG Grid and many more wonderful packages.
 
-# [Download Mac](https://howaboutyes.com/traktor/mac)
+# Download [Mac](https://howaboutyes.com/traktor/mac) or [Windows](https://howaboutyes.com/traktor/win)
 
-# [Download Windows](https://howaboutyes.com/traktor/win)
+Like this project? Buy me a coffee
 
 ## Developer setup
 

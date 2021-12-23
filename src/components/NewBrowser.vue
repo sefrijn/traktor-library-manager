@@ -33,6 +33,7 @@
         :sortOrder="sorting"
         :created="created"
         :animation="animation"
+        :selectedNodes="selectedNodes"
       >
       </ejs-treeview>
     </div>
@@ -89,6 +90,7 @@ export default {
         collapse: { effect: "SlideUp", duration: 100, easing: "linear" },
       },
       cssClasses: cssClassesDefault,
+      selectedNodes: [],
     };
   },
   computed: {
@@ -100,10 +102,43 @@ export default {
     },
   },
   methods: {
-    // > ContextMenu
+    openPlaylist(list) {
+      this.$store.commit("setFilter", { rating: 0, color: 0 });
+      this.$store.commit("setActivePlaylist", list);
+      // TODO
+      // this.$store.commit("setActivePlaylistPath", this.path);
+
+      let entries = this.$store.state.playlistEntries[list];
+      let tracks = [];
+      for (const playlistTrack of entries) {
+        let filename = playlistTrack.split("/:").pop();
+        let index = parseInt(this.$store.state.filenameToIndex[filename]);
+        let track = this.$store.state.collection[index];
+        tracks.push(track);
+      }
+      this.$store.commit("setRowData", tracks);
+    },
+
+    // Reset selection and load all data
+    openTrackCollection() {
+      this.$store.commit("setRowData", this.$store.state.collection);
+      this.$store.commit("setActivePlaylist", null);
+      let treeview = document.getElementById("treeview").ej2_instances[0];
+      treeview.selectedNodes = [];
+    },
+
+    // > Node clicked events
     nodeclick(args) {
-      console.log("nodeClicked");
-      console.log(args.node.dataset.uid);
+      let id = args.node.dataset.uid;
+      console.log("open: " + id);
+
+      // Open playlist
+      if (args.event.which === 1 && id.includes("playlist")) {
+        id = id.substr(0, id.indexOf("-"));
+        this.openPlaylist(id);
+      }
+
+      // ContextMenu
       if (args.event.which === 3) {
         let val = {};
         val.x = args.event.clientX;
@@ -114,6 +149,7 @@ export default {
     },
 
     // > Treeview Init
+    // Exclude two uneditable playlists
     created(args) {
       let excluded = [];
       let d = this.$refs.treeview.getTreeData();
@@ -125,12 +161,17 @@ export default {
           excluded.push(val.id);
       });
       this.$refs.treeview.disableNodes(excluded);
+
+      this.$store.commit("updatePlaylistNML");
     },
 
+    // > Set Vuex True data and sort new treedata after change
     update(args) {
-      // > Sort new treedata after update by setting Vuex var
       let d = this.$refs.treeview.getTreeData();
       this.$store.commit("setTreeViewData", d);
+      this.$store.commit("updatePlaylistNML");
+      // console.log("data after update:");
+      // console.log(this.fields);
     },
 
     // > Limit Drag & Drop for playlist and smartlist items
@@ -165,10 +206,8 @@ export default {
       }
     },
     dragStop(args) {
-      console.log(args);
       if (this.dragCondition(args)) {
         args.cancel = true;
-        console.log("cancel");
       }
       this.cssClasses = cssClassesDefault;
     },
@@ -181,15 +220,6 @@ export default {
 @import "~@syncfusion/ej2-base/styles/material-dark.css";
 @import "~@syncfusion/ej2-vue-navigations/styles/material-dark.css";
 
-// .control_wrapper {
-//   display: block;
-//   max-width: 350px;
-//   max-height: 350px;
-//   margin: auto;
-//   overflow: auto;
-//   border: 1px solid #dddddd;
-//   border-radius: 3px;
-// }
 #treeview.e-treeview {
   // Main padding
   > .e-list-parent.e-ul {

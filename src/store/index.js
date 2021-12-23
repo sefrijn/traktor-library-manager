@@ -40,7 +40,6 @@ function getObjValue(path, obj) {
 		if (!schema[elem]) schema[elem] = {};
 		schema = schema[elem];
 	}
-
 	return schema[pList[len - 1]];
 }
 
@@ -61,7 +60,13 @@ function makeid(length) {
 // Mapping path in Library to path in Playlists (used for browser tree)
 // playlists and library stay the same
 
-function getItems(pathLibrary, playlistsItemPath, library, playlists) {
+function getPlaylistNode(
+	pathLibrary,
+	playlistsItemPath,
+	library,
+	playlists,
+	entries
+) {
 	let nodesArray = getObjValue(pathLibrary, library);
 	let subnodesArrayPath = ".SUBNODES.0.NODE";
 	if (nodesArray) {
@@ -78,6 +83,19 @@ function getItems(pathLibrary, playlistsItemPath, library, playlists) {
 				nodeData.text = node.$.NAME;
 				let uuid = node.PLAYLIST[0]["$"]["UUID"];
 				nodeData.id = uuid + "-playlist";
+
+				// Append current PL to PlaylistEntries
+				if ("PLAYLIST" in node && "ENTRY" in node.PLAYLIST[0]) {
+					entries[uuid] = [];
+					node.PLAYLIST[0]["ENTRY"].forEach((track) => {
+						if (track.PRIMARYKEY[0].$.TYPE != "TRACK") {
+							delete entries[uuid];
+							return;
+						}
+						entries[uuid].push(track.PRIMARYKEY[0].$.KEY);
+					});
+				}
+
 				if (
 					node.$.NAME === "Preparation" &&
 					pathLibrary === "NML.PLAYLISTS.0.NODE.0.SUBNODES.0.NODE"
@@ -99,15 +117,25 @@ function getItems(pathLibrary, playlistsItemPath, library, playlists) {
 
 			// If there are children, repeat this function and complete paths
 			if (nodesArray[index].SUBNODES) {
-				getItems(
+				getPlaylistNode(
 					nodePath + subnodesArrayPath,
 					playlistsItemPath + index + ".child.",
 					library,
-					playlists
+					playlists,
+					entries
 				);
 			}
 		});
 	}
+}
+
+function updateLibraryNML(nml, playlists, playlistEntries, nmlPath) {
+	console.log(nmlPath);
+	// playlists.forEach((node, index) => {
+	// 	if(node.id.includes("-folder-")){
+	// 		console.log(node);
+	// 	}
+	// });
 }
 
 export default createStore({
@@ -133,6 +161,7 @@ export default createStore({
 
 			// Rebuild data (new JS structure)
 			playlists: [], // Rebuild playlist for Browser Tree
+			playlistEntries: {},
 			fieldsTreeView: {
 				dataSource: null,
 				id: "id",
@@ -198,13 +227,33 @@ export default createStore({
 				ready: state.fieldsTreeView.ready,
 			};
 		},
+		updatePlaylistNML(state) {
+			console.log("updatePlaylistNML");
+			// state.playlists + state.playlisEntries
+			// console.log(getObjValue(nmlPlaylist, state.library));
+			updateLibraryNML(
+				state.library,
+				state.playlists,
+				state.playlisEntries,
+				nmlPlaylist
+			);
+			// setObjValue(nmlPlaylist, "", state.library);
+		},
 		setPlaylistData(state) {
 			// state.playlists = [];
-			getItems(nmlPlaylist, "", state.library, state.playlists);
+			getPlaylistNode(
+				nmlPlaylist,
+				"",
+				state.library,
+				state.playlists,
+				state.playlistEntries
+			);
 			state.fieldsTreeView.dataSource = state.playlists;
 			state.fieldsTreeView.ready = true;
 
 			console.log(state.playlists);
+			console.log(state.playlistEntries);
+			console.log("----");
 			// Test print specific value from playlist object
 			// console.log(
 			// 	getObjValue(
