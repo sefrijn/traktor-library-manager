@@ -108,7 +108,6 @@ export default {
     openPlaylist(list) {
       this.$store.commit("setFilter", { rating: 0, color: 0 });
       this.$store.commit("setActivePlaylist", list.$.UUID);
-      this.$store.commit("setActivePlaylistPath", this.path);
       console.log("open list " + list.$.UUID);
 
       let tracks = [];

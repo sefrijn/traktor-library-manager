@@ -142,17 +142,8 @@ export default {
     };
   },
   computed: {
-    playlists() {
-      return this.$store.state.playlists;
-    },
-    library() {
-      return this.$store.state.library;
-    },
     activePlaylist() {
       return this.$store.getters.activePlaylist;
-    },
-    activePlaylistPath() {
-      return this.$store.getters.activePlaylistPath;
     },
     pathToLibrary() {
       return this.$store.getters.libraryPath;
@@ -164,7 +155,7 @@ export default {
       return this.$store.getters.savingEnabled;
     },
     collection() {
-      return this.$store.state.collection;
+      return this.$store.getters.collection;
     },
     rowData() {
       return this.$store.state.rowData;

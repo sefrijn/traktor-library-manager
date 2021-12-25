@@ -34,7 +34,7 @@ export default {
         // >>> Autocomplete Genre
         let genre = track["INFO"][0]["$"]["GENRE"];
         if (
-          this.$store.state.genres.indexOf(genre) < 0 &&
+          this.$store.getters.genres.indexOf(genre) < 0 &&
           genre != undefined &&
           genre != ""
         )
@@ -58,7 +58,7 @@ export default {
         if (tags.length > 0) {
           tags.forEach((tag, index) => {
             if (
-              this.$store.state.tags.indexOf(tag) < 0 &&
+              this.$store.getters.tags.indexOf(tag) < 0 &&
               tag != undefined &&
               tag != ""
             )

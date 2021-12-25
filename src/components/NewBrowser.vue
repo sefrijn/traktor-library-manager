@@ -95,33 +95,33 @@ export default {
   },
   computed: {
     fieldsReady() {
-      return this.$store.state.fieldsTreeView.ready;
+      return this.$store.getters.browser.ready;
     },
     fields() {
-      return this.$store.state.fieldsTreeView;
+      return this.$store.getters.browser;
     },
   },
   methods: {
     openPlaylist(list) {
       this.$store.commit("setFilter", { rating: 0, color: 0 });
       this.$store.commit("setActivePlaylist", list);
-      // TODO
-      // this.$store.commit("setActivePlaylistPath", this.path);
 
-      let entries = this.$store.state.playlistEntries[list];
+      let entries = this.$store.getters.playlistEntries[list];
       let tracks = [];
       for (const playlistTrack of entries) {
         let filename = playlistTrack.split("/:").pop();
-        let index = parseInt(this.$store.state.filenameToIndex[filename]);
-        let track = this.$store.state.collection[index];
+        let index = parseInt(this.$store.getters.filenameToIndex[filename]);
+        let track = this.$store.getters.collection[index];
         tracks.push(track);
       }
       this.$store.commit("setRowData", tracks);
+
+      this.$store.commit("setLibraryPlaylist");
     },
 
     // Reset selection and load all data
     openTrackCollection() {
-      this.$store.commit("setRowData", this.$store.state.collection);
+      this.$store.commit("setRowData", this.$store.getters.collection);
       this.$store.commit("setActivePlaylist", null);
       let treeview = document.getElementById("treeview").ej2_instances[0];
       treeview.selectedNodes = [];
@@ -162,14 +162,16 @@ export default {
       });
       this.$refs.treeview.disableNodes(excluded);
 
-      this.$store.commit("updatePlaylistNML");
+      // TODO
+      // this.$store.commit("updatePlaylistNML");
     },
 
     // > Set Vuex True data and sort new treedata after change
     update(args) {
       let d = this.$refs.treeview.getTreeData();
-      this.$store.commit("setTreeViewData", d);
-      this.$store.commit("updatePlaylistNML");
+      this.$store.commit("setBrowserData", d);
+      // TODO
+      // this.$store.commit("updatePlaylistNML");
       // console.log("data after update:");
       // console.log(this.fields);
     },

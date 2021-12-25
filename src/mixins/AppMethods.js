@@ -82,6 +82,7 @@ export default {
 
       // >>> Store Track Collection in XML
       if (!this.activePlaylist) {
+        console.log(libraryUpdated);
         this.$store.commit("setLibraryValue", {
           path: nmlCollection,
           value: libraryUpdated,
@@ -90,27 +91,23 @@ export default {
 
       // >>> Playlist edit
       if (this.activePlaylist) {
-        let path = nmlPlaylist + ".0";
-        for (let depth = 1; depth < this.activePlaylistPath.length; depth++) {
-          path += `.SUBNODES.0.NODE.${this.activePlaylistPath[depth]}`;
-        }
-        path += ".PLAYLIST.0.ENTRY";
-        let playlistEntries = this.$store.getters.library(path);
-
+        let entries = this.$store.getters.playlistEntries[this.activePlaylist];
         // Single element to swap
-        let el = playlistEntries[parseInt(event.node.id)];
-        playlistEntries.splice(parseInt(event.node.id), 1);
-        playlistEntries.splice(event.overIndex, 0, el);
+        let el = entries[parseInt(event.node.id)];
+        entries.splice(parseInt(event.node.id), 1);
+        entries.splice(event.overIndex, 0, el);
 
-        // Update Vuex Library js object
-        this.$store.commit("setLibraryValue", {
-          path: path,
-          value: playlistEntries,
-        });
+        // Convert playlists & playlistEntries to Library item
+        //   // Update Vuex Library js object
+        //   this.$store.commit("setLibraryValue", {
+        //     path: path,
+        //     value: playlistEntries,
+        //   });
       }
 
       //  >>> Save changes
-      let libraryObj = cloneDeep(this.library);
+      let libraryObj = cloneDeep(this.$store.getters.libraryFull);
+      console.log(libraryObj);
       window.ipcRenderer.send("buildXML", [
         libraryObj,
         localStorage.pathToLibrary,
@@ -259,7 +256,7 @@ export default {
         collection.forEach((track, index) => {
           let genre = track["INFO"][0]["$"]["GENRE"];
           if (
-            this.$store.state.genres.indexOf(genre) < 0 &&
+            this.$store.getters.genres.indexOf(genre) < 0 &&
             genre != undefined &&
             genre != ""
           )
@@ -290,7 +287,7 @@ export default {
           if (tags.length > 0) {
             tags.forEach((tag, index) => {
               if (
-                this.$store.state.tags.indexOf(tag) < 0 &&
+                this.$store.getters.tags.indexOf(tag) < 0 &&
                 tag != undefined &&
                 tag != ""
               )
@@ -300,7 +297,7 @@ export default {
         });
       }
 
-      let libraryObj = cloneDeep(this.library);
+      let libraryObj = cloneDeep(this.$store.getters.libraryFull);
       window.ipcRenderer.send("buildXML", [
         libraryObj,
         localStorage.pathToLibrary,

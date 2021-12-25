@@ -3,8 +3,6 @@ export default {
 		display: "split", // display setting [split,list,grid]
 		sidebar: true,
 		preventScroll: false, // prevent during editing rowdata
-		activePlaylist: null, // selected playlist, null means all tracks
-		activePlaylistPath: [],
 		showMarkers: false,
 		contextMenu: { x: 0, y: 0, show: false },
 		status: null,
@@ -21,12 +19,6 @@ export default {
 		},
 		preventScroll(state) {
 			return state.preventScroll;
-		},
-		activePlaylist(state) {
-			return state.activePlaylist;
-		},
-		activePlaylistPath(state) {
-			return state.activePlaylistPath;
 		},
 		showMarkers(state) {
 			return state.showMarkers;
@@ -57,12 +49,6 @@ export default {
 		},
 		setPreventScroll(state, prevent) {
 			state.preventScroll = prevent;
-		},
-		setActivePlaylist(state, playlist) {
-			state.activePlaylist = playlist;
-		},
-		setActivePlaylistPath(state, path) {
-			state.activePlaylistPath = path;
 		},
 		setShowMarkers(state, value) {
 			state.showMarkers = value;
