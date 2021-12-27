@@ -102,7 +102,6 @@ export default {
 
       //  >>> Save changes
       let libraryObj = cloneDeep(this.$store.getters.libraryFull);
-      console.log(libraryObj);
       window.ipcRenderer.send("buildXML", [
         libraryObj,
         localStorage.pathToLibrary,

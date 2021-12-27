@@ -172,11 +172,12 @@ ipcMain.on("parseXML", function(event, arg) {
 ipcMain.on("buildXML", function(event, arg) {
   let js = arg[0];
   let path = arg[1];
+  let message = arg.length > 2 ? ": " + arg[2] : "";
   let xml = builder.buildObject(js);
   fs.writeFile(path, xml, function(err) {
     if (err) return console.log(err);
     console.log("Saved document");
-    win.webContents.send("buildXML", "Succes saving XML");
+    win.webContents.send("buildXML", "XML Saved" + message);
   });
 });
 

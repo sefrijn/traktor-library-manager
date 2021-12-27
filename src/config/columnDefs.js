@@ -71,7 +71,7 @@ let column_defs = [
     width: 135,
   },
   {
-    headerName: "T",
+    headerName: "Time",
     field: "length",
     width: 62,
     editable: false,

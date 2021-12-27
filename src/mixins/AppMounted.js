@@ -104,14 +104,26 @@ export default {
         // >>> Find tracks by Filename
         filenameToIndex[filename] = index;
       });
+      this.totalSongs = Object.keys(collectionFiltered).length;
+
       this.$store.commit("setCollection", collectionFiltered);
       this.$store.commit("setRowData", collectionFiltered);
       this.$store.commit("setFilenameToIndex", filenameToIndex);
 
-      // >> Create playlist data
-      this.$store.commit("setPlaylistData");
+      // >> Create playlist data & Delete old autoplaylists
+      this.$store.commit("initialPlaylistData");
 
-      this.totalSongs = Object.keys(collectionFiltered).length;
+      // >> Create new autoplaylist data
+      this.$store.commit("setDateImportedList");
+
+      // Write autoplaylist data to this.library and XML file
+      this.$store.commit("setLibraryPlaylist");
+      let libraryObj = cloneDeep(this.$store.getters.libraryFull);
+      window.ipcRenderer.send("buildXML", [
+        libraryObj,
+        localStorage.pathToLibrary,
+        "Autoplaylist Data update in Library Manager",
+      ]);
     });
 
     window.ipcRenderer.receive("parseXML", (xmlAsJS) => {
