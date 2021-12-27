@@ -191,8 +191,20 @@ export default {
 
     // > Limit Drag & Drop for playlist and smartlist items
     dragCondition(args) {
-      if (args.droppedNode != null) {
+      // Prevent Library Manager edit 1
+      if (args.draggedNodeData.parentID.includes("Library-Manager"))
+        return true;
+
+      if (args.droppedNode != null && args.droppedNodeData.parentID != null) {
         return (
+          // Prevent Library Manager edit 2
+          args.draggedNodeData.id.includes("autolist") ||
+          (args.droppedNodeData.id.includes("Library-Manager") &&
+            args.position === "Inside") ||
+          args.droppedNodeData.parentID.includes("Library-Manager") ||
+          args.draggedNodeData.parentID.includes("Library-Manager") ||
+          // Prevent drop outside Main folder
+          args.dropLevel == 1 ||
           // Cancel drag & drop for Preparation List
           (args.draggedNodeData.text === "Preparation" &&
             args.draggedNodeData.parentID.includes("ROOT")) ||
@@ -221,6 +233,7 @@ export default {
       }
     },
     dragStop(args) {
+      console.log(args);
       if (this.dragCondition(args)) {
         args.cancel = true;
       }
@@ -266,7 +279,20 @@ export default {
         mask-image: url("../assets/svg/playlist-plus.svg");
       }
     }
-
+    // Icon Library Manager
+    &.library-manager > .e-text-content.e-icon-wrapper {
+      > .e-list-text::before {
+        mask-image: url("../assets/svg/tag-multiple.svg");
+      }
+    }
+    &.library-manager .e-text-content {
+      &:not(.e-icon-wrapper) > .e-list-text::before {
+        mask-image: url("../assets/svg/label.svg");
+        width: 14px;
+        height: 14px;
+        @apply fill-current bg-active-dark;
+      }
+    }
     .e-text-content {
       @apply pl-0; // Remove icon padding
 
@@ -315,7 +341,7 @@ export default {
     }
 
     &.e-disable {
-      @apply hidden;
+      // @apply hidden;
     }
   }
 

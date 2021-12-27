@@ -237,6 +237,12 @@ function setPlaylistNode(
 				nodeData.child = [];
 				nodeData.id = slugify(`${node.$.NAME} folder ${id}`);
 				nodeData.type = "folder";
+				if (
+					node.$.NAME === "Library Manager" &&
+					pathLibrary === "NML.PLAYLISTS.0.NODE.0.SUBNODES.0.NODE"
+				) {
+					nodeData.htmlAttributes = { class: "library-manager" };
+				}
 			}
 			if (node.PLAYLIST) {
 				nodeData.text = node.$.NAME;

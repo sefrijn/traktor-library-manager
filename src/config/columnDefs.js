@@ -20,6 +20,7 @@ let column_defs = [
     editable: false,
     width: 84,
     cellRenderer: "indexRenderer",
+    sort: "desc",
   },
   {
     headerName: "Track ID",

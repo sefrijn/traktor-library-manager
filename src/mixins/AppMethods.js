@@ -199,7 +199,7 @@ export default {
       console.log("You'v edited a cell");
       setTimeout(() => {
         this.save(params);
-      }, 50);
+      }, 25);
     },
     save(params) {
       // Save changes to Traktor XML
