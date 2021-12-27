@@ -44,7 +44,7 @@ export default {
 		window.ipcRenderer.receive("coverArtProgress", (message) => {
 			this.percentage = message * 100;
 			if (this.percentage == 100) {
-				console.log("Loaded All Cover Art");
+				console.log("Cover Art Loaded");
 			}
 		});
 	},

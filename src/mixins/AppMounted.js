@@ -6,7 +6,7 @@ export default {
     if (localStorage.pathToLibrary) {
       this.$store.commit("setLibraryPath", localStorage.pathToLibrary);
       window.ipcRenderer.send("parseXML", [this.pathToLibrary]);
-      console.log("Load library from localStorage: " + this.pathToLibrary);
+      console.log("Library Path: " + this.pathToLibrary);
     }
 
     window.ipcRenderer.receive("openLibrary", (message) => {

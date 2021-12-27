@@ -145,7 +145,6 @@ export default {
     onCellClicked(params) {
       if (params.data.index != this.$store.state.trackPlaying.index) {
         let clipboardVal = params.data.artist + " - " + params.data.title;
-        console.log("copy to clipboard: " + clipboardVal);
         window.ipcRenderer.send("toClipboard", clipboardVal);
         this.$store.commit("setClipboardMessage", true);
         setTimeout(() => {

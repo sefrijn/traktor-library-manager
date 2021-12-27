@@ -129,7 +129,6 @@ export default {
     // > Node clicked events
     nodeclick(args) {
       let id = args.node.dataset.uid;
-      console.log("open: " + id);
 
       // Open playlist
       if (args.event.which === 1 && id.includes("playlist")) {
@@ -210,12 +209,17 @@ export default {
     // > Limit Drag & Drop for playlist and smartlist items
     dragCondition(args) {
       // Prevent Library Manager edit 1
-      if (args.draggedNodeData.parentID.includes("Library-Manager"))
+      if (
+        args.draggedNodeData.parentID.includes("Library-Manager") ||
+        args.draggedNodeData.id.includes("autolist") ||
+        args.draggedNodeData.id.includes("autofolder")
+      )
         return true;
 
       if (args.droppedNode != null && args.droppedNodeData.parentID != null) {
         return (
           // Prevent Library Manager edit 2
+          args.droppedNodeData.id.includes("autofolder") ||
           args.draggedNodeData.id.includes("autolist") ||
           (args.droppedNodeData.id.includes("Library-Manager") &&
             args.position === "Inside") ||

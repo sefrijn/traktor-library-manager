@@ -144,41 +144,56 @@ export default {
 				id: slugify(`${name} folder ${makeid(5)}`),
 			};
 
-			let timestamp, date, monthName;
-			let folderName, playlistIndex, id, loc;
+			let timestamp, date, month, monthName, year;
+			let playlistName, playlistIndex, id, loc;
 			let entries = {};
 			state.collection.forEach((track, index) => {
 				timestamp = Date.parse(track.import_date);
 				date = new Date(timestamp);
+
 				monthName = date.toLocaleString("default", {
 					month: "long",
 				});
-				date =
-					date
-						.getFullYear()
-						.toString()
-						.substr(-2) +
-					(date.getMonth() < 9
+				year = date.getFullYear();
+				month =
+					date.getMonth() < 9
 						? "0" + (date.getMonth() + 1)
-						: date.getMonth() + 1);
-				folderName = date + " " + monthName;
+						: date.getMonth() + 1;
+				playlistName = month + " " + monthName;
+
+				// Does Year folder exist?
+				let yearIndex = node.child.findIndex((value) => {
+					return value.text.trim() == year;
+				});
+				// Create it
+				if (yearIndex == -1) {
+					yearIndex = node.child.length;
+					node.child.push({
+						type: "folder",
+						text: " " + year,
+						child: [],
+						id: slugify(`${year} folder autofolder ${makeid(5)}`),
+					});
+				}
 
 				// If playlist doesn't exist, create new auto playlist
-				playlistIndex = node.child.findIndex((value) => {
-					return value.text === folderName;
-				});
+				playlistIndex = node.child[yearIndex].child.findIndex(
+					(value) => {
+						return value.text === playlistName;
+					}
+				);
 				if (playlistIndex == -1) {
 					id = "autolist_" + makeid(23);
 					// Add track to Browser Node
-					node.child.push({
+					node.child[yearIndex].child.push({
 						type: "playlist",
 						id: id + "-playlist",
-						text: folderName,
+						text: playlistName,
 					});
 					entries[id] = [];
 				} else {
 					// If playlist exists, set ID correctly for PlaylistEntries
-					id = node.child[playlistIndex].id;
+					id = node.child[yearIndex].child[playlistIndex].id;
 					id = id.substr(0, id.indexOf("-"));
 				}
 
