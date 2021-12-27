@@ -5,6 +5,7 @@ export default {
 		savingEnabled: true,
 		libraryPath: null, // path to Library NML file
 		startingUp: true,
+		allowTrackDragDrop: true,
 	}),
 	getters: {
 		loading(state) {
@@ -22,6 +23,9 @@ export default {
 		startingUp(state) {
 			return state.startingUp;
 		},
+		allowTrackDragDrop(state) {
+			return state.allowTrackDragDrop;
+		},
 	},
 	mutations: {
 		setLoading(state, loading) {
@@ -38,6 +42,9 @@ export default {
 		},
 		setStartingUp(state, status) {
 			state.startingUp = status;
+		},
+		setAllowTrackDragDrop(state, allow) {
+			state.allowTrackDragDrop = allow;
 		},
 	},
 };

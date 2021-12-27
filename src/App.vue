@@ -192,8 +192,14 @@ export default {
     coverSize() {
       return this.$store.getters.coverSize;
     },
+    allowTrackDragDrop() {
+      return this.$store.getters.allowTrackDragDrop;
+    },
   },
   watch: {
+    allowTrackDragDrop(newval, oldval) {
+      this.columnDefs[0].rowDrag = newval;
+    },
     isSavingEnabled(newval, oldval) {
       this.columnDefs.forEach((colDef, index) => {
         if (newval && !colDef.hasOwnProperty("editable")) {

@@ -132,6 +132,12 @@ export default {
 
       // Open playlist
       if (args.event.which === 1 && id.includes("playlist")) {
+        if (id.includes("autolist")) {
+          this.$store.commit("setAllowTrackDragDrop", false);
+        } else if (!this.$store.getters.allowTrackDragDrop) {
+          this.$store.commit("setAllowTrackDragDrop", true);
+        }
+
         id = id.substr(0, id.indexOf("-"));
         this.openPlaylist(id);
       }
