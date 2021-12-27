@@ -113,8 +113,11 @@ export default {
       // >> Create playlist data & Delete old autoplaylists
       this.$store.commit("initialPlaylistData");
 
+      // >> Autoplaylist Root Folder
+      this.$store.commit("setAutoplaylistFolder");
       // >> Create new autoplaylist data
       this.$store.commit("setDateImportedList");
+      this.$store.commit("setTagList");
 
       // Write autoplaylist data to this.library and XML file
       this.$store.commit("setLibraryPlaylist");

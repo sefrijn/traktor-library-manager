@@ -70,17 +70,18 @@ export default {
 	mixins: [spotifySuggestions],
 	computed: {
 		genres() {
-			return [...this.spotifyGenres, ...this.$store.state.genres].filter(
-				(genre) => {
-					if (this.value) {
-						return genre
-							.toLowerCase()
-							.includes(this.value.toLowerCase());
-					} else {
-						return true;
-					}
+			return [
+				...this.spotifyGenres,
+				...this.$store.getters.genres,
+			].filter((genre) => {
+				if (this.value) {
+					return genre
+						.toLowerCase()
+						.includes(this.value.toLowerCase());
+				} else {
+					return true;
 				}
-			);
+			});
 		},
 	},
 	methods: {

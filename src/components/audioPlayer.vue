@@ -250,7 +250,9 @@ export default {
 			this.emptyWavesurfer();
 			var blob = new window.Blob([message]);
 			wavesurfer.loadBlob(blob);
-			console.log("load audio file");
+			console.log(
+				"Loaded in AudioPlayer: " + this.artist + " - " + this.title
+			);
 		});
 
 		window.ipcRenderer.receive("spotifyArtist", (message) => {

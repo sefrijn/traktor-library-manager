@@ -104,6 +104,7 @@ export default {
   },
   methods: {
     openPlaylist(list) {
+      console.log("open: " + list);
       this.$store.commit("setFilter", { rating: 0, color: 0 });
       this.$store.commit("setActivePlaylist", list);
 

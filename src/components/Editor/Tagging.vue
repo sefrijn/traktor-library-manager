@@ -88,7 +88,7 @@ export default {
 	mixins: [spotifySuggestions],
 	computed: {
 		tagsAutocomplete() {
-			return [...this.spotifyGenres, ...this.$store.state.tags].filter(
+			return [...this.spotifyGenres, ...this.$store.getters.tags].filter(
 				(tag) => {
 					return tag.toLowerCase().includes(this.value.toLowerCase());
 				}

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border-t border-black nowplaying text-sm font-medium text-center text-white bg-black-light"
+    class="border-t border-black nowplaying text-sm font-medium text-center text-white bg-black-light w-full"
   >
     <img v-if="image" :src="image" />
     <span v-if="artist" class="block uppercase text-xxs text-gray pt-2"

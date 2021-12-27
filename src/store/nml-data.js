@@ -1,5 +1,6 @@
 import { nmlCollection, nmlPlaylist, nmlSubnode } from "./../config/paths.js";
 const slugify = require("slugify");
+const cloneDeep = require("lodash.clonedeep");
 
 export default {
 	state: () => ({
@@ -125,28 +126,135 @@ export default {
 		clearTags(state) {
 			state.tags = [];
 		},
-		setDateImportedList(state) {
-			// Set root Folder of Playlists
-			let root = "0.child";
-
+		setAutoplaylistFolder(state) {
+			// Create Library Manager folder if it does not exist
+			let rootfolders = state.playlists[0].child;
+			let libManIndex = rootfolders.findIndex((element) =>
+				element.text.includes("Library Manager")
+			);
+			if (libManIndex == -1) {
+				let name = "Library Manager";
+				let node = {
+					text: " " + name,
+					type: "folder",
+					child: [],
+					id: slugify(`${name} folder ${makeid(5)}`),
+					htmlAttributes: { class: "library-manager" },
+				};
+				state.playlists[0].child.push(node);
+			}
+		},
+		setTagList(state) {
 			// Get location of Library Manager Folder
-			let folders = objectWalker(root, state.playlists); // Get root childfolders
-			let libIndex = folders.findIndex((element) =>
+			let rootfolders = state.playlists[0].child;
+			let libManIndex = rootfolders.findIndex((element) =>
+				element.text.includes("Library Manager")
+			);
+
+			// Create playlist folder at path
+			let name = "Tags";
+			let node;
+
+			let autoIndex = rootfolders[libManIndex].child.findIndex(
+				(value) => {
+					return value.text.trim() == name;
+				}
+			);
+			if (autoIndex == -1) {
+				console.log("create auto folder");
+				node = {
+					text: " " + name,
+					child: [],
+					id: slugify(`${name} folder ${makeid(5)}`),
+					type: "folder",
+				};
+			} else {
+				node = rootfolders[libManIndex].child[autoIndex];
+				console.log(
+					"auto folder exists with items: " + node.child.length
+				);
+			}
+
+			let id, playlistIndex, tags, loc;
+			let entries = {};
+			state.collection.forEach((track, index) => {
+				tags = [...new Set(getTags(track))];
+				tags.forEach((tag, index) => {
+					// If playlist doesn't exist, create new auto playlist
+					playlistIndex = node.child.findIndex((value) => {
+						return value.text === tag;
+					});
+					if (playlistIndex == -1) {
+						id = "autolist_" + makeid(23);
+						// Add track to Browser Node
+						node.child.push({
+							text: tag,
+							type: "playlist",
+							id: id + "-playlist",
+						});
+					} else {
+						// If playlist exists, set ID correctly for PlaylistEntries
+						id = node.child[playlistIndex].id;
+						id = id.substr(0, id.indexOf("-"));
+					}
+					// Add track to auto playlist
+					loc = objectWalker(
+						nmlCollection + "." + track.index + ".LOCATION.0.$",
+						state.library
+					);
+					if (entries[id] === undefined) entries[id] = [];
+					entries[id].push(loc.VOLUME + loc.DIR + loc.FILE);
+				});
+			});
+
+			// Cleanup existing nodes
+			let keep = [];
+			node.child.forEach((tag, index) => {
+				if (state.tags.includes(tag.text)) {
+					keep.push(cloneDeep(tag));
+				}
+			});
+			node.child = keep;
+
+			// Write to Playlists and PlaylistEntries
+			state.playlistEntries = { ...state.playlistEntries, ...entries };
+			if (autoIndex == -1) {
+				state.playlists[0].child[libManIndex].child.push(node);
+			} else {
+				state.playlists[0].child[libManIndex].child[autoIndex] = node;
+			}
+		},
+		setDateImportedList(state) {
+			// Get location of Library Manager Folder
+			let rootfolders = state.playlists[0].child;
+			let libManIndex = rootfolders.findIndex((element) =>
 				element.text.includes("Library Manager")
 			);
 
 			// Create playlist folder at path
 			let name = "Date Imported";
-			let node = {
-				type: "folder",
-				text: " " + name,
-				child: [],
-				id: slugify(`${name} folder ${makeid(5)}`),
-			};
+			let node;
+
+			let autoIndex = rootfolders[libManIndex].child.findIndex(
+				(value) => {
+					return value.text.trim() == name;
+				}
+			);
+			if (autoIndex == -1) {
+				node = {
+					text: " " + name,
+					type: "folder",
+					child: [],
+					id: slugify(`${name} folder ${makeid(5)}`),
+				};
+			} else {
+				node = rootfolders[libManIndex].child[autoIndex];
+			}
 
 			let timestamp, date, month, monthName, year;
 			let playlistName, playlistIndex, id, loc;
 			let entries = {};
+			let activeLists = {};
 			state.collection.forEach((track, index) => {
 				timestamp = Date.parse(track.import_date);
 				date = new Date(timestamp);
@@ -169,8 +277,8 @@ export default {
 				if (yearIndex == -1) {
 					yearIndex = node.child.length;
 					node.child.push({
-						type: "folder",
 						text: " " + year,
+						type: "folder",
 						child: [],
 						id: slugify(`${year} folder autofolder ${makeid(5)}`),
 					});
@@ -183,18 +291,26 @@ export default {
 					}
 				);
 				if (playlistIndex == -1) {
+					// console.log("playlist does not exist");
 					id = "autolist_" + makeid(23);
 					// Add track to Browser Node
 					node.child[yearIndex].child.push({
+						text: playlistName,
 						type: "playlist",
 						id: id + "-playlist",
-						text: playlistName,
 					});
-					entries[id] = [];
 				} else {
 					// If playlist exists, set ID correctly for PlaylistEntries
 					id = node.child[yearIndex].child[playlistIndex].id;
 					id = id.substr(0, id.indexOf("-"));
+				}
+
+				// Generate list for cleanup
+				if (activeLists[year] === undefined) {
+					activeLists[year] = [];
+				}
+				if (!activeLists[year].includes(playlistName)) {
+					activeLists[year].push(playlistName);
 				}
 
 				// Add track to auto playlist
@@ -202,11 +318,23 @@ export default {
 					nmlCollection + "." + track.index + ".LOCATION.0.$",
 					state.library
 				);
+				if (entries[id] === undefined) entries[id] = [];
 				entries[id].push(loc.VOLUME + loc.DIR + loc.FILE);
 			});
 
+			// cleanup unnused years and months
+			node.child.forEach((year, index) => {
+				if (!(year.text.trim() in activeLists)) {
+					node.child.splice(index, 1);
+				}
+			});
+
 			state.playlistEntries = { ...state.playlistEntries, ...entries };
-			state.playlists[0].child[libIndex].child.push(node);
+			if (autoIndex == -1) {
+				state.playlists[0].child[libManIndex].child.push(node);
+			} else {
+				state.playlists[0].child[libManIndex].child[autoIndex] = node;
+			}
 		},
 
 		// Active playlist
@@ -329,26 +457,24 @@ function setPlaylistNode(
 					nodeData.htmlAttributes = { class: "library-manager" };
 				}
 			}
-			if (
-				node.PLAYLIST &&
-				// ALWAYS regenerate auto playlists on startup
-				!node.PLAYLIST[0]["$"]["UUID"].includes("autolist")
-			) {
+			if (node.PLAYLIST) {
 				nodeData.text = node.$.NAME;
 				let uuid = node.PLAYLIST[0]["$"]["UUID"];
 				nodeData.id = uuid + "-playlist";
 				nodeData.type = "playlist";
 
 				// Append current PL to PlaylistEntries
-				entries[uuid] = [];
-				if ("PLAYLIST" in node && "ENTRY" in node.PLAYLIST[0]) {
-					node.PLAYLIST[0]["ENTRY"].forEach((track) => {
-						if (track.PRIMARYKEY[0].$.TYPE != "TRACK") {
-							delete entries[uuid];
-							return;
-						}
-						entries[uuid].push(track.PRIMARYKEY[0].$.KEY);
-					});
+				if (!node.PLAYLIST[0]["$"]["UUID"].includes("autolist")) {
+					entries[uuid] = [];
+					if ("PLAYLIST" in node && "ENTRY" in node.PLAYLIST[0]) {
+						node.PLAYLIST[0]["ENTRY"].forEach((track) => {
+							if (track.PRIMARYKEY[0].$.TYPE != "TRACK") {
+								delete entries[uuid];
+								return;
+							}
+							entries[uuid].push(track.PRIMARYKEY[0].$.KEY);
+						});
+					}
 				}
 
 				if (
@@ -373,13 +499,7 @@ function setPlaylistNode(
 			objectWalker(playlistsItemPath + index, playlists, "set", nodeData);
 
 			// If there are children, repeat this function and complete paths
-			if (
-				nodesArray[index].SUBNODES &&
-				!(
-					node.$.NAME === "Library Manager" &&
-					pathLibrary === nmlPlaylist + ".0" + nmlSubnode
-				)
-			) {
+			if (nodesArray[index].SUBNODES) {
 				setPlaylistNode(
 					nodePath + nmlSubnode,
 					playlistsItemPath + index + ".child.",
@@ -422,4 +542,21 @@ function makeid(length) {
 		);
 	}
 	return result;
+}
+
+function getTags(track) {
+	let tags1 = track.comment_1;
+	if (tags1 != undefined && tags1 != "") {
+		tags1 = tags1.split(/[;,]+/).map((item) => item.trim());
+	} else {
+		tags1 = [];
+	}
+	let tags2 = track.comment_2;
+	if (tags2 != undefined && tags2 != "") {
+		tags2 = tags2.split(/[;,]+/).map((item) => item.trim());
+	} else {
+		tags2 = [];
+	}
+	let tags = [...tags1, ...tags2];
+	return tags;
 }
