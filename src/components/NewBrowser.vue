@@ -28,6 +28,7 @@
         :allowEditing="true"
         :nodeExpanded="expandCollapse"
         :nodeCollapsed="expandCollapse"
+        :nodeEditing="startedEditing"
         :dataSourceChanged="update"
         :expandOn="'Click'"
         :sortOrder="sorting"
@@ -195,6 +196,17 @@ export default {
       ]);
     },
 
+    // > Prevent autolist edit
+    startedEditing(args) {
+      console.log(args);
+      if (
+        args.nodeData.id.includes("autolist") ||
+        args.nodeData.text === "Preparation"
+      ) {
+        args.cancel = true;
+      }
+    },
+
     // > Limit Drag & Drop for playlist and smartlist items
     dragCondition(args) {
       // Prevent Library Manager edit 1
@@ -289,14 +301,25 @@ export default {
     &.library-manager > .e-text-content.e-icon-wrapper {
       > .e-list-text::before {
         mask-image: url("../assets/svg/tag-multiple.svg");
+        @apply fill-current bg-active;
+      }
+    }
+    &.e-active.library-manager {
+      > .e-text-content.e-icon-wrapper > .e-list-text::before {
+        @apply bg-white;
       }
     }
     &.library-manager .e-text-content {
       &:not(.e-icon-wrapper) > .e-list-text::before {
         mask-image: url("../assets/svg/label.svg");
-        width: 14px;
-        height: 14px;
-        @apply fill-current bg-active-dark;
+        width: 13px;
+        height: 13px;
+        @apply fill-current bg-active;
+      }
+    }
+    &.e-active[data-uid*="autolist"] {
+      .e-text-content:not(.e-icon-wrapper) > .e-list-text::before {
+        @apply bg-white;
       }
     }
     .e-text-content {
