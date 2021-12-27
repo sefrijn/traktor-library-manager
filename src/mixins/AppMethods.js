@@ -97,12 +97,7 @@ export default {
         entries.splice(parseInt(event.node.id), 1);
         entries.splice(event.overIndex, 0, el);
 
-        // Convert playlists & playlistEntries to Library item
-        //   // Update Vuex Library js object
-        //   this.$store.commit("setLibraryValue", {
-        //     path: path,
-        //     value: playlistEntries,
-        //   });
+        this.$store.commit("setLibraryPlaylist");
       }
 
       //  >>> Save changes
@@ -129,12 +124,10 @@ export default {
 
     // > Tracklist updates
     onGridReady(params) {
-      // console.log("set visibleTracks - onGridReady");
       this.gridApi = params.api;
       this.visibleTracks = this.gridApi.getRenderedNodes();
     },
     onGridSizeChanged(params) {
-      // console.log("set visibleTracks - onGridSizeChanged");
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();
       }
@@ -143,7 +136,6 @@ export default {
       this.filteredSongs = this.gridOptions.api.getModel().rootNode.childrenAfterFilter.length;
     },
     onViewportChanged(params) {
-      // console.log("set visibleTracks - onViewportChanged");
       this.filteredSongs = this.gridOptions.api.getModel().rootNode.childrenAfterFilter.length;
       if (this.gridApi != null) {
         this.visibleTracks = this.gridApi.getRenderedNodes();

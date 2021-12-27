@@ -72,9 +72,7 @@ export default {
 		},
 		// NML data - specific node
 		setLibraryValue(state, data) {
-			console.log(data.path);
 			objectWalker(data.path, state.library, "set", data.value);
-			console.log(state.library);
 		},
 		setLibraryPlaylist(state) {
 			// Write data to Library
@@ -84,7 +82,6 @@ export default {
 				state.library,
 				nmlPlaylist
 			);
-			console.log(state.library);
 		},
 
 		// Rebuild data
@@ -101,12 +98,9 @@ export default {
 			);
 			state.browser.dataSource = state.playlists;
 			state.browser.ready = true;
-
-			console.log(state.playlists);
-			console.log(state.playlistEntries);
-			console.log("----");
 		},
 		setBrowserData(state, data) {
+			state.playlists = data;
 			state.browser = {
 				dataSource: data,
 				id: state.browser.id,
@@ -133,9 +127,6 @@ export default {
 
 		// Active playlist
 		setActivePlaylist(state, playlist) {
-			// console.log(playlist);
-			// let key = getKeyByValue(playlist, state.playlist);
-			// console.log(key);
 			state.activePlaylist = playlist;
 		},
 
@@ -149,10 +140,11 @@ export default {
 function setLibraryPlaylistNode(nodes, entries, library, path) {
 	nodes.forEach((node, index) => {
 		if (node.type == "folder") {
+			let name = nmlPlaylist === path ? "$ROOT" : node.text.trim();
 			let nodeValue = {
 				$: {
 					TYPE: node.type.toUpperCase(),
-					NAME: node.text.trim(),
+					NAME: name,
 				},
 				SUBNODES: [
 					{
@@ -255,7 +247,6 @@ function setPlaylistNode(
 				// Append current PL to PlaylistEntries
 				entries[uuid] = [];
 				if ("PLAYLIST" in node && "ENTRY" in node.PLAYLIST[0]) {
-					// entries[uuid] = [];
 					node.PLAYLIST[0]["ENTRY"].forEach((track) => {
 						if (track.PRIMARYKEY[0].$.TYPE != "TRACK") {
 							delete entries[uuid];
@@ -281,6 +272,7 @@ function setPlaylistNode(
 			}
 			// Root element expanded
 			if (playlistsItemPath === "") {
+				nodeData.text = "Playlists";
 				nodeData.expanded = true;
 			}
 			objectWalker(playlistsItemPath + index, playlists, "set", nodeData);

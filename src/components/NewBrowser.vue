@@ -26,8 +26,8 @@
         :nodeDragStop="dragStop"
         :nodeDragging="dragNode"
         :allowEditing="true"
-        :nodeExpanded="update"
-        :nodeCollapsed="update"
+        :nodeExpanded="expandCollapse"
+        :nodeCollapsed="expandCollapse"
         :dataSourceChanged="update"
         :expandOn="'Click'"
         :sortOrder="sorting"
@@ -115,8 +115,6 @@ export default {
         tracks.push(track);
       }
       this.$store.commit("setRowData", tracks);
-
-      this.$store.commit("setLibraryPlaylist");
     },
 
     // Reset selection and load all data
@@ -161,19 +159,34 @@ export default {
           excluded.push(val.id);
       });
       this.$refs.treeview.disableNodes(excluded);
-
-      // TODO
-      // this.$store.commit("updatePlaylistNML");
     },
 
-    // > Set Vuex True data and sort new treedata after change
-    update(args) {
+    // Map visual to treedata & playlist
+    expandCollapse(args) {
       let d = this.$refs.treeview.getTreeData();
       this.$store.commit("setBrowserData", d);
-      // TODO
-      // this.$store.commit("updatePlaylistNML");
-      // console.log("data after update:");
-      // console.log(this.fields);
+    },
+
+    // > Update Vuex data after edits
+    update(args) {
+      this.$store.commit("setSaving", true);
+      setTimeout(() => {
+        this.updateAfterTimeout();
+      }, 25);
+    },
+    updateAfterTimeout() {
+      // Get new treedata
+      let d = this.$refs.treeview.getTreeData();
+      // Save to JS objects (browser, playlists, playlistEntries)
+      this.$store.commit("setBrowserData", d);
+      // Rebuild Library JS object
+      this.$store.commit("setLibraryPlaylist");
+      // Save to XML file
+      let libraryObj = cloneDeep(this.$store.getters.libraryFull);
+      window.ipcRenderer.send("buildXML", [
+        libraryObj,
+        localStorage.pathToLibrary,
+      ]);
     },
 
     // > Limit Drag & Drop for playlist and smartlist items
@@ -289,8 +302,14 @@ export default {
         min-height: 24px;
         line-height: 24px;
         @apply flex items-center font-sans;
-        .e-input-group input {
-          @apply bg-active shadow-lg;
+        .e-input-group {
+          @apply m-0 py-0 border-b border-white;
+          height: 24px;
+          input {
+            @apply bg-transparent m-0 py-0;
+            height: 24px;
+            line-height: 24px;
+          }
         }
       }
     }
