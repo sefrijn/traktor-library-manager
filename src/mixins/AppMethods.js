@@ -145,14 +145,14 @@ export default {
     onCellClicked(params) {
       if (params.data.index != this.$store.state.trackPlaying.index) {
         let clipboardVal = params.data.artist + " - " + params.data.title;
-        copyToClipboard(clipboardVal);
+        this.copyToClipboard(clipboardVal);
       }
       if (params.colDef.field == "index") {
         this.playTrack(params.data);
       }
     },
     copyToClipboard(text) {
-      window.ipcRenderer.send("toClipboard", clipboardVal);
+      window.ipcRenderer.send("toClipboard", text);
       this.$store.commit("setClipboardMessage", true);
       setTimeout(() => {
         this.$store.commit("setClipboardMessage", false);
@@ -166,7 +166,7 @@ export default {
           node.setSelected(true, true);
           if (track.index != this.$store.state.trackPlaying.index) {
             let clipboardVal = track.artist + " - " + track.title;
-            copyToClipboard(clipboardVal);
+            this.copyToClipboard(clipboardVal);
           }
         }
         this.$store.commit("setTrackPlaying", track);
