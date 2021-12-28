@@ -145,19 +145,30 @@ export default {
     onCellClicked(params) {
       if (params.data.index != this.$store.state.trackPlaying.index) {
         let clipboardVal = params.data.artist + " - " + params.data.title;
-        window.ipcRenderer.send("toClipboard", clipboardVal);
-        this.$store.commit("setClipboardMessage", true);
-        setTimeout(() => {
-          this.$store.commit("setClipboardMessage", false);
-        }, 1400);
+        copyToClipboard(clipboardVal);
       }
       if (params.colDef.field == "index") {
         this.playTrack(params.data);
       }
     },
+    copyToClipboard(text) {
+      window.ipcRenderer.send("toClipboard", clipboardVal);
+      this.$store.commit("setClipboardMessage", true);
+      setTimeout(() => {
+        this.$store.commit("setClipboardMessage", false);
+      }, 1400);
+    },
     // > Play a track
     playTrack(track) {
       if (track.index != this.$store.state.trackPlaying.index) {
+        let node = this.gridApi.getRowNode(track.index);
+        if (!node.isSelected()) {
+          node.setSelected(true, true);
+          if (track.index != this.$store.state.trackPlaying.index) {
+            let clipboardVal = track.artist + " - " + track.title;
+            copyToClipboard(clipboardVal);
+          }
+        }
         this.$store.commit("setTrackPlaying", track);
         this.$store.commit("setLoading", true);
         this.$store.commit("setSpotifyArtist", true);

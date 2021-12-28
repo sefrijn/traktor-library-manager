@@ -1,88 +1,92 @@
 <template>
   <div
-    class="h-screen bg-black-dark text-white font-sans"
+    class="h-screen bg-black-dark text-white font-sans flex flex-col-reverse"
     @click="hideContextMenu"
   >
-    <app-header ref="header" style="height:67px;"></app-header>
+    <about></about>
+    <div class="flex-grow">
+      <app-header ref="header" style="height:67px;"></app-header>
 
-    <main class="flex relative" @mouseup="endDragging">
-      <welcome style="height: calc(100vh - 134px);"> </welcome>
+      <main class="flex relative" @mouseup="endDragging">
+        <welcome style="height: calc(100vh - 32px - 134px);"> </welcome>
 
-      <generate-cover-art style="height: calc(100vh - 134px);">
-      </generate-cover-art>
+        <generate-cover-art style="height: calc(100vh - 32px - 134px);">
+        </generate-cover-art>
 
-      <aside
-        v-if="sidebar && pathToLibrary"
-        class="max-w-sm flex flex-col justify-between items-start border-r border-black overflow-hidden"
-        :style="{ width: `${asideWidth}%` }"
-        style="height: calc(100vh - 134px);"
-      >
-        <new-browser style="min-height:0;" class="flex-grow"></new-browser>
-        <browser v-if="false"></browser>
-        <now-playing class="flex-shrink-0"></now-playing>
-      </aside>
-
-      <div
-        v-if="sidebar && pathToLibrary"
-        class="divider w-2 flex justify-center items-center bg-black-medium hover:bg-black-light cursor-divider-h"
-        @mousedown="startDragging"
-      >
-        <img src="./assets/vsizegrip.png" alt="" />
-      </div>
-
-      <section
-        v-if="pathToLibrary"
-        class="flex-grow relative border-l border-black"
-        style="height: calc(100vh - 134px);"
-        @wheel="setScrollSource"
-      >
-        <context-menu></context-menu>
-        <ag-grid-vue
-          ref="trackList"
-          class="ag-theme-alpine-dark w-full"
-          :class="classesGrid"
-          :rowBuffer="10"
-          :column-defs="columnDefs"
-          :default-col-def="defaultColDef"
-          :suppress-scroll-on-new-data="preventScroll"
-          :row-data="rowData"
-          :row-class-rules="rowClassRules"
-          :grid-options="gridOptions"
-          :rowDragManaged="true"
-          :rowDragMultiRow="false"
-          :animateRows="true"
-          :rowSelection="`multiple`"
-          @grid-ready="onGridReady"
-          @viewport-changed="onViewportChanged"
-          @cell-value-changed="onCellValueChanged"
-          @cell-editing-started="onCellEditingStarted"
-          @cell-editing-stopped="onCellEditingStopped"
-          @cell-clicked="onCellClicked"
-          @cell-context-menu="onCellContextMenu"
-          @body-scroll="onBodyScroll"
-          @grid-size-changed="onGridSizeChanged"
-          @filter-changed="onFilterChanged"
-          @row-drag-end="onRowDragEnd"
+        <aside
+          v-if="sidebar && pathToLibrary"
+          class="max-w-sm flex flex-col justify-between items-start border-r border-black overflow-hidden"
+          :style="{ width: `${asideWidth}%` }"
+          style="height: calc(100vh - 32px - 134px);"
         >
-        </ag-grid-vue>
-        <visual-browser
-          @scroll="onBodyScroll"
-          ref="visualbrowser"
-          :class="classesVisualBrowser"
-          :tracks="visibleTracks"
-          :filtered-songs="filteredSongs"
-          @play-track="playTrack"
-        ></visual-browser>
-      </section>
-    </main>
+          <new-browser style="min-height:0;" class="flex-grow"></new-browser>
+          <browser v-if="false"></browser>
+          <now-playing class="flex-shrink-0"></now-playing>
+        </aside>
 
-    <app-footer
-      style="height: 67px;"
-      class="border-t border-black flex justify-center items-center"
-      :filtered-songs="filteredSongs"
-      :total-songs="totalSongs"
-    >
-    </app-footer>
+        <div
+          v-if="sidebar && pathToLibrary"
+          class="divider w-2 flex justify-center items-center bg-black-medium hover:bg-black-light cursor-divider-h"
+          @mousedown="startDragging"
+        >
+          <img src="./assets/vsizegrip.png" alt="" />
+        </div>
+
+        <section
+          v-if="pathToLibrary"
+          class="flex-grow relative border-l border-black"
+          style="height: calc(100vh - 32px - 134px);"
+          @wheel="setScrollSource"
+        >
+          <context-menu></context-menu>
+          <ag-grid-vue
+            ref="trackList"
+            class="ag-theme-alpine-dark w-full"
+            :class="classesGrid"
+            :rowBuffer="10"
+            :column-defs="columnDefs"
+            :default-col-def="defaultColDef"
+            :suppress-scroll-on-new-data="preventScroll"
+            :row-data="rowData"
+            :row-class-rules="rowClassRules"
+            :grid-options="gridOptions"
+            :rowDragManaged="true"
+            :rowDragMultiRow="false"
+            :animateRows="true"
+            :rowSelection="`multiple`"
+            @grid-ready="onGridReady"
+            @viewport-changed="onViewportChanged"
+            @cell-value-changed="onCellValueChanged"
+            @cell-editing-started="onCellEditingStarted"
+            @cell-editing-stopped="onCellEditingStopped"
+            @cell-clicked="onCellClicked"
+            @cell-context-menu="onCellContextMenu"
+            @body-scroll="onBodyScroll"
+            @grid-size-changed="onGridSizeChanged"
+            @filter-changed="onFilterChanged"
+            @row-drag-end="onRowDragEnd"
+          >
+          </ag-grid-vue>
+          <visual-browser
+            @scroll="onBodyScroll"
+            ref="visualbrowser"
+            :class="classesVisualBrowser"
+            :tracks="visibleTracks"
+            :filtered-songs="filteredSongs"
+            @play-track="playTrack"
+          ></visual-browser>
+        </section>
+      </main>
+
+      <app-footer
+        ref="footer"
+        style="height: 67px;"
+        class="border-t border-black flex justify-center items-center"
+        :filtered-songs="filteredSongs"
+        :total-songs="totalSongs"
+      >
+      </app-footer>
+    </div>
   </div>
 </template>
 
@@ -90,6 +94,7 @@
 window.ipcRenderer.removeAllListeners();
 
 import { AgGridVue } from "ag-grid-vue3";
+import About from "./components/About.vue";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
 import Browser from "./components/Browser.vue";
@@ -99,6 +104,8 @@ import Welcome from "./components/Welcome.vue";
 import GenerateCoverArt from "./components/GenerateCoverArt.vue";
 import NowPlaying from "./components/NowPlaying.vue";
 import ContextMenu from "./components/ContextMenu.vue";
+import SvgIcon from "@jamescoyle/vue-icon";
+import { mdiCoffeeOutline } from "@mdi/js";
 
 // Split App.vue into separate files
 import appBeforeMount from "./mixins/AppBeforeMount.js";
@@ -109,6 +116,8 @@ import fancyTimeFormat from "./mixins/FancyTimeFormat.js";
 export default {
   name: "App",
   components: {
+    SvgIcon,
+    About,
     AgGridVue,
     AppHeader,
     AppFooter,
@@ -123,6 +132,7 @@ export default {
   mixins: [fancyTimeFormat, appBeforeMount, appMounted, appMethods],
   data() {
     return {
+      iconCoffee: mdiCoffeeOutline,
       totalSongs: null, // INT - All tracks in collection
       filteredSongs: null, // INT - Tracks within playlist, filter and search
       columnDefs: null, // JS Object - AG Grid column settings

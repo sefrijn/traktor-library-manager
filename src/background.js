@@ -59,7 +59,7 @@ async function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  win.setPosition(1280, 0);
+  win.setPosition(80, 0);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -95,7 +95,6 @@ async function spotifyApi() {
       qs.stringify(data),
       headers
     );
-    // console.log(response.data.access_token);
     return response.data.access_token;
   } catch (error) {
     console.log(error);
@@ -252,6 +251,10 @@ ipcMain.on("spotifyArtist", async function(event, artist) {
       console.log(error);
       win.webContents.send("spotifyArtist", false);
     });
+});
+
+ipcMain.on("openURL", (event, url) => {
+  shell.openExternal(url);
 });
 
 ipcMain.on("toClipboard", function(event, arg) {

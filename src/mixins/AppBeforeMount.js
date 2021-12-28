@@ -38,6 +38,10 @@ export default {
     }
 
     this.unsubscribe = tinykeys(window, {
+      "$mod+P": () => {
+        this.$refs.footer.$refs.player.togglePlayback();
+        console.log("Shortcut Play/Pause pressed");
+      },
       "$mod+F": () => {
         this.$refs.header.$refs.search.$refs.input.focus();
       },

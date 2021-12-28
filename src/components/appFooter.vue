@@ -6,7 +6,7 @@
 			class="flex items-center space-x-3"
 			:class="{ 'pointer-events-none opacity-40': !pathToLibrary }"
 		>
-			<audio-player></audio-player>
+			<audio-player ref="player"></audio-player>
 		</div>
 
 		<div
