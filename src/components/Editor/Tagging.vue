@@ -34,6 +34,7 @@
 					tagsAutocomplete.length > 0 && tagsAutocomplete[0] !== value
 				"
 				class="text-white text-opacity-80 font-semibold"
+				@mouseleave="hoverTag(-1)"
 			>
 				<li
 					v-for="(tag, index) in tagsAutocomplete"

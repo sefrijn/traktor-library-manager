@@ -285,6 +285,9 @@ export default {
             });
           }
         });
+        // Write autoplaylist data to library (and XML file)
+        this.$store.commit("setTagList");
+        this.$store.commit("updateBrowserData");
       }
 
       let libraryObj = cloneDeep(this.$store.getters.libraryFull);

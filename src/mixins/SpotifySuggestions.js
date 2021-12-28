@@ -31,6 +31,10 @@ export default {
 			}
 			this.apiDone = true;
 		});
+
+		setTimeout(() => {
+			this.apiDone = true;
+		}, 3000);
 	},
 	beforeUnmount() {
 		console.log("remove IPC listener");

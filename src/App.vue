@@ -197,6 +197,12 @@ export default {
     },
   },
   watch: {
+    activePlaylist(newval, oldval) {
+      setTimeout(() => {
+        this.visibleTracks = this.gridApi.getRenderedNodes();
+        console.log(this.visibleTracks);
+      }, 50);
+    },
     allowTrackDragDrop(newval, oldval) {
       this.columnDefs[0].rowDrag = newval;
     },

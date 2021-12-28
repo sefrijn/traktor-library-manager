@@ -110,6 +110,14 @@ export default {
 				ready: state.browser.ready,
 			};
 		},
+		updateBrowserData(state) {
+			state.browser = {
+				dataSource: state.playlists,
+				id: state.browser.id,
+				text: state.browser.text,
+				ready: state.browser.ready,
+			};
+		},
 
 		// Autocomplete & Autoplaylists
 		addGenre(state, genre) {
@@ -513,7 +521,7 @@ function setPlaylistNode(
 }
 
 // > Helpers
-function objectWalker(path, obj, type = "get", value = null) {
+function objectWalker(path, obj, type = "get", value = undefined) {
 	var schema = obj; // a moving reference to internal objects within obj
 	var pList = path.split(".");
 	var len = pList.length;
@@ -525,7 +533,7 @@ function objectWalker(path, obj, type = "get", value = null) {
 
 	if (type == "get") return schema[pList[len - 1]];
 
-	if (type == "set" && value) schema[pList[len - 1]] = value;
+	if (type == "set") schema[pList[len - 1]] = value;
 
 	if (type == "delete") delete schema[pList[len - 1]];
 }

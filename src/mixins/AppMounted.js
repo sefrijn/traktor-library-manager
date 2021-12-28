@@ -33,6 +33,7 @@ export default {
 
         // >>> Autocomplete Genre
         let genre = track["INFO"][0]["$"]["GENRE"];
+        if (genre) genre = caps(genre);
         if (
           this.$store.getters.genres.indexOf(genre) < 0 &&
           genre != undefined &&
@@ -42,14 +43,19 @@ export default {
 
         // >>> Autocomplete Tags
         let tags1 = track["INFO"][0]["$"]["COMMENT"];
+        if (tags1) tags1 = caps(tags1);
+        let tags1_str = tags1;
         if (tags1 != undefined && tags1 != "") {
-          tags1 = tags1.split(/[;,]+/).map((item) => item.trim());
+          tags1 = tags1.split(/[;,]+/).map((item) => caps(item.trim()));
         } else {
           tags1 = [];
         }
+
         let tags2 = track["INFO"][0]["$"]["RATING"];
+        if (tags2) tags2 = caps(tags2);
+        let tags2_str = tags2;
         if (tags2 != undefined && tags2 != "") {
-          tags2 = tags2.split(/[;,]+/).map((item) => item.trim());
+          tags2 = tags2.split(/[;,]+/).map((item) => caps(item.trim()));
         } else {
           tags2 = [];
         }
@@ -76,8 +82,8 @@ export default {
             true
           ),
           ["genre"]: genre,
-          ["comment_1"]: track["INFO"][0]["$"]["COMMENT"],
-          ["comment_2"]: track["INFO"][0]["$"]["RATING"],
+          ["comment_1"]: tags1_str,
+          ["comment_2"]: tags2_str,
           ["rating"]: track["INFO"][0]["$"]["RANKING"]
             ? track["INFO"][0]["$"]["RANKING"] / 51
             : 0,
@@ -145,3 +151,11 @@ export default {
     });
   },
 };
+
+function caps(txt) {
+  return txt
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+    .join(" ");
+}

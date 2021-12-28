@@ -20,6 +20,7 @@
 			<ul
 				v-if="genres.length > 0 && genres[0] !== value"
 				class="text-white text-opacity-80 font-semibold"
+				@mouseleave="hoverGenre(-1)"
 			>
 				<li
 					v-for="(genre, index) in genres"

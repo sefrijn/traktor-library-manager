@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-between w-full">
+  <div class="flex flex-col justify-between w-full relative">
     <div class="overflow-auto w-full">
       <div
         class="text-sm flex space-x-1 py-1 px-2 cursor-pointer hover:bg-active-dark hover:text-white"
@@ -38,27 +38,27 @@
       >
       </ejs-treeview>
     </div>
-    <div class="controls flex-shrink-0 p-2 flex space-x-2">
+    <div class="absolute bottom-0 controls flex-shrink-0 p-2 flex space-x-2">
       <button
-        class="flex justify-center items-center h-9 w-9 bg-black-light"
+        class="flex justify-center items-center h-7 w-7 bg-black-light shadow-black-lg"
         v-tooltip="'New playlist'"
       >
         <svg-icon
           class=""
           type="mdi"
           :path="iconNewPlaylist"
-          size="21"
+          size="16"
         ></svg-icon>
       </button>
       <button
-        class="flex justify-center items-center h-9 w-9 bg-black-light"
+        class="flex justify-center items-center h-7 w-7 bg-black-light shadow-black-lg"
         v-tooltip="'New Folder'"
       >
         <svg-icon
           class=""
           type="mdi"
           :path="iconNewFolder"
-          size="21"
+          size="16"
         ></svg-icon>
       </button>
     </div>
