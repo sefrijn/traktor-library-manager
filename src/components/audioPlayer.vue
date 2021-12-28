@@ -217,6 +217,10 @@ export default {
 		togglePlayback() {
 			wavesurfer.playPause();
 			this.isPlaying = wavesurfer.isPlaying();
+			// navigator.mediaSession.playbackState = this.isPlaying
+			// 	? "playing"
+			// 	: "paused";
+			// console.log("playing: " + navigator.mediaSession.playbackState);
 		},
 		emptyWavesurfer() {
 			wavesurfer.stop();
@@ -244,6 +248,13 @@ export default {
 		this.createWavesurfer();
 	},
 	mounted() {
+		// navigator.mediaSession.setActionHandler("play", function() {
+		// 	console.log("play");
+		// });
+		// navigator.mediaSession.setActionHandler("pause", function() {
+		// 	console.log("pause");
+		// });
+
 		this.createWavesurfer();
 
 		window.ipcRenderer.receive("loadAudio", (message) => {
