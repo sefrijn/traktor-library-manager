@@ -246,6 +246,7 @@ export default {
         libraryObj,
         localStorage.pathToLibrary,
       ]);
+      console.log(this.$store.getters.playlists);
     },
 
     // > Prevent autolist edit

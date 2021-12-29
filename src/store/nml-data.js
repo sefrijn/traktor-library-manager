@@ -100,6 +100,7 @@ export default {
 			);
 			state.browser.dataSource = state.playlists;
 			state.browser.ready = true;
+			console.log(state.playlists);
 		},
 		addtoPlaylistEntries(state, data) {
 			// Add track to auto playlist

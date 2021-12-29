@@ -7,6 +7,7 @@ export default {
 
     this.gridOptions = {
       components: ag_components,
+      getRowNodeId: (data) => data.index,
     };
     this.columnDefs = column_defs;
     this.rowClassRules = {

@@ -44,23 +44,6 @@ export default createStore({
 		setTrackPlaying(state, track) {
 			state.trackPlaying = track;
 		},
-
-		// New playlist function
-		removePlaylistFolder(state) {
-			removeObjValue("0.child.0.child", state.playlists);
-			// console.log(path);
-			// console.log(state.playlists.SUBNODES[0].NODE);
-			// console.log(removeFromObject(state.playlists, path));
-			// delete state.playlists[removeFromObject(state.playlists, path)];
-			// console.log(state.playlists.SUBNODES[0].NODE);
-			// console.log(state.playlists[removeFromObject(state.playlists, path)]);
-			// console.log(
-			// 	fetchFromObject(state.playlists, state.playlists.SUBNODES)
-			// );
-		},
-		// addPlaylist(state, playlist) {
-		// 	state.playlists[playlist.name] = playlist.entries;
-		// },
 	},
 	actions: {
 		setPreventScroll({ commit }, prevent) {
