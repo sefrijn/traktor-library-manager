@@ -4,16 +4,14 @@
 			v-if="contextMenu.show"
 			@mouseenter="cancelHide"
 			@mouseleave="hide"
-			class="shadow-black block fixed z-30 bg-black-light p-2"
+			class="shadow-black rounded ring-4 ring-black ring-opacity-50 block fixed z-30 bg-indigo-900 p-2"
+			style="min-width:150px;"
 			:style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y}px` }"
 		>
-			<div
-				class="shadow-black-lg absolute -top-1 -left-1 rounded-full w-2 h-2 bg-active-orange"
-			></div>
 			<ul class="text-sm">
 				<li
 					v-for="action in contextMenu.actions"
-					class="px-2 py-0.5 hover:bg-active cursor-pointer"
+					class="px-2 py-0.5 hover:bg-indigo-700 cursor-pointer"
 					@click="
 						$store.commit(contextMenu.source + action, contextMenu)
 					"

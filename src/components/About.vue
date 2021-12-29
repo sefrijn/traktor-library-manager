@@ -18,7 +18,7 @@
     </p>
     <p>Enjoy my work?</p>
     <button
-      class="rounded font-bold tracking-wider bg-active text-white px-2.5 py-1"
+      class="rounded font-bold tracking-wider bg-indigo-800 hover:bg-indigo-600 text-white px-2.5 py-1"
       @click="openURL('https://ko-fi.com/sefrijn')"
     >
       <svg-icon

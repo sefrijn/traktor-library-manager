@@ -69,13 +69,13 @@
       <form class="relative flex-grow" @submit="addNode" v-if="createNodeType">
         <label
           for=""
-          class="absolute bottom-full left-0 text-gray uppercase text-xxs"
+          class="absolute bottom-full mb-1 left-0 text-gray uppercase text-xxs"
           >enter name</label
         >
         <input
           ref="nodeName"
           type="text"
-          class="w-full h-7 border-none bg-active shadow-black text-sm px-2"
+          class="w-full h-7 border-none bg-active text-sm px-2"
           v-model="nodeName"
         />
       </form>
