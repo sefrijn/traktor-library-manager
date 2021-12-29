@@ -17,7 +17,7 @@ export default {
     });
 
     window.ipcRenderer.receive("buildXML", (message) => {
-      console.log(message);
+      // Saving XML to disk finished
       this.$store.commit("setSaving", false);
       this.$store.commit("setPreventScroll", false);
     });

@@ -111,6 +111,13 @@ export default {
 				loc.VOLUME + loc.DIR + loc.FILE
 			);
 		},
+		griddelete_from_playlist(state, data) {
+			let index = state.playlistEntries[data.playlist].findIndex(
+				(track) =>
+					track.includes(data.artist) && track.includes(data.title)
+			);
+			state.playlistEntries[data.playlist].splice(index, 1);
+		},
 		addNode(state, data) {
 			let treeview = document.getElementById("treeview").ej2_instances[0];
 			let selected = treeview.getNode(data.selected);

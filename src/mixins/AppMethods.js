@@ -166,7 +166,6 @@ export default {
             }
           },
           onDragStop: (params) => {
-            console.log("dropped track: " + params.node.data.index);
             const elements = document.elementsFromPoint(
               params.event.clientX,
               params.event.clientY
@@ -175,7 +174,6 @@ export default {
             if (id.includes("playlist")) {
               this.$store.commit("setSaving", true);
               id = id.substr(0, id.indexOf("-"));
-              console.log(id);
               this.$store.commit("addtoPlaylistEntries", {
                 id: id,
                 index: params.node.data.index,
@@ -247,11 +245,19 @@ export default {
 
     // > Context menu
     onCellContextMenu(params) {
-      let val = {};
-      val.x = params.event.clientX;
-      val.y = params.event.clientY;
-      val.show = true;
-      this.$store.commit("setContextMenu", val);
+      if (this.activePlaylist) {
+        let menu = {
+          x: params.event.clientX,
+          y: params.event.clientY,
+          show: true,
+          source: "grid",
+          actions: ["add_to_preparation", "delete_from_playlist"],
+          artist: params.data.artist,
+          title: params.data.title,
+          playlist: this.activePlaylist,
+        };
+        this.$store.commit("setContextMenu", menu);
+      }
     },
     hideContextMenu() {
       let val = this.contextMenu;
