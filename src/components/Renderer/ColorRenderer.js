@@ -36,9 +36,13 @@ export class ColorRenderer {
 
     saveCell(params, e) {
         if (store.getters.savingEnabled) {
-            console.log(e.path[0].getAttribute("color"));
+            console.log("set color to " + e.path[0].getAttribute("color"));
             let newColor = e.path[0].getAttribute("color");
             params.setValue(newColor);
+            let rowNode = params.api.getRowNode(params.data.index);
+            params.api.redrawRows({
+                rowNodes: [rowNode],
+            });
         } else {
             console.log("saving disabled");
         }
