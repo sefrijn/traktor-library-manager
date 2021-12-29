@@ -101,6 +101,36 @@ export default {
 			state.browser.dataSource = state.playlists;
 			state.browser.ready = true;
 		},
+		addNode(state, data) {
+			let treeview = document.getElementById("treeview").ej2_instances[0];
+			let selected = treeview.getNode(data.selected);
+			let parentID = state.playlists[0].id;
+
+			if (selected.id !== "") {
+				parentID = selected.id.includes("-folder-")
+					? selected.id
+					: selected.parentID;
+			}
+
+			// Node for Treeview
+			let node = {};
+
+			if (data.type === "playlist") {
+				node.text = data.name;
+				node.type = data.type;
+				node.id = data.id + "-playlist";
+				// Create empty array in PlaylistEntries
+				state.playlistEntries[data.id] = [];
+			}
+			if (data.type === "folder") {
+				node.text = " " + data.name;
+				node.type = data.type;
+				node.child = [];
+				node.id = slugify(`${data.name} folder ${makeid(5)}`);
+			}
+
+			treeview.addNodes([node], parentID);
+		},
 		setBrowserData(state, data) {
 			state.playlists = data;
 			state.browser = {
@@ -109,6 +139,16 @@ export default {
 				text: state.browser.text,
 				ready: state.browser.ready,
 			};
+		},
+		browserdelete(state, data) {
+			let treeview = document.getElementById("treeview").ej2_instances[0];
+			treeview.removeNodes([data.id]);
+			console.log("node deleted from vuex");
+		},
+		browserrename(state, data) {
+			let treeview = document.getElementById("treeview").ej2_instances[0];
+			treeview.beginEdit(data.id);
+			console.log("node editing started from vuex");
 		},
 		updateBrowserData(state) {
 			state.browser = {

@@ -11,12 +11,14 @@
 				class="shadow-black-lg absolute -top-1 -left-1 rounded-full w-2 h-2 bg-active-orange"
 			></div>
 			<ul class="text-sm">
-				<li class="px-2 py-0.5 hover:bg-active cursor-pointer">
-					Delete from Playlist
-				</li>
-				<li class="px-2 py-0.5 hover:bg-active cursor-pointer">Copy</li>
-				<li class="px-2 py-0.5 hover:bg-active cursor-pointer">
-					Paste
+				<li
+					v-for="action in contextMenu.actions"
+					class="px-2 py-0.5 hover:bg-active cursor-pointer"
+					@click="
+						$store.commit(contextMenu.source + action, contextMenu)
+					"
+				>
+					{{ action }}
 				</li>
 			</ul>
 		</div>

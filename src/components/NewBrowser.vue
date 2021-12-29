@@ -29,6 +29,7 @@
         :nodeExpanded="expandCollapse"
         :nodeCollapsed="expandCollapse"
         :nodeEditing="startedEditing"
+        :nodeEdited="finishedEditing"
         :dataSourceChanged="update"
         :expandOn="'Click'"
         :sortOrder="sorting"
@@ -38,10 +39,13 @@
       >
       </ejs-treeview>
     </div>
-    <div class="absolute bottom-0 controls flex-shrink-0 p-2 flex space-x-2">
+    <div
+      class="absolute bottom-0 controls flex-shrink-0 w-full p-2 flex space-x-2"
+    >
       <button
-        class="flex justify-center items-center h-7 w-7 bg-black-light shadow-black-lg"
+        class="flex flex-shrink-0 justify-center items-center h-7 w-7 bg-black-light shadow-black-lg"
         v-tooltip="'New playlist'"
+        @click="showInput('playlist')"
       >
         <svg-icon
           class=""
@@ -51,8 +55,9 @@
         ></svg-icon>
       </button>
       <button
-        class="flex justify-center items-center h-7 w-7 bg-black-light shadow-black-lg"
+        class="flex flex-shrink-0 justify-center items-center h-7 w-7 bg-black-light shadow-black-lg"
         v-tooltip="'New Folder'"
+        @click="showInput('folder')"
       >
         <svg-icon
           class=""
@@ -61,6 +66,19 @@
           size="16"
         ></svg-icon>
       </button>
+      <form class="relative flex-grow" @submit="addNode" v-if="createNodeType">
+        <label
+          for=""
+          class="absolute bottom-full left-0 text-gray uppercase text-xxs"
+          >enter name</label
+        >
+        <input
+          ref="nodeName"
+          type="text"
+          class="w-full h-7 border-none bg-active shadow-black text-sm px-2"
+          v-model="nodeName"
+        />
+      </form>
     </div>
   </div>
 </template>
@@ -92,6 +110,8 @@ export default {
       },
       cssClasses: cssClassesDefault,
       selectedNodes: [],
+      createNodeType: null,
+      nodeName: "",
     };
   },
   computed: {
@@ -103,6 +123,27 @@ export default {
     },
   },
   methods: {
+    showInput(type) {
+      this.createNodeType = type;
+      this.$nextTick(() => {
+        this.$refs.nodeName.focus();
+      });
+    },
+    addNode(e) {
+      e.preventDefault();
+      let data = {
+        id: makeid(32),
+        name: this.nodeName,
+        type: this.createNodeType,
+        selected: this.selectedNodes[0],
+      };
+
+      this.$store.commit("addNode", data);
+
+      // Empty input field
+      this.createNodeType = null;
+      this.nodeName = "";
+    },
     openPlaylist(list) {
       console.log("open: " + list);
       this.$store.commit("setFilter", { rating: 0, color: 0 });
@@ -129,6 +170,11 @@ export default {
 
     // > Node clicked events
     nodeclick(args) {
+      // console.log(args);
+      let treeview = document.getElementById("treeview").ej2_instances[0];
+      this.selectedNodes = treeview.selectedNodes;
+      // console.log(treeview.selectedNodes);
+
       let id = args.node.dataset.uid;
 
       // Open playlist
@@ -145,11 +191,16 @@ export default {
 
       // ContextMenu
       if (args.event.which === 3) {
-        let val = {};
-        val.x = args.event.clientX;
-        val.y = args.event.clientY;
-        val.show = true;
-        this.$store.commit("setContextMenu", val);
+        let menu = {
+          x: args.event.clientX,
+          y: args.event.clientY,
+          show: true,
+          source: "browser",
+          actions: ["delete", "rename"],
+          id: id,
+        };
+        this.selectedNodes = [id];
+        this.$store.commit("setContextMenu", menu);
       }
     },
 
@@ -198,12 +249,18 @@ export default {
 
     // > Prevent autolist edit
     startedEditing(args) {
-      console.log(args);
       if (
         args.nodeData.id.includes("autolist") ||
         args.nodeData.text === "Preparation"
       ) {
         args.cancel = true;
+      }
+    },
+    finishedEditing(args) {
+      console.log(args);
+      if (args.nodeData.id.includes("-folder-")) {
+        // Add space to folders
+        args.newText = " " + args.newText.trim();
       }
     },
 
@@ -266,6 +323,17 @@ export default {
 
   mounted() {},
 };
+
+function makeid(length) {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 </script>
 <style lang="scss">
 @import "~@syncfusion/ej2-base/styles/material-dark.css";
@@ -294,6 +362,17 @@ export default {
     }
     &.e-hover.e-active > .e-fullrow {
       @apply bg-active-dark border-active-dark;
+    }
+    // Icon Folder
+    &[data-uid*="folder"] > .e-text-content > .e-list-text::before {
+      mask-image: url("../assets/svg/folder-outline.svg");
+    }
+    // Icon Playlist
+    &[data-uid*="playlist"] > .e-text-content > .e-list-text::before {
+      mask-image: url("../assets/svg/playlist-music.svg");
+    }
+    &[data-uid*="smartlist"] > .e-text-content > .e-list-text::before {
+      mask-image: url("../assets/svg/playlist-music.svg");
     }
 
     // Icon Preparation
@@ -324,7 +403,7 @@ export default {
     }
     &.e-active[data-uid*="autolist"] {
       .e-text-content:not(.e-icon-wrapper) > .e-list-text::before {
-        @apply bg-white;
+        @apply text-gray-dark;
       }
     }
     .e-text-content {
@@ -336,18 +415,15 @@ export default {
       }
 
       // Icons
-      &:not(.e-icon-wrapper) .e-list-text::before {
-        mask-image: url("../assets/svg/playlist-music.svg");
-      }
       .e-icon-expandable ~ .e-list-text::before {
         mask-image: url("../assets/svg/folder-outline.svg");
       }
       .e-icon-collapsible ~ .e-list-text:before {
         mask-image: url("../assets/svg/folder-open-outline.svg");
       }
-      &:not(.e-icon-wrapper) .e-list-text::before {
-        mask-image: url("../assets/svg/playlist-music.svg");
-      }
+      // &:not(.e-icon-wrapper) .e-list-text::before {
+      //   mask-image: url("../assets/svg/playlist-music.svg");
+      // }
 
       &:not(.e-icon-wrapper) .e-list-text::before,
       .e-icon-expandable ~ .e-list-text::before,
