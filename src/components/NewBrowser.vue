@@ -77,6 +77,7 @@
           type="text"
           class="w-full h-7 border-none bg-active text-sm px-2"
           v-model="nodeName"
+          @blur="createNodeType = null"
         />
       </form>
     </div>

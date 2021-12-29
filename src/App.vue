@@ -210,7 +210,6 @@ export default {
     activePlaylist(newval, oldval) {
       setTimeout(() => {
         this.visibleTracks = this.gridApi.getRenderedNodes();
-        console.log(this.visibleTracks);
       }, 50);
     },
     allowTrackDragDrop(newval, oldval) {
@@ -249,6 +248,9 @@ export default {
         }
         this.gridApi.setFilterModel(filter);
       }
+      setTimeout(() => {
+        this.visibleTracks = this.gridApi.getRenderedNodes();
+      }, 50);
     },
     coverSize(newCoverSize, oldCoverSize) {
       if (newCoverSize != oldCoverSize) {

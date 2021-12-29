@@ -101,6 +101,16 @@ export default {
 			state.browser.dataSource = state.playlists;
 			state.browser.ready = true;
 		},
+		addtoPlaylistEntries(state, data) {
+			// Add track to auto playlist
+			let loc = objectWalker(
+				nmlCollection + "." + data.index + ".LOCATION.0.$",
+				state.library
+			);
+			state.playlistEntries[data.id].push(
+				loc.VOLUME + loc.DIR + loc.FILE
+			);
+		},
 		addNode(state, data) {
 			let treeview = document.getElementById("treeview").ej2_instances[0];
 			let selected = treeview.getNode(data.selected);
