@@ -157,10 +157,41 @@ ipcMain.on("openLibrary", function(event) {
   });
   if (file == undefined) return console.log("no file selected, just continue");
   win.webContents.send("openLibrary", file);
+  // if (file) {
+  //   const d = new Date();
+  //   let month = d.getMonth();
+  //   let year = d.getFullYear();
+  //   let backup = file.replace(".nml", "-" + month + year + ".nml");
+  //   fs.copyFile(file, backup, (err) => {
+  //     if (err) throw err;
+  //     console.log("source.txt was copied to destination.txt");
+  //   });
+  // }
 });
 
 ipcMain.on("parseXML", function(event, arg) {
   let file = arg[0];
+  const dateRaw = new Date();
+  const date =
+    dateRaw.getFullYear() +
+    ("0" + (dateRaw.getMonth() + 1)).slice(-2) +
+    ("0" + dateRaw.getDate()).slice(-2);
+  let backup = file.replace(".nml", "-manager-backup-" + date + ".nml");
+
+  try {
+    if (!fs.existsSync(backup)) {
+      console.log("copy file: " + file);
+      fs.copyFile(file, backup, (err) => {
+        if (err) throw err;
+        console.log("Collection backup created for today: " + date);
+      });
+    } else {
+      console.log("Collection backup already created for today");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
   fs.readFile(file, function(err, data) {
     parser.parseString(data, function(err, result) {
       win.webContents.send("parseXML", result);
