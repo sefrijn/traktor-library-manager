@@ -338,6 +338,8 @@ export default {
           )
             this.$store.commit("addGenre", genre);
         });
+        this.$store.commit("setGenreList");
+        this.$store.commit("updateBrowserData");
       }
       // Update Tag list
       if (

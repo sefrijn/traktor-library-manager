@@ -210,6 +210,84 @@ export default {
 				state.playlists[0].child.push(node);
 			}
 		},
+		setGenreList(state) {
+			// Get location of Library Manager Folder
+			let rootfolders = state.playlists[0].child;
+			let libManIndex = rootfolders.findIndex((element) =>
+				element.text.includes("Library Manager")
+			);
+
+			// Create playlist folder at path
+			let name = "Genre";
+			let node;
+
+			let autoIndex = rootfolders[libManIndex].child.findIndex(
+				(value) => {
+					return value.text.trim() == name;
+				}
+			);
+			if (autoIndex == -1) {
+				console.log("create auto folder");
+				node = {
+					text: " " + name,
+					child: [],
+					id: slugify(`${name} folder ${makeid(5)}`),
+					type: "folder",
+				};
+			} else {
+				node = rootfolders[libManIndex].child[autoIndex];
+				console.log(
+					"auto folder exists with items: " + node.child.length
+				);
+			}
+
+			let id, playlistIndex, tags, loc;
+			let entries = {};
+			state.collection.forEach((track, index) => {
+				// If playlist doesn't exist, create new auto playlist
+				playlistIndex = node.child.findIndex((value) => {
+					return value.text === track.genre;
+				});
+				if (playlistIndex == -1) {
+					id = "autolist_" + makeid(23);
+					// Add track to Browser Node
+					node.child.push({
+						text: track.genre,
+						type: "playlist",
+						id: id + "-playlist",
+					});
+				} else {
+					// If playlist exists, set ID correctly for PlaylistEntries
+					id = node.child[playlistIndex].id;
+					id = id.substr(0, id.indexOf("-"));
+				}
+				// Add track to auto playlist
+				loc = objectWalker(
+					nmlCollection + "." + track.index + ".LOCATION.0.$",
+					state.library
+				);
+				if (entries[id] === undefined) entries[id] = [];
+				entries[id].push(loc.VOLUME + loc.DIR + loc.FILE);
+			});
+
+			// Cleanup existing nodes
+			let keep = [];
+			node.child.forEach((genre, index) => {
+				if (state.genres.includes(genre.text)) {
+					keep.push(cloneDeep(genre));
+				}
+			});
+			node.child = keep;
+
+			// Write to Playlists and PlaylistEntries
+			state.playlistEntries = { ...state.playlistEntries, ...entries };
+			if (autoIndex == -1) {
+				state.playlists[0].child[libManIndex].child.push(node);
+			} else {
+				state.playlists[0].child[libManIndex].child[autoIndex] = node;
+			}
+		},
+
 		setTagList(state) {
 			// Get location of Library Manager Folder
 			let rootfolders = state.playlists[0].child;

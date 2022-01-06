@@ -124,6 +124,7 @@ export default {
       // >> Create new autoplaylist data
       this.$store.commit("setDateImportedList");
       this.$store.commit("setTagList");
+      this.$store.commit("setGenreList");
 
       // Write autoplaylist data to this.library and XML file
       this.$store.commit("setLibraryPlaylist");
