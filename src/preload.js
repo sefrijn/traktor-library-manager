@@ -16,6 +16,7 @@ const validChannels = [
 	"spotifyGenres",
 	"spotifyArtist",
 	"openURL",
+	"logError",
 ];
 
 // Expose protected methods that allow the renderer process to use

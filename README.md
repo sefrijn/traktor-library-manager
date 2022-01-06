@@ -3,9 +3,11 @@
 Manage your Traktor Pro 3 library with ease! Build with love by [DJ Sefrijn](https://mixcloud.com/sefrijn) from studio [How About Yes](https://howaboutyes.com).
 Uses Vue, Tailwind, Electron, AG Grid and many more wonderful packages.
 
-# Download [Mac](https://howaboutyes.com/traktor/mac) or [Windows](https://howaboutyes.com/traktor/win)
+This projects is still in Beta testing.
 
-Like this project? Buy me a coffee
+# Download [Mac](https://howaboutyes.com/projects/traktor-library-manager/)
+
+Like this project? [Buy me a coffee](https://ko-fi.com/sefrijn)
 
 ## Developer setup
 
@@ -22,10 +24,3 @@ The client ID & secret you get from creating a Spotify app:
 https://developer.spotify.com/dashboard
 
 After that you can run `yarn electron:serve` to start the watch server.
-
-## Current status
-
--   [ ] Add playlist
--   [ ] Add folder
--   [ ] Add track to playlist
--   [ ] Preparation list

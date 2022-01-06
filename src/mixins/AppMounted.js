@@ -150,6 +150,11 @@ export default {
       });
       window.ipcRenderer.send("coverArtList", cloneDeep(paths));
     });
+
+    window.ipcRenderer.receive("logError", (message) => {
+      console.log("Error from Background.js:");
+      console.log(message);
+    });
   },
 };
 

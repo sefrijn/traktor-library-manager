@@ -337,63 +337,78 @@ ipcMain.on("coverArtList", function(event, files) {
     try {
       await Promise.all(
         Object.keys(files).map(async (index) => {
-          let path_small = path.join(
-            cover_path_small,
-            path.parse(files[index].file).name + ".jpeg"
-          );
-          let path_medium = path.join(
-            cover_path_medium,
-            path.parse(files[index].file).name + ".jpeg"
-          );
-          let path_large = path.join(
-            cover_path_large,
-            path.parse(files[index].file).name + ".jpeg"
-          );
-          if (
-            index < debugLimitImages &&
-            (!fs.existsSync(path_small) ||
-              !fs.existsSync(path_medium) ||
-              !fs.existsSync(path_large))
-          ) {
-            const metadata = await mm.parseFile(
-              files[index].path + files[index].file
+          if (!fs.existsSync(files[index].path + files[index].file)) {
+            win.webContents.send(
+              "logError",
+              "Track does not exist, please remove from your lbirary: " +
+                files[index].path +
+                files[index].file
             );
-            if (metadata.common.picture !== undefined) {
-              let picture = metadata.common.picture[0];
+            console.log("Track does not exist");
+          } else {
+            let path_small = path.join(
+              cover_path_small,
+              path.parse(files[index].file).name + ".jpeg"
+            );
+            let path_medium = path.join(
+              cover_path_medium,
+              path.parse(files[index].file).name + ".jpeg"
+            );
+            let path_large = path.join(
+              cover_path_large,
+              path.parse(files[index].file).name + ".jpeg"
+            );
+            if (
+              index < debugLimitImages &&
+              (!fs.existsSync(path_small) ||
+                !fs.existsSync(path_medium) ||
+                !fs.existsSync(path_large))
+            ) {
+              const metadata = await mm.parseFile(
+                files[index].path + files[index].file
+              );
+              if (metadata.common.picture !== undefined) {
+                let picture = metadata.common.picture[0];
 
-              // SMALL
-              sharp(picture.data)
-                .resize(cover_size_small, cover_size_small)
-                .jpeg({
-                  quality: 75,
-                })
-                .toFile(path_small);
-              // MEDIUM
-              sharp(picture.data)
-                .resize(cover_size_medium, cover_size_medium)
-                .jpeg({
-                  quality: 75,
-                })
-                .toFile(path_medium);
-              // LARGE
-              sharp(picture.data)
-                .resize(cover_size_large, cover_size_large)
-                .jpeg({
-                  quality: 75,
-                })
-                .toFile(path_large);
-            } else {
-              // remove item from array
-              files[index].file = null;
+                // SMALL
+                sharp(picture.data)
+                  .resize(cover_size_small, cover_size_small)
+                  .jpeg({
+                    quality: 75,
+                  })
+                  .toFile(path_small);
+                // MEDIUM
+                sharp(picture.data)
+                  .resize(cover_size_medium, cover_size_medium)
+                  .jpeg({
+                    quality: 75,
+                  })
+                  .toFile(path_medium);
+                // LARGE
+                sharp(picture.data)
+                  .resize(cover_size_large, cover_size_large)
+                  .jpeg({
+                    quality: 75,
+                  })
+                  .toFile(path_large);
+              } else {
+                // remove item from array
+                files[index].file = null;
+              }
             }
           }
           counter++;
+          if (counter > total) counter = total;
           win.webContents.send("coverArtProgress", counter / total);
         })
       );
       win.webContents.send("coverArtList", files);
     } catch (error) {
-      console.error(error.message);
+      // console.error(error.message);
+      win.webContents.send("logError", error.message);
+      counter++;
+      if (counter > total) counter = total;
+      win.webContents.send("coverArtProgress", counter / total);
     }
   })();
 });
