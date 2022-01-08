@@ -164,6 +164,9 @@ export default {
     isSavingEnabled() {
       return this.$store.getters.savingEnabled;
     },
+    isStartingUp() {
+      return this.$store.getters.startingUp;
+    },
     collection() {
       return this.$store.getters.collection;
     },
@@ -261,6 +264,14 @@ export default {
         setTimeout(() => {
           this.onBodyScroll();
         }, 20);
+      }
+    },
+    isStartingUp(newval, oldval) {
+      if (oldval == true && newval == false) {
+        console.log("finished startup");
+        setTimeout(() => {
+          this.addDropZone();
+        }, 1500);
       }
     },
   },

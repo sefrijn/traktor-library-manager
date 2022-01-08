@@ -126,11 +126,7 @@ export default {
 	},
 	mounted() {
 		window.ipcRenderer.receive("traktorOpen", (traktorOpen) => {
-			// Initial check Traktor Open. Ready to save if Traktor is closed.
-			if (this.$store.getters.startingUp) {
-				this.$store.commit("setStartingUp", false);
-			}
-
+			// Initial check Traktor Open.
 			// If Traktor is open (= true), saving is NOT enabled (= false), so invert variable
 			this.$store.commit("setSavingEnabled", !traktorOpen);
 		});

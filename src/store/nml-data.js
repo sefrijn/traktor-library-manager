@@ -91,6 +91,8 @@ export default {
 		},
 		initialPlaylistData(state) {
 			// Called only once during startup to get data for the app. After that, app only writes data to NML file, no more reading.
+			console.log("working:");
+			console.log(state.library);
 			setPlaylistNode(
 				nmlPlaylist,
 				"",
@@ -101,6 +103,7 @@ export default {
 			state.browser.dataSource = state.playlists;
 			state.browser.ready = true;
 			console.log(state.playlists);
+			console.log(state.playlistEntries);
 		},
 		addtoPlaylistEntries(state, data) {
 			// Add track to auto playlist
@@ -522,18 +525,21 @@ function setLibraryPlaylistNode(nodes, entries, library, path) {
 		if (node.type == "playlist") {
 			let nodeEntries = [];
 			let id = node.id.substr(0, node.id.indexOf("-"));
-			entries[id].forEach((entry, index) => {
-				nodeEntries.push({
-					PRIMARYKEY: [
-						{
-							$: {
-								TYPE: "TRACK",
-								KEY: entry,
+			if (entries[id]) {
+				entries[id].forEach((entry, index) => {
+					nodeEntries.push({
+						PRIMARYKEY: [
+							{
+								$: {
+									TYPE: "TRACK",
+									KEY: entry,
+								},
 							},
-						},
-					],
+						],
+					});
 				});
-			});
+			}
+
 			let nodeValue = {
 				$: {
 					TYPE: node.type.toUpperCase(),
@@ -610,13 +616,18 @@ function setPlaylistNode(
 				// Append current PL to PlaylistEntries
 				if (!node.PLAYLIST[0]["$"]["UUID"].includes("autolist")) {
 					entries[uuid] = [];
-					if ("PLAYLIST" in node && "ENTRY" in node.PLAYLIST[0]) {
+					if (
+						"PLAYLIST" in node &&
+						"ENTRY" in node.PLAYLIST[0] &&
+						node.PLAYLIST[0]["ENTRY"].length > 0
+					) {
 						node.PLAYLIST[0]["ENTRY"].forEach((track) => {
-							if (track.PRIMARYKEY[0].$.TYPE != "TRACK") {
-								delete entries[uuid];
-								return;
+							if (track.PRIMARYKEY[0].$.TYPE == "TRACK") {
+								// TODO - Why is this here?
+								// delete entries[uuid];
+								// return;
+								entries[uuid].push(track.PRIMARYKEY[0].$.KEY);
 							}
-							entries[uuid].push(track.PRIMARYKEY[0].$.KEY);
 						});
 					}
 				}

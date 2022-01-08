@@ -128,12 +128,17 @@ export default {
 
       // Write autoplaylist data to this.library and XML file
       this.$store.commit("setLibraryPlaylist");
+
       let libraryObj = cloneDeep(this.$store.getters.libraryFull);
       window.ipcRenderer.send("buildXML", [
         libraryObj,
         localStorage.pathToLibrary,
         "Autoplaylist Data update in Library Manager",
       ]);
+
+      if (this.$store.getters.startingUp) {
+        this.$store.commit("setStartingUp", false);
+      }
     });
 
     window.ipcRenderer.receive("parseXML", (xmlAsJS) => {
@@ -152,8 +157,7 @@ export default {
     });
 
     window.ipcRenderer.receive("logError", (message) => {
-      console.log("Error from Background.js:");
-      console.log(message);
+      console.error(message);
     });
   },
 };

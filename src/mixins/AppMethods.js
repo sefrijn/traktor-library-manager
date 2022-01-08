@@ -123,75 +123,75 @@ export default {
       document.removeEventListener("mousemove", this.handleDragging);
     },
 
+    addDropZone() {
+      // define drop zone
+      const targetContainer = document.querySelector("#treeview");
+      console.log(targetContainer);
+      dropZoneParams = {
+        getContainer: () => targetContainer,
+        onDragging: (params) => {
+          const elements = document.elementsFromPoint(
+            params.event.clientX,
+            params.event.clientY
+          );
+          if (elements[2].dataset.uid) {
+            // Initial hover, add class
+            if (!prevHover) {
+              elements[2].classList.add("e-hover");
+            }
+
+            if (
+              // New hover, element changed, remove old hover
+              prevHover &&
+              prevHover.dataset.uid != elements[2].dataset.uid
+            ) {
+              prevHover.classList.remove("e-hover");
+              elements[2].classList.add("e-hover");
+            }
+
+            // After hovering over disabled items, add class to current hover item
+            if (!elements[2].classList.contains("e-hover")) {
+              elements[2].classList.add("e-hover");
+            }
+
+            prevHover = elements[2];
+          } else {
+            if (prevHover) prevHover.classList.remove("e-hover");
+            prevHover = undefined;
+          }
+        },
+        onDragStop: (params) => {
+          const elements = document.elementsFromPoint(
+            params.event.clientX,
+            params.event.clientY
+          );
+          let id = elements[2].dataset.uid;
+          if (id.includes("playlist")) {
+            this.$store.commit("setSaving", true);
+            id = id.substr(0, id.indexOf("-"));
+            this.$store.commit("addtoPlaylistEntries", {
+              id: id,
+              index: params.node.data.index,
+            });
+            // Update after adding track
+            this.$store.commit("setLibraryPlaylist");
+            // Save to XML file
+            let libraryObj = cloneDeep(this.$store.getters.libraryFull);
+            window.ipcRenderer.send("buildXML", [
+              libraryObj,
+              localStorage.pathToLibrary,
+            ]);
+          }
+        },
+      };
+      this.gridApi.addRowDropZone(dropZoneParams);
+      this.gridApi.redrawRows(); // force redraw after adding dropzone
+    },
     // > Tracklist updates
     onGridReady(params) {
       console.log("AG Grid is READY");
       this.gridApi = params.api;
       this.visibleTracks = this.gridApi.getRenderedNodes();
-
-      setTimeout(() => {
-        // define drop zone
-        const targetContainer = document.querySelector("#treeview");
-        dropZoneParams = {
-          getContainer: () => targetContainer,
-          onDragging: (params) => {
-            const elements = document.elementsFromPoint(
-              params.event.clientX,
-              params.event.clientY
-            );
-            if (elements[2].dataset.uid) {
-              // Initial hover, add class
-              if (!prevHover) {
-                elements[2].classList.add("e-hover");
-              }
-
-              if (
-                // New hover, element changed, remove old hover
-                prevHover &&
-                prevHover.dataset.uid != elements[2].dataset.uid
-              ) {
-                prevHover.classList.remove("e-hover");
-                elements[2].classList.add("e-hover");
-              }
-
-              // After hovering over disabled items, add class to current hover item
-              if (!elements[2].classList.contains("e-hover")) {
-                elements[2].classList.add("e-hover");
-              }
-
-              prevHover = elements[2];
-            } else {
-              if (prevHover) prevHover.classList.remove("e-hover");
-              prevHover = undefined;
-            }
-          },
-          onDragStop: (params) => {
-            const elements = document.elementsFromPoint(
-              params.event.clientX,
-              params.event.clientY
-            );
-            let id = elements[2].dataset.uid;
-            if (id.includes("playlist")) {
-              this.$store.commit("setSaving", true);
-              id = id.substr(0, id.indexOf("-"));
-              this.$store.commit("addtoPlaylistEntries", {
-                id: id,
-                index: params.node.data.index,
-              });
-              // Update after adding track
-              this.$store.commit("setLibraryPlaylist");
-              // Save to XML file
-              let libraryObj = cloneDeep(this.$store.getters.libraryFull);
-              window.ipcRenderer.send("buildXML", [
-                libraryObj,
-                localStorage.pathToLibrary,
-              ]);
-            }
-          },
-        };
-        this.gridApi.addRowDropZone(dropZoneParams);
-        this.gridApi.redrawRows(); // force redraw after adding dropzone
-      }, 1000);
     },
     onGridSizeChanged(params) {
       if (this.gridApi != null) {

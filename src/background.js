@@ -345,6 +345,8 @@ ipcMain.on("coverArtList", function(event, files) {
                 files[index].file
             );
             console.log("Track does not exist");
+            // Remove item from array
+            files[index].file = null;
           } else {
             let path_small = path.join(
               cover_path_small,
