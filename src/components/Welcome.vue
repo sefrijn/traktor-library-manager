@@ -44,7 +44,8 @@
 				class="mt-5 max-w-sm flex flex-col space-y-2 items-start font-medium"
 			>
 				<p class="text-center">
-					Enter name & email to start the Free Beta
+					Enter name & valid email to receive updates and bugfixes for
+					this free beta version.
 				</p>
 				<input
 					v-model="contact.name"
