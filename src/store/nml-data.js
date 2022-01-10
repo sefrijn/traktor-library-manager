@@ -91,7 +91,7 @@ export default {
 		},
 		initialPlaylistData(state) {
 			// Called only once during startup to get data for the app. After that, app only writes data to NML file, no more reading.
-			console.log("working:");
+			console.log("state.library:");
 			console.log(state.library);
 			setPlaylistNode(
 				nmlPlaylist,
@@ -102,7 +102,9 @@ export default {
 			);
 			state.browser.dataSource = state.playlists;
 			state.browser.ready = true;
+			console.log("state.playlists:");
 			console.log(state.playlists);
+			console.log("state.playlistEntries:");
 			console.log(state.playlistEntries);
 		},
 		addtoPlaylistEntries(state, data) {

@@ -126,7 +126,6 @@ export default {
     addDropZone() {
       // define drop zone
       const targetContainer = document.querySelector("#treeview");
-      console.log(targetContainer);
       dropZoneParams = {
         getContainer: () => targetContainer,
         onDragging: (params) => {

@@ -5,12 +5,17 @@ export default {
   mounted() {
     // App has started before, first check version
     if (localStorage.version) {
-      console.log("Version opened before: " + localStorage.version);
       window.ipcRenderer.send("setVersion", localStorage.version);
     }
     window.ipcRenderer.receive("setVersion", (version) => {
-      console.log("Newest version: " + version);
+      console.log(
+        "Version opened before: " +
+          localStorage.version +
+          ", Newest version: " +
+          version
+      );
       if (localStorage.version == version && localStorage.pathToLibrary) {
+        console.log("Same version, load the library...");
         this.$store.commit("setLibraryPath", localStorage.pathToLibrary);
         window.ipcRenderer.send("parseXML", [this.pathToLibrary]);
         console.log("Library Path: " + this.pathToLibrary);
@@ -151,7 +156,6 @@ export default {
 
     window.ipcRenderer.receive("parseXML", (xmlAsJS) => {
       this.$store.commit("setLibrary", xmlAsJS);
-      console.log(xmlAsJS);
 
       let collection = this.$store.getters.library(nmlCollection);
       let paths = {};
