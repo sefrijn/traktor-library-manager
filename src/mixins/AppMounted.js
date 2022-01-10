@@ -3,11 +3,19 @@ import { nmlCollection, nmlPlaylist } from "./../config/paths.js";
 
 export default {
   mounted() {
-    if (localStorage.pathToLibrary) {
-      this.$store.commit("setLibraryPath", localStorage.pathToLibrary);
-      window.ipcRenderer.send("parseXML", [this.pathToLibrary]);
-      console.log("Library Path: " + this.pathToLibrary);
+    // App has started before, first check version
+    if (localStorage.version) {
+      console.log("Version opened before: " + localStorage.version);
+      window.ipcRenderer.send("setVersion", localStorage.version);
     }
+    window.ipcRenderer.receive("setVersion", (version) => {
+      console.log("Newest version: " + version);
+      if (localStorage.version == version && localStorage.pathToLibrary) {
+        this.$store.commit("setLibraryPath", localStorage.pathToLibrary);
+        window.ipcRenderer.send("parseXML", [this.pathToLibrary]);
+        console.log("Library Path: " + this.pathToLibrary);
+      }
+    });
 
     window.ipcRenderer.receive("openLibrary", (message) => {
       localStorage.pathToLibrary = message;

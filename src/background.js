@@ -26,6 +26,7 @@ const axios = require("axios");
 const qs = require("qs");
 const sharp = require("sharp");
 const si = require("systeminformation");
+const pjson = require("./../package.json");
 
 let parser = new xml2js.Parser();
 var builder = new xml2js.Builder({
@@ -167,6 +168,11 @@ ipcMain.on("openLibrary", function(event) {
   //     console.log("source.txt was copied to destination.txt");
   //   });
   // }
+});
+
+ipcMain.on("setVersion", function(event, arg) {
+  console.log(pjson.version);
+  win.webContents.send("setVersion", pjson.version);
 });
 
 ipcMain.on("parseXML", function(event, arg) {

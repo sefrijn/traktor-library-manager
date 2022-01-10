@@ -165,10 +165,8 @@ export default {
           this.sent = true;
           this.contact = {
             name: "",
-            company: "",
             email: "",
             body: "",
-            card: this.contact.card,
           };
         })
         .catch((error) => {
