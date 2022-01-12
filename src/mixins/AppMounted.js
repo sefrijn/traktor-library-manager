@@ -4,9 +4,8 @@ import { nmlCollection, nmlPlaylist } from "./../config/paths.js";
 export default {
   mounted() {
     // App has started before, first check version
-    if (localStorage.version) {
-      window.ipcRenderer.send("setVersion", localStorage.version);
-    }
+    window.ipcRenderer.send("setVersion", "");
+
     window.ipcRenderer.receive("setVersion", (version) => {
       console.log(
         "Version opened before: " +
@@ -20,6 +19,7 @@ export default {
         window.ipcRenderer.send("parseXML", [this.pathToLibrary]);
         console.log("Library Path: " + this.pathToLibrary);
       }
+      localStorage.version = version;
     });
 
     window.ipcRenderer.receive("openLibrary", (message) => {

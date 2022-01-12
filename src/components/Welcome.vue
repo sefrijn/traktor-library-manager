@@ -59,11 +59,19 @@
 					placeholder="Email"
 					class="text-sm text-black mt-1 block w-full placeholder:text-slate-400 bg-white opacity-80 hover:opacity-100 focus:opacity-100 focus:bg-white border-0"
 				/>
-				<input
-					class="bg-active hover:bg-active-dark font-bold tracking-wider text-white px-2.5 py-1 cursor-pointer"
-					type="submit"
-					value="Send"
-				/>
+				<div class="flex space-x-3">
+					<input
+						class="bg-active hover:bg-active-dark font-bold tracking-wider text-white px-2.5 py-1 cursor-pointer"
+						type="submit"
+						value="Send"
+					/>
+					<button
+						class="bg-active hover:bg-active-dark font-bold tracking-wider text-white px-2.5 py-1 cursor-pointer"
+						@click="sent = true"
+					>
+						Skip
+					</button>
+				</div>
 				<transition name="fade">
 					<div
 						class="text-sm text-red-800 w-full"

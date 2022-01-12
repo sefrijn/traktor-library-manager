@@ -1,4 +1,4 @@
-# Traktor Library Manager
+# Traktor Library Manager 0.9.6
 
 Manage your Traktor Pro 3 library with ease! Build with love by [DJ Sefrijn](https://mixcloud.com/sefrijn) from studio [How About Yes](https://howaboutyes.com).
 Uses Vue, Tailwind, Electron, AG Grid and many more wonderful packages.
