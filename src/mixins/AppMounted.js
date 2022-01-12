@@ -158,7 +158,7 @@ export default {
       this.$store.commit("setLibrary", xmlAsJS);
 
       let collection = this.$store.getters.library(nmlCollection);
-      let paths = {};
+      let paths = [];
       collection.forEach((track, index) => {
         paths[index] = {
           path: track["LOCATION"][0]["$"]["DIR"].replace(/:/g, ""),
@@ -168,6 +168,9 @@ export default {
       window.ipcRenderer.send("coverArtList", cloneDeep(paths));
     });
 
+    window.ipcRenderer.receive("logWarning", (message) => {
+      console.warn(message);
+    });
     window.ipcRenderer.receive("logError", (message) => {
       console.error(message);
     });

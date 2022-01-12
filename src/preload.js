@@ -17,6 +17,7 @@ const validChannels = [
 	"spotifyArtist",
 	"openURL",
 	"logError",
+	"logWarning",
 	"setVersion",
 ];
 

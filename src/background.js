@@ -301,124 +301,92 @@ ipcMain.on("toClipboard", function(event, arg) {
 
 // >> Generate Cover Art
 // Large
-const cover_size_large = 400;
-const cover_path_large = path.join(
-  app.getPath("userData"),
-  "coverart",
-  cover_size_large.toString()
-);
-if (!fs.existsSync(cover_path_large)) {
-  fs.mkdirSync(cover_path_large, { recursive: true });
+const sizeL = 400;
+const imgL = path.join(app.getPath("userData"), "coverart", sizeL.toString());
+if (!fs.existsSync(imgL)) {
+  fs.mkdirSync(imgL, { recursive: true });
 }
 
 // medium
-const cover_size_medium = 200;
-const cover_path_medium = path.join(
-  app.getPath("userData"),
-  "coverart",
-  cover_size_medium.toString()
-);
-if (!fs.existsSync(cover_path_medium)) {
-  fs.mkdirSync(cover_path_medium, { recursive: true });
+const sizeM = 200;
+const imgM = path.join(app.getPath("userData"), "coverart", sizeM.toString());
+if (!fs.existsSync(imgM)) {
+  fs.mkdirSync(imgM, { recursive: true });
 }
 
 // Small
-const cover_size_small = 60;
-const cover_path_small = path.join(
-  app.getPath("userData"),
-  "coverart",
-  cover_size_small.toString()
-);
-if (!fs.existsSync(cover_path_small)) {
-  fs.mkdirSync(cover_path_small, { recursive: true });
+const sizeS = 60;
+const imgS = path.join(app.getPath("userData"), "coverart", sizeS.toString());
+if (!fs.existsSync(imgS)) {
+  fs.mkdirSync(imgS, { recursive: true });
 }
 
-ipcMain.on("coverArtList", function(event, files) {
-  let images = {};
-  let total = parseInt(Object.keys(files).length);
+ipcMain.on("coverArtList", async function(event, files) {
   let counter = 0;
-  console.log("started processing images: " + Object.keys(files).length);
-  let start = Date.now();
-  (async () => {
-    try {
-      await Promise.all(
-        Object.keys(files).map(async (index) => {
-          if (!fs.existsSync(files[index].path + files[index].file)) {
-            win.webContents.send(
-              "logError",
-              "Track does not exist, please remove from your lbirary: " +
-                files[index].path +
-                files[index].file
-            );
-            console.log("Track does not exist");
-            // Remove item from array
-            files[index].file = null;
-          } else {
-            let path_small = path.join(
-              cover_path_small,
-              path.parse(files[index].file).name + ".jpeg"
-            );
-            let path_medium = path.join(
-              cover_path_medium,
-              path.parse(files[index].file).name + ".jpeg"
-            );
-            let path_large = path.join(
-              cover_path_large,
-              path.parse(files[index].file).name + ".jpeg"
-            );
-            if (
-              index < debugLimitImages &&
-              (!fs.existsSync(path_small) ||
-                !fs.existsSync(path_medium) ||
-                !fs.existsSync(path_large))
-            ) {
-              const metadata = await mm.parseFile(
-                files[index].path + files[index].file
-              );
-              if (metadata.common.picture !== undefined) {
-                let picture = metadata.common.picture[0];
+  const total = files.length;
 
-                // SMALL
-                sharp(picture.data)
-                  .resize(cover_size_small, cover_size_small)
-                  .jpeg({
-                    quality: 75,
-                  })
-                  .toFile(path_small);
-                // MEDIUM
-                sharp(picture.data)
-                  .resize(cover_size_medium, cover_size_medium)
-                  .jpeg({
-                    quality: 75,
-                  })
-                  .toFile(path_medium);
-                // LARGE
-                sharp(picture.data)
-                  .resize(cover_size_large, cover_size_large)
-                  .jpeg({
-                    quality: 75,
-                  })
-                  .toFile(path_large);
-              } else {
-                // remove item from array
-                files[index].file = null;
-              }
-            }
-          }
-          counter++;
-          if (counter > total) counter = total;
-          win.webContents.send("coverArtProgress", counter / total);
-        })
+  // Check which files exist on disk
+  for (const index in files) {
+    if (fs.existsSync(files[index].path + files[index].file)) {
+      // File Exists on Disk
+
+      // Check if coverart is already generated
+      let s = path.join(imgS, path.parse(files[index].file).name + ".jpeg");
+      let m = path.join(imgM, path.parse(files[index].file).name + ".jpeg");
+      let l = path.join(imgL, path.parse(files[index].file).name + ".jpeg");
+      if (!fs.existsSync(s) || !fs.existsSync(m) || !fs.existsSync(l)) {
+        // Coverart does not exist on disk
+        // Read metadata from audiofile
+        const meta = await mm.parseFile(files[index].path + files[index].file);
+        if (meta.common.picture !== undefined) {
+          // The track has an image! Write it to disk
+          let picture = meta.common.picture[0];
+          // Small
+          sharp(picture.data)
+            .resize(sizeS, sizeS)
+            .jpeg({ quality: 75 })
+            .toFile(s);
+          // Medium
+          sharp(picture.data)
+            .resize(sizeM, sizeM)
+            .jpeg({ quality: 75 })
+            .toFile(m);
+          // Large
+          sharp(picture.data)
+            .resize(sizeL, sizeL)
+            .jpeg({ quality: 75 })
+            .toFile(l);
+        } else {
+          win.webContents.send(
+            "logWarning",
+            "File " +
+              index +
+              " has no Coverart: " +
+              files[index].path +
+              files[index].file
+          );
+          files[index].file = null;
+        }
+      }
+    } else {
+      win.webContents.send(
+        "logError",
+        "File " +
+          index +
+          " not found on disk: " +
+          files[index].path +
+          files[index].file
       );
-      win.webContents.send("coverArtList", files);
-    } catch (error) {
-      // console.error(error.message);
-      win.webContents.send("logError", error.message);
-      counter++;
-      if (counter > total) counter = total;
-      win.webContents.send("coverArtProgress", counter / total);
+      files[index].file = null;
     }
-  })();
+
+    counter++;
+    if (counter < total)
+      win.webContents.send("coverArtProgress", counter / total);
+  }
+
+  win.webContents.send("coverArtProgress", 1);
+  win.webContents.send("coverArtList", files);
 });
 
 function registerLocalResourceProtocol() {
