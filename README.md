@@ -11,6 +11,13 @@ Like this project? [Buy me a coffee](https://ko-fi.com/sefrijn)
 
 ## Developer setup
 
+To run a dev server on local machine:
+
+```
+yarn
+yarn electron:serve
+```
+
 To enable Spotify Integration during development, create a `src/config.js` file containing:
 
 ```
@@ -22,5 +29,3 @@ export { client_secret, client_id };
 
 The client ID & secret you get from creating a Spotify app:
 https://developer.spotify.com/dashboard
-
-After that you can run `yarn electron:serve` to start the watch server.

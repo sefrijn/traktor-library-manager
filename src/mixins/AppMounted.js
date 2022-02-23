@@ -168,6 +168,9 @@ export default {
       window.ipcRenderer.send("coverArtList", cloneDeep(paths));
     });
 
+    window.ipcRenderer.receive("logInfo", (message) => {
+      console.log(message);
+    });
     window.ipcRenderer.receive("logWarning", (message) => {
       console.warn(message);
     });

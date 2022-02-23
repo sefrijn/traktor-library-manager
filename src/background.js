@@ -158,16 +158,6 @@ ipcMain.on("openLibrary", function(event) {
   });
   if (file == undefined) return console.log("no file selected, just continue");
   win.webContents.send("openLibrary", file);
-  // if (file) {
-  //   const d = new Date();
-  //   let month = d.getMonth();
-  //   let year = d.getFullYear();
-  //   let backup = file.replace(".nml", "-" + month + year + ".nml");
-  //   fs.copyFile(file, backup, (err) => {
-  //     if (err) throw err;
-  //     console.log("source.txt was copied to destination.txt");
-  //   });
-  // }
 });
 
 ipcMain.on("setVersion", function(event, arg) {
@@ -327,6 +317,10 @@ ipcMain.on("coverArtList", async function(event, files) {
 
   // Check which files exist on disk
   for (const index in files) {
+    win.webContents.send(
+      "logInfo",
+      index + " Start loading file " + files[index].path + files[index].file
+    );
     if (fs.existsSync(files[index].path + files[index].file)) {
       // File Exists on Disk
 
@@ -337,36 +331,76 @@ ipcMain.on("coverArtList", async function(event, files) {
       if (!fs.existsSync(s) || !fs.existsSync(m) || !fs.existsSync(l)) {
         // Coverart does not exist on disk
         // Read metadata from audiofile
-        const meta = await mm.parseFile(files[index].path + files[index].file);
-        if (meta.common.picture !== undefined) {
-          // The track has an image! Write it to disk
-          let picture = meta.common.picture[0];
-          // Small
-          sharp(picture.data)
-            .resize(sizeS, sizeS)
-            .jpeg({ quality: 75 })
-            .toFile(s);
-          // Medium
-          sharp(picture.data)
-            .resize(sizeM, sizeM)
-            .jpeg({ quality: 75 })
-            .toFile(m);
-          // Large
-          sharp(picture.data)
-            .resize(sizeL, sizeL)
-            .jpeg({ quality: 75 })
-            .toFile(l);
-        } else {
-          win.webContents.send(
-            "logWarning",
-            "File " +
-              index +
-              " has no Coverart: " +
-              files[index].path +
-              files[index].file
-          );
-          files[index].file = null;
-        }
+        const meta = await mm
+          .parseFile(files[index].path + files[index].file)
+          .then(async (info) => {
+            win.webContents.send("logInfo", meta);
+
+            if (meta.common && meta.common.picture) {
+              // The track has an image! Write it to disk
+              let picture = meta.common.picture[0];
+              win.webContents.send("logInfo", picture);
+              if (
+                picture.format.includes("image") &&
+                Buffer.isBuffer(picture.data)
+              ) {
+                win.webContents.send(
+                  "logInfo",
+                  "started resizing image data " + index
+                );
+                // Small
+                await sharp(picture.data)
+                  .resize(sizeS, sizeS)
+                  .jpeg({ quality: 75 })
+                  .toFile(s)
+                  .then((info) => {})
+                  .catch((err) => {
+                    console.log("ERR", err);
+                  });
+                // Medium
+                await sharp(picture.data)
+                  .resize(sizeM, sizeM)
+                  .jpeg({ quality: 75 })
+                  .toFile(m)
+                  .then((info) => {})
+                  .catch((err) => {
+                    console.log("ERR", err);
+                  });
+                // Large
+                await sharp(picture.data)
+                  .resize(sizeL, sizeL)
+                  .jpeg({ quality: 75 })
+                  .toFile(l)
+                  .then((info) => {})
+                  .catch((err) => {
+                    console.log("ERR", err);
+                  });
+              } else {
+                win.webContents.send(
+                  "logError",
+                  "Image file " +
+                    index +
+                    " is not a valid Image Buffer: " +
+                    files[index].path +
+                    files[index].file
+                );
+                files[index].file = null;
+              }
+            } else {
+              win.webContents.send(
+                "logWarning",
+                "File " +
+                  index +
+                  " has no Coverart: " +
+                  files[index].path +
+                  files[index].file
+              );
+              files[index].file = null;
+            }
+          })
+          .catch((err) => {
+            console.log("ERR", err);
+          });
       }
     } else {
       win.webContents.send(

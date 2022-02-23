@@ -18,6 +18,7 @@ const validChannels = [
 	"openURL",
 	"logError",
 	"logWarning",
+	"logInfo",
 	"setVersion",
 ];
 
