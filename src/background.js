@@ -331,9 +331,9 @@ ipcMain.on("coverArtList", async function(event, files) {
       if (!fs.existsSync(s) || !fs.existsSync(m) || !fs.existsSync(l)) {
         // Coverart does not exist on disk
         // Read metadata from audiofile
-        const meta = await mm
+        let meta = await mm
           .parseFile(files[index].path + files[index].file)
-          .then(async (info) => {
+          .then(async (meta) => {
             win.webContents.send("logInfo", meta);
 
             if (meta.common && meta.common.picture) {
