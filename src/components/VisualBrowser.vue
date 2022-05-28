@@ -1,12 +1,12 @@
 <template>
     <div
-        class="visual-browser w-full bg-black-dark -mb-4 border-t border-black"
+        class="visual-browser w-full bg-neutral-800 -mb-4 border-t border-black"
         :class="class"
     >
         <div
-            @scroll="$emit('scroll')"
             ref="smallWrapper"
             class="overflow-scroll h-full w-full"
+            @scroll="$emit('scroll')"
         >
             <div
                 ref="hugeWrapper"
@@ -25,14 +25,15 @@
                 <div
                     v-for="(row, index) in tracks"
                     :key="index"
-                    class="p-2 absolute transition-width hover:bg-black-light cursor-pointer"
+                    class="p-2 absolute transition-width hover:bg-neutral-600 cursor-pointer"
                     :class="[
                         `w-1/${coverSize}`,
                         trackPlayingIndex == row.data.index ? 'active' : '',
                     ]"
                     :style="{
-                        left: `calc(${row.rowIndex %
-                            coverSize} * 100% / ${coverSize})`,
+                        left: `calc(${
+                            row.rowIndex % coverSize
+                        } * 100% / ${coverSize})`,
                         top: `calc(${Math.floor(
                             row.rowIndex / coverSize
                         )} * 100% / ${wrapperLines})`,
@@ -43,7 +44,7 @@
                         :is="image"
                         :artist="row.data.artist"
                         :title="row.data.title"
-                        :textHeight="coverTextHeight"
+                        :text-height="coverTextHeight"
                         :src="'local-resource://coverart/200/' + row.data.image"
                     >
                     </component>
@@ -51,9 +52,11 @@
             </div>
         </div>
         <div
-            class="absolute bottom-0 border-t border-black flex justify-end items-center px-4 h-8 w-full bg-black-medium  z-10"
+            class="absolute bottom-0 border-t border-black flex justify-end items-center px-4 h-8 w-full bg-neutral-700 z-10"
         >
-            <span class="text-xs tracking-wider mr-5 text-gray-dark">Size</span>
+            <span class="text-xs tracking-wider mr-5 text-neutral-400"
+                >Size</span
+            >
             <vue-slider
                 v-model="coverSizeLocal"
                 width="250px"
@@ -62,20 +65,22 @@
                 :adsorb="true"
                 :tooltip="'none'"
             />
-            <span class="text-xs tracking-wider ml-5 text-gray-dark"
+            <span class="text-xs tracking-wider ml-5 text-neutral-400"
                 >{{ coverSize }} per row</span
             >
         </div>
     </div>
 </template>
 
-<style></style>
-
 <script>
-import Image from "./Image.vue";
-import VueSlider from "vue-slider-component";
+import Image from './Image.vue';
+import VueSlider from 'vue-slider-component';
 
 export default {
+    components: {
+        Image,
+        VueSlider,
+    },
     props: {
         tracks: Array,
         class: String,
@@ -84,7 +89,7 @@ export default {
     data() {
         return {
             images: {},
-            image: "Image",
+            image: 'Image',
             coverSizeLocal: null,
             coverTextHeight: 48,
         };
@@ -103,13 +108,9 @@ export default {
     watch: {
         coverSizeLocal(newCoverSize, oldCoverSize) {
             if (newCoverSize != oldCoverSize) {
-                this.$store.commit("setCoverSize", newCoverSize);
+                this.$store.commit('setCoverSize', newCoverSize);
             }
         },
-    },
-    components: {
-        Image,
-        VueSlider,
     },
     beforeMount() {
         this.coverSizeLocal = this.coverSize;
@@ -117,11 +118,13 @@ export default {
     methods: {
         active(index) {
             if (index == trackPlayingIndex) {
-                return "active";
+                return 'active';
             } else {
-                return "";
+                return '';
             }
         },
     },
 };
 </script>
+
+<style></style>

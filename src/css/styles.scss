@@ -1,17 +1,18 @@
-@import "fonts";
-@import "colors";
-@import "~ag-grid-community/src/styles/ag-grid.scss";
-@import "~ag-grid-community/src/styles/ag-theme-alpine-dark/sass/ag-theme-alpine-dark-mixin";
+@import 'fonts';
+@import 'colors';
+@import '~ag-grid-community/src/styles/ag-grid';
+@import '~ag-grid-community/src/styles/ag-theme-alpine-dark/sass/ag-theme-alpine-dark-mixin';
 
 /* Slider */
-$themeColor: $traktor-active;
-$bgColor: $gray;
+$theme-color: $primary-500;
+$bg-color: $neutral-300;
+
 /* $disabledColor: #666 !default;
 $railBorderRadius: 15px !default;
 $railColorDisabled: #ccc !default;
 
 $dotBorderRadius: 50% !default;
-$dotShadowColor: rgba($themeColor, 0.38) !default;
+$dotShadowColor: rgba($theme-color, 0.38) !default;
 
 $tooltipFontSize: 12px !default;
 $tooltipSize: 30px !default;
@@ -21,285 +22,353 @@ $stepBorderRadius: 50% !default;
 
 $labelFontSize: 14px !default;
  */
-@import "~vue-slider-component/lib/theme/material.scss";
+@import '~vue-slider-component/lib/theme/material.scss';
+
 .color-dot {
-	.color-1 {
-		background-color: $red-dark;
-	}
-	.color-2 {
-		background-color: $orange-dark;
-	}
-	.color-3 {
-		background-color: $yellow-dark;
-	}
-	.color-4 {
-		background-color: $green-dark;
-	}
-	.color-5 {
-		background-color: $blue-dark;
-	}
-	.color-6 {
-		background-color: $violet-dark;
-	}
-	.color-7 {
-		background-color: $magenta-dark;
-	}
+    .color-1 {
+        background-color: $red-dark;
+    }
+
+    .color-2 {
+        background-color: $orange-dark;
+    }
+
+    .color-3 {
+        background-color: $yellow-dark;
+    }
+
+    .color-4 {
+        background-color: $green-dark;
+    }
+
+    .color-5 {
+        background-color: $blue-dark;
+    }
+
+    .color-6 {
+        background-color: $violet-dark;
+    }
+
+    .color-7 {
+        background-color: $magenta-dark;
+    }
 }
 
 /* .color-dot:hover, */
 .color-dot.active-color,
 .color-dot:hover {
-	.color-1 {
-		background-color: $red-bright;
-	}
-	.color-2 {
-		background-color: $orange-bright;
-	}
-	.color-3 {
-		background-color: $yellow-bright;
-	}
-	.color-4 {
-		background-color: $green-bright;
-	}
-	.color-5 {
-		background-color: $blue-bright;
-	}
-	.color-6 {
-		background-color: $violet-bright;
-	}
-	.color-7 {
-		background-color: $magenta-bright;
-	}
+    .color-1 {
+        background-color: $red-bright;
+    }
+
+    .color-2 {
+        background-color: $orange-bright;
+    }
+
+    .color-3 {
+        background-color: $yellow-bright;
+    }
+
+    .color-4 {
+        background-color: $green-bright;
+    }
+
+    .color-5 {
+        background-color: $blue-bright;
+    }
+
+    .color-6 {
+        background-color: $violet-bright;
+    }
+
+    .color-7 {
+        background-color: $magenta-bright;
+    }
 }
 
 .ag-theme-alpine-dark {
-	@include ag-theme-alpine-dark(
-		(
-			alpine-active-color: $traktor-active,
-			header-background-color: $black-light,
-			borders: false,
-			background-color: $black-dark,
-			odd-row-background-color: $black-medium,
-			row-hover-color: lighten($black-light, 4%),
-			font-size: 12px !important,
-			grid-size: 4.9px,
-			cell-horizontal-padding: 7px,
-			header-height: 20px,
-			font-family: (
-				"Mulish",
-				sans-serif,
-			),
-		)
-	);
-	.ag-header {
-		border-bottom: 1px solid $black-dark;
-	}
-	.ag-cell-focus {
-		background-color: $traktor-active-dark;
-		border: none !important;
-	}
-	[aria-selected="true"] {
-		background-color: darken($traktor-active, 15%);
-	}
-	.ag-row {
-		&.color-1 {
-			background-color: $red-dark;
-			&.ag-row-odd {
-				background-color: $red-darker;
-			}
-			&.ag-row-hover {
-				background-color: lighten($red-dark, 5%);
-			}
-			&[aria-selected="true"] {
-				background-color: lighten($red-dark, 15%);
-			}
-		}
-		&.color-2 {
-			background-color: $orange-dark;
-			&.ag-row-odd {
-				background-color: $orange-darker;
-			}
-			&.ag-row-hover {
-				background-color: lighten($orange-dark, 5%);
-			}
-			&[aria-selected="true"] {
-				background-color: lighten($orange-dark, 15%);
-			}
-		}
-		&.color-3 {
-			background-color: $yellow-dark;
-			&.ag-row-odd {
-				background-color: $yellow-darker;
-			}
-			&.ag-row-hover {
-				background-color: lighten($yellow-dark, 5%);
-			}
-			&[aria-selected="true"] {
-				background-color: lighten($yellow-dark, 15%);
-			}
-		}
-		&.color-4 {
-			background-color: $green-dark;
-			&.ag-row-odd {
-				background-color: $green-darker;
-			}
-			&.ag-row-hover {
-				background-color: lighten($green-dark, 5%);
-			}
-			&[aria-selected="true"] {
-				background-color: lighten($green-dark, 15%);
-			}
-		}
-		&.color-5 {
-			background-color: $blue-dark;
-			&.ag-row-odd {
-				background-color: $blue-darker;
-			}
-			&.ag-row-hover {
-				background-color: lighten($blue-dark, 5%);
-			}
-			&[aria-selected="true"] {
-				background-color: lighten($blue-dark, 15%);
-			}
-		}
-		&.color-6 {
-			background-color: $violet-dark;
-			&.ag-row-odd {
-				background-color: $violet-darker;
-			}
-			&.ag-row-hover {
-				background-color: lighten($violet-dark, 5%);
-			}
-			&[aria-selected="true"] {
-				background-color: lighten($violet-dark, 15%);
-			}
-		}
-		&.color-7 {
-			background-color: $magenta-dark;
-			&.ag-row-odd {
-				background-color: $magenta-darker;
-			}
-			&.ag-row-hover {
-				background-color: lighten($magenta-dark, 5%);
-			}
-			&[aria-selected="true"] {
-				background-color: lighten($magenta-dark, 15%);
-			}
-		}
-	}
-	/* 	div.ag-row.ag-row-selected[class*="color"] {
-		background-color: darken($traktor-active, 15%);
+    @include ag-theme-alpine-dark(
+        (
+            alpine-primary-500-color: $primary-500,
+            header-background-color: $neutral-600,
+            borders: false,
+            background-color: $neutral-800,
+            odd-row-background-color: $neutral-700,
+            row-hover-color: lighten($neutral-600, 4%),
+            font-size: 12px !important,
+            grid-size: 4.9px,
+            cell-horizontal-padding: 7px,
+            header-height: 20px,
+            font-family: (
+                'Mulish',
+                sans-serif,
+            ),
+        )
+    );
+
+    .ag-header {
+        border-bottom: 1px solid $neutral-800;
+    }
+
+    .ag-cell-focus {
+        background-color: $primary-600;
+        border: none !important;
+    }
+
+    [aria-selected='true'] {
+        background-color: darken($primary-500, 15%);
+    }
+
+    .ag-row {
+        &.color-1 {
+            background-color: $red-dark;
+
+            &.ag-row-odd {
+                background-color: $red-darker;
+            }
+
+            &.ag-row-hover {
+                background-color: lighten($red-dark, 5%);
+            }
+
+            &[aria-selected='true'] {
+                background-color: lighten($red-dark, 15%);
+            }
+        }
+
+        &.color-2 {
+            background-color: $orange-dark;
+
+            &.ag-row-odd {
+                background-color: $orange-darker;
+            }
+
+            &.ag-row-hover {
+                background-color: lighten($orange-dark, 5%);
+            }
+
+            &[aria-selected='true'] {
+                background-color: lighten($orange-dark, 15%);
+            }
+        }
+
+        &.color-3 {
+            background-color: $yellow-dark;
+
+            &.ag-row-odd {
+                background-color: $yellow-darker;
+            }
+
+            &.ag-row-hover {
+                background-color: lighten($yellow-dark, 5%);
+            }
+
+            &[aria-selected='true'] {
+                background-color: lighten($yellow-dark, 15%);
+            }
+        }
+
+        &.color-4 {
+            background-color: $green-dark;
+
+            &.ag-row-odd {
+                background-color: $green-darker;
+            }
+
+            &.ag-row-hover {
+                background-color: lighten($green-dark, 5%);
+            }
+
+            &[aria-selected='true'] {
+                background-color: lighten($green-dark, 15%);
+            }
+        }
+
+        &.color-5 {
+            background-color: $blue-dark;
+
+            &.ag-row-odd {
+                background-color: $blue-darker;
+            }
+
+            &.ag-row-hover {
+                background-color: lighten($blue-dark, 5%);
+            }
+
+            &[aria-selected='true'] {
+                background-color: lighten($blue-dark, 15%);
+            }
+        }
+
+        &.color-6 {
+            background-color: $violet-dark;
+
+            &.ag-row-odd {
+                background-color: $violet-darker;
+            }
+
+            &.ag-row-hover {
+                background-color: lighten($violet-dark, 5%);
+            }
+
+            &[aria-selected='true'] {
+                background-color: lighten($violet-dark, 15%);
+            }
+        }
+
+        &.color-7 {
+            background-color: $magenta-dark;
+
+            &.ag-row-odd {
+                background-color: $magenta-darker;
+            }
+
+            &.ag-row-hover {
+                background-color: lighten($magenta-dark, 5%);
+            }
+
+            &[aria-selected='true'] {
+                background-color: lighten($magenta-dark, 15%);
+            }
+        }
+    }
+
+    /* 	div.ag-row.ag-row-selected[class*="color"] {
+		background-color: darken($primary-500, 15%);
 	}
  */
 }
+
 #app .ag-theme-alpine-dark {
-	.ag-cell-inline-editing {
-		@apply ring-0 ring-offset-0 rounded-none bg-active-dark;
-		.ag-cell-edit-wrapper input[class^="ag-"] {
-			@apply rounded-none bg-transparent pl-3;
-			padding-bottom: 0.6rem;
-		}
-	}
-	.ag-popup-editor {
-		@apply rounded-none bg-active-dark;
-		input[class^="text-"] {
-			/* @apply rounded-none bg-transparent pl-3; */
-			padding-bottom: 0.6rem;
-		}
-		li.active {
-			@apply hover:bg-active;
-		}
-	}
+    .ag-cell-inline-editing {
+        @apply ring-0 ring-offset-0 rounded-none bg-primary-600;
+
+        .ag-cell-edit-wrapper input[class^='ag-'] {
+            @apply rounded-none bg-transparent pl-3;
+
+            padding-bottom: 0.6rem;
+        }
+    }
+
+    .ag-popup-editor {
+        @apply rounded-none bg-primary-600;
+
+        input[class^='text-'] {
+            /* @apply rounded-none bg-transparent pl-3; */
+            padding-bottom: 0.6rem;
+        }
+
+        li.active {
+            @apply hover:bg-primary-500;
+        }
+    }
 }
 
 /* Style */
 .v-popper--theme-tooltip .v-popper__inner {
-	background: $black-medium;
-	color: $gray;
-	@apply text-xs;
+    background: $neutral-700;
+    color: $neutral-300;
+    @apply text-xs;
 }
 
 .v-popper--theme-tooltip .v-popper__arrow {
-	border-color: $black-medium;
+    border-color: $neutral-700;
 }
 
 /* Buttons */
 button,
 header button.flex,
 footer button.flex,
-input[type="radio"] + label {
-	@apply bg-black-medium hover:bg-active-dark text-gray-light hover:text-white;
+input[type='radio'] + label {
+    @apply bg-neutral-700 hover:bg-primary-600 text-neutral-200 hover:text-white;
 }
 
 #app {
-	.active,
-	input[type="radio"]:checked + label {
-		@apply bg-active hover:bg-active-dark text-white;
-	}
-	.clear-tag {
-		@apply bg-active-orange text-white line-through;
-	}
-	::selection {
-		color: white;
-		background: $traktor-active-orange;
-	}
-	input:focus,
-	textarea:focus,
-	select:focus,
-	[contenteditable] {
-		@apply outline-none ring-0 ring-offset-0 border-none border-0;
-	}
-	.ag-drag-handle.ag-row-drag:hover::after {
-		@apply block absolute bg-black-light text-white z-10 shadow-black px-2 py-1 leading-normal left-7 text-xxs pointer-events-none;
-		content: "Drag";
-	}
-	.ag-drag-handle.ag-row-drag + span {
-		flex-grow: 1;
-	}
-	.index-wrapper {
-		.icon-wrapper {
-			display: none;
-		}
-		.icon {
-			width: 0;
-			height: 0;
-			margin-left: 2px;
-			border-top: 7px solid transparent;
-			border-bottom: 7px solid transparent;
-			border-left: 11px solid white;
-		}
-		&:hover {
-			.icon-wrapper {
-				display: flex;
-			}
-			.index {
-				display: none;
-			}
-		}
-	}
-	.rating:hover > span svg {
-		color: $traktor-active-orange;
-		opacity: 1;
-	}
-	.rating:hover > span:hover {
-		& ~ span svg {
-			color: white;
-			opacity: 0.2;
-		}
-	}
+    .active,
+    input[type='radio']:checked + label {
+        @apply bg-primary-500 hover:bg-primary-600 text-white;
+    }
+
+    .clear-tag {
+        @apply bg-secondary-500 text-white line-through;
+    }
+
+    ::selection {
+        color: white;
+        background: $secondary-500;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus,
+    [contenteditable] {
+        @apply outline-none ring-0 ring-offset-0 border-none border-0;
+    }
+
+    .ag-drag-handle.ag-row-drag:hover::after {
+        @apply block absolute bg-neutral-600 text-white z-10 shadow-black px-2 py-1 leading-normal left-7 text-xxs pointer-events-none;
+
+        content: 'Drag';
+    }
+
+    .ag-drag-handle.ag-row-drag + span {
+        flex-grow: 1;
+    }
+
+    .index-wrapper {
+        .icon-wrapper {
+            display: none;
+        }
+
+        .icon {
+            width: 0;
+            height: 0;
+            margin-left: 2px;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-left: 11px solid white;
+        }
+
+        &:hover {
+            .icon-wrapper {
+                display: flex;
+            }
+
+            .index {
+                display: none;
+            }
+        }
+    }
+
+    .rating:hover > span svg {
+        color: $secondary-500;
+        opacity: 1;
+    }
+
+    .rating:hover > span:hover {
+        & ~ span svg {
+            color: white;
+            opacity: 0.2;
+        }
+    }
 }
+
 .w-1\/7 {
-	width: calc(100% / 7);
+    width: calc(100% / 7);
 }
+
 .w-1\/8 {
-	width: calc(100% / 8);
+    width: calc(100% / 8);
 }
+
 .w-1\/9 {
-	width: calc(100% / 9);
+    width: calc(100% / 9);
 }
+
 .w-1\/10 {
-	width: calc(100% / 10);
+    width: calc(100% / 10);
 }
+
 .w-1\/11 {
-	width: calc(100% / 11);
+    width: calc(100% / 11);
 }

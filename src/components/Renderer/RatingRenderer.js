@@ -1,24 +1,24 @@
-import store from "../../store";
+import store from '../../store';
 
 export class RatingRenderer {
     init(params) {
         let val = parseInt(params.value);
 
-        this.eGui = document.createElement("div");
-        this.eGui.className = "rating flex";
+        this.eGui = document.createElement('div');
+        this.eGui.className = 'rating flex';
 
-        let stars_orange = "";
+        let stars_orange = '';
         for (var i = 1; i <= val; i++) {
-            stars_orange += this.star("text-active-orange", i);
+            stars_orange += this.star('text-secondary-500', i);
         }
 
-        let stars_gray = "";
+        let stars_gray = '';
         for (var i = val + 1; i <= 5; i++) {
-            stars_gray += this.star("text-white opacity-20", i);
+            stars_gray += this.star('text-white opacity-20', i);
         }
 
         this.eGui.innerHTML = stars_orange + stars_gray;
-        this.eGui.addEventListener("click", this.saveCell.bind(event, params));
+        this.eGui.addEventListener('click', this.saveCell.bind(event, params));
     }
 
     getGui() {
@@ -44,7 +44,7 @@ export class RatingRenderer {
 
     saveCell(params, e) {
         if (store.getters.savingEnabled) {
-            let newRating = e.path[0].getAttribute("star");
+            let newRating = e.path[0].getAttribute('star');
             params.setValue(newRating);
         }
     }
